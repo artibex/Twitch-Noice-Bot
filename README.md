@@ -1,10 +1,10 @@
-#Twitch Noice Bot
+# Twitch Noice Bot
 
-###What is this Bot for?
+### What is this Bot for?
 This Twitch bot is using a Text to Speech Synth to read out the chat for you. Listen to the whole conversation with your community while not even looking away from the thing you do!
 
 <br>
-###Key Features
+### Key Features
 - Engage with your Community while not getting distrected by a Textwall, just listen the chatmembers what they have to say!
 - Quick Start! (Ready in 1 minute)
 - Easy to use
@@ -18,13 +18,13 @@ This Twitch bot is using a Text to Speech Synth to read out the chat for you. Li
 - Helpful for streamers with a reading disability
 
 
-###Installation Guide
+### Installation Guide
 1. Download the latest release
 2. Unzip all files into a empty folder
 3. Go into the "Settings.txt" and add your channelname after "channel=" example: "channel=korpsian"
 4. Go into the "Settings.txt" and add your oauth key after "oauth=" you can generate one [here](https://twitchapps.com/tmi/) example: oauth="oauth:SoMeCoOlTeXt123456789"
 
-###Settings Explenations
+### Settings Explenations
 | Command                 	| Explenation                                                                                      	|
 |-------------------------	|--------------------------------------------------------------------------------------------------	|
 | ircclient=              	| The IRC Server you are Connecting to                                                             	|
@@ -44,7 +44,7 @@ This Twitch bot is using a Text to Speech Synth to read out the chat for you. Li
 <br>
 ### File Explenations
 <br>
-####Aliaslist.text
+#### Aliaslist.text
 In the AliasList.txt are all Usernames collected with the desiered nickname.
 File example "AliasList.txt":
 korpsian,the developer
@@ -52,7 +52,7 @@ XXCoolKid1000XX,John
 ls_1235433,Pepe
 [Username],[Nickname] (without [])
 <br>
-####Blacklist.txt
+#### Blacklist.txt
 In the Blacklist.txt file are all ignored Users to find. File Example:
 Cloudbot
 AudioAlert
@@ -61,7 +61,7 @@ XxUncoolTrollxX
 [Username] (without [])
 
 <br>
-####BridgeWordList.txt
+#### BridgeWordList.txt
 In the BridgeWordList.txt are all connector words to find. "Example: John [says] Hello!". You can mix it up by putting more then one in the file.
 File Example "BridgeWordList.txt":
 says
@@ -72,7 +72,7 @@ writes
 [Bridgeword] (without [])
 
 <br>
-####Whitelist.txt (CURRENLTY UNUSED)
+#### Whitelist.txt (CURRENLTY UNUSED)
 In the whitelist are all users that are allowed to control the advanced bot settings like mute/unmute tts, define new audio device ID for example.
 File Example "Whitelist.txt":
 MyName
@@ -82,7 +82,7 @@ SomeChillDude
 [User] (without [])
 
 <br>
-##Planned Features
+## Planned Features
 - Soundboard Capability, let the chat have some fun in your stream
 - Chat Commands (Mute/Unmute the TTS with one command, Play a sound)
 - Set the TTS volume
@@ -91,7 +91,7 @@ SomeChillDude
 - A GUI
 
 
-##Credits
+## Credits
 This Software was made by Korbinian Maag (aka Korpsian on Twitch)
 
 <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
