@@ -1,4 +1,4 @@
-name: .NET Core Win
+name: .NET Core ubuntu
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 jobs:
   build:
 
-    runs-on: windows
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
