@@ -95,5 +95,4 @@ SomeChillDude
 <br></br>
 ## Credits
 This Software was made by Korbinian Maag (aka Korpsian on Twitch)
-
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=s-xclick&hosted_button_id=DHKXSBMH8AJWQ)
+[![paypal](https://www.paypalobjects.com/en_US/DK/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=TRFFCPEAG82H2)
