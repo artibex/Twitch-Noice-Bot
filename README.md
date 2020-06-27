@@ -3,7 +3,7 @@
 ### What is this Bot for?
 This Twitch bot is using a Text to Speech Synth to read out the chat for you. Listen to the whole conversation with your community while not even looking away from the thing you do!
 
-<br>
+<br></br>
 ### Key Features
 - Engage with your Community while not getting distrected by a Textwall, just listen the chatmembers what they have to say!
 - Quick Start! (Ready in 1 minute)
@@ -17,7 +17,7 @@ This Twitch bot is using a Text to Speech Synth to read out the chat for you. Li
 - Helpful for streamers or users with a visual handicap
 - Helpful for streamers with a reading disability
 
-
+<br></br>
 ### Installation Guide
 1. Download the latest release
 2. Unzip all files into a empty folder
@@ -41,9 +41,9 @@ This Twitch bot is using a Text to Speech Synth to read out the chat for you. Li
 | ttsoutputdevice=        	| Preconfigure the Audio Device ID so the programm is starting up without askin for a device       	|
 | soundboardoutputdevice= 	| Preconfigure the Audio Device ID so the programm is starting up without askin for a device       	|
 
-<br>
+<br></br>
 ### File Explenations
-<br>
+
 #### Aliaslist.text
 In the AliasList.txt are all Usernames collected with the desiered nickname.
 File example "AliasList.txt":
@@ -51,7 +51,8 @@ korpsian,the developer
 XXCoolKid1000XX,John
 ls_1235433,Pepe
 [Username],[Nickname] (without [])
-<br>
+
+<br></br>
 #### Blacklist.txt
 In the Blacklist.txt file are all ignored Users to find. File Example:
 Cloudbot
@@ -60,7 +61,7 @@ Followerbot
 XxUncoolTrollxX
 [Username] (without [])
 
-<br>
+<br></br>
 #### BridgeWordList.txt
 In the BridgeWordList.txt are all connector words to find. "Example: John [says] Hello!". You can mix it up by putting more then one in the file.
 File Example "BridgeWordList.txt":
@@ -71,7 +72,7 @@ speak
 writes
 [Bridgeword] (without [])
 
-<br>
+<br></br>
 #### Whitelist.txt (CURRENLTY UNUSED)
 In the whitelist are all users that are allowed to control the advanced bot settings like mute/unmute tts, define new audio device ID for example.
 File Example "Whitelist.txt":
@@ -81,7 +82,8 @@ MyOtherModerator
 SomeChillDude
 [User] (without [])
 
-<br>
+<br></br>
+
 ## Planned Features
 - Soundboard Capability, let the chat have some fun in your stream
 - Chat Commands (Mute/Unmute the TTS with one command, Play a sound)
@@ -90,7 +92,7 @@ SomeChillDude
 - Reload the files
 - A GUI
 
-
+<br></br>
 ## Credits
 This Software was made by Korbinian Maag (aka Korpsian on Twitch)
 
