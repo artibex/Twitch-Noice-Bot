@@ -19,7 +19,7 @@ This Twitch bot is using a Text to Speech Synth to read out the chat for you. Li
 
 <br></br>
 ### Installation Guide
-1. Download the latest release
+1. Download the latest release [here](https://github.com/Korpsian/Twitch-Noice-Bot/releases/tag/v1.0)
 2. Unzip all files into a empty folder
 3. Go into the "Settings.txt" and add your channelname after "channel=" example: "channel=korpsian"
 4. Go into the "Settings.txt" and add your oauth key after "oauth=" you can generate one [here](https://twitchapps.com/tmi/) example: oauth="oauth:SoMeCoOlTeXt123456789"
