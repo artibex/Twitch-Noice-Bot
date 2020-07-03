@@ -45,11 +45,11 @@ This Twitch bot is using a Text to Speech Synth to read out the chat for you. Li
 ### File Explenations
 
 #### Aliaslist.text
-In the AliasList.txt are all Usernames collected with the desiered nickname.
-File example "AliasList.txt":
-korpsian,the developer
-XXCoolKid1000XX,John
-ls_1235433,Pepe
+In the AliasList.txt are all Usernames collected with the desiered nickname. <br></br>
+ File example "AliasList.txt":<br></br>
+korpsian,the developer <br></br>
+XXCoolKid1000XX,John <br></br>
+ls_1235433,Pepe <br></br>
 [Username],[Nickname] (without [])
 
 <br></br>
