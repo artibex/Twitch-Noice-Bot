@@ -54,32 +54,32 @@ ls_1235433,Pepe
 
 <br></br>
 #### Blacklist.txt
-In the Blacklist.txt file are all ignored Users to find. File Example:
-Cloudbot
-AudioAlert
-Followerbot
-XxUncoolTrollxX
+In the Blacklist.txt file are all ignored Users to find. File Example:  
+Cloudbot  
+AudioAlert  
+Followerbot  
+XxUncoolTrollxX  
 [Username] (without [])
 
 <br></br>
 #### BridgeWordList.txt
-In the BridgeWordList.txt are all connector words to find. "Example: John [says] Hello!". You can mix it up by putting more then one in the file.
-File Example "BridgeWordList.txt":
-says
-say
-speaks
-speak
-writes
+In the BridgeWordList.txt are all connector words to find. "Example: John   [says] Hello!". You can mix it up by putting more then one in the file.  
+File Example "BridgeWordList.txt":  
+says  
+say  
+speaks  
+speak  
+writes  
 [Bridgeword] (without [])
 
 <br></br>
 #### Whitelist.txt (CURRENLTY UNUSED)
-In the whitelist are all users that are allowed to control the advanced bot settings like mute/unmute tts, define new audio device ID for example.
-File Example "Whitelist.txt":
-MyName
-MyModerator
-MyOtherModerator
-SomeChillDude
+In the whitelist are all users that are allowed to control the advanced bot   settings like mute/unmute tts, define new audio device ID for example.  
+File Example "Whitelist.txt":  
+MyName  
+MyModerator  
+MyOtherModerator  
+SomeChillDude  
 [User] (without [])
 
 <br></br>
