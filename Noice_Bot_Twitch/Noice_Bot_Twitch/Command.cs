@@ -8,17 +8,17 @@ using System.Globalization;
 namespace Noice_Bot_Twitch
 {
     //Command datacontainer, used to store the command information and further processing
-    class Command
+    class Comment
     {
         public string user;
         public string comment;
 
-        public Command(string user, string command)
+        public Comment(string user, string command)
         {
             this.user = user;
             this.comment = command;
         }
-        public Command(string rawMsg)
+        public Comment(string rawMsg)
         {
             //Pre edit
             rawMsg = rawMsg.ToLower();

@@ -17,16 +17,15 @@ namespace Noice_Bot_Twitch
         private int fasterSpeed = 3;
         private int fastestSpeed = 5;
         private int outputDeviceID = -2;
-
+        private float ttsVolume = 1f;
 
         //Init TextToSpeech, needs a filemanager to know where to place the soundfile
         public TTS (FileManager fm, AudioDeviceManager adm)
         {
             this.fm = fm; //Set the Filemanager
             outputDeviceID = adm.GetTTSOutputDeviceID(); //Get the configured device
-            
-            //DetectDevices(); //Detect and Select the Audiodevice to play the sound
-            
+            ttsVolume = fm.GetTTSVolume();            
+
             normalSpeed = fm.GetTTSBaseSpeed();
             fastestSpeed = fm.GetTTSMaxSpeed();
             //fasterSpeed is in the middle of base and max, so calculate it
@@ -38,8 +37,9 @@ namespace Noice_Bot_Twitch
             int speed = 0; //Defined PlaybackSpeed
             string filepath = String.Empty; //Filepath
 
-            if (text.Length > 80) speed = fasterSpeed; //Set the speed according to the length
-            if (text.Length > 100) speed = fastestSpeed;
+            int maxChar = fm.GetMaxTextLength();
+            if (text.Length > Convert.ToInt32(fm.GetMaxTextLength()*0.5)) speed = fasterSpeed; //Set the speed according to the length
+            if (text.Length > Convert.ToInt32(fm.GetMaxTextLength()*0.8)) speed = fastestSpeed;
             else speed = normalSpeed;
 
             //Create a hash with the current date and format out useless characters
@@ -51,34 +51,13 @@ namespace Noice_Bot_Twitch
 
             filepath = fm.GetPath() + @"\" + filename;
 
-            using (WaveOutEvent tempWave = new WaveOutEvent())
-            {
-                SpeechSynthesizer tempSynth = new SpeechSynthesizer();
-                WaveFileReader reader = null;
+            SpeechSynthesizer tempSynth = new SpeechSynthesizer();
+            tempSynth.SetOutputToWaveFile(filepath); //Set the output path
+            tempSynth.Rate = speed;
+            tempSynth.Speak(text); //Generate the .wav file
+            tempSynth.Dispose(); //Get rid of the Synth
 
-                tempWave.DeviceNumber = outputDeviceID; //Set the Playing Device
-                tempWave.DeviceNumber = outputDeviceID;
-                tempSynth.Rate = speed;
-
-                tempSynth.SetOutputToWaveFile(filepath); //Set the output path
-                tempSynth.Speak(text); //Generate the .wav file
-                tempSynth.Dispose(); //Get rid of the Synth
-                reader = new WaveFileReader(filepath);
-                WaveChannel32 inputStream = new WaveChannel32(reader);
-                inputStream.PadWithZeroes = false;
-                tempWave.Init(reader);
-                tempWave.Play();
-
-                while (tempWave.PlaybackState != PlaybackState.Stopped)
-                {
-                    //Wait and continue when finished
-                }
-
-                reader.Dispose(); //Dispose reader
-                tempWave.Dispose(); //Dispose wave
-                //Thread.Sleep(500);
-                File.Delete(filepath); //Delete used and created file
-            }
+            using (Speaker s = new Speaker(filepath, outputDeviceID,ttsVolume, true)) ; //Do nothing
         }
 
         //Detect the connected audio devices

@@ -33,7 +33,7 @@ namespace Noice_Bot_Twitch
         }
 
         //Checks the Username and replaces it with an Alias of the list
-        public Command CheckAlias(Command c)
+        public Comment CheckAlias(Comment c)
         {
             foreach (string s in fm.GetAliasList())
             {
@@ -51,7 +51,7 @@ namespace Noice_Bot_Twitch
         
         //Check if someone is spamming a lot of waird symboles and removes the command
         //Checks the length of a command and reduces it to a given length
-        public Command SpamProtection(Command c)
+        public Comment SpamProtection(Comment c)
         {
             //Cut the comment down
             if(c.comment.Length > _maxTextLength) c.comment = c.comment.Substring(0, _maxTextLength);
@@ -80,7 +80,7 @@ namespace Noice_Bot_Twitch
 
         //Checks if a user is on the Blacklist of TTS
         //Return true if he is on the list, otherwise false
-        public bool CheckBlacklist(Command c)
+        public bool CheckBlacklist(Comment c)
         {
             foreach (string s in fm.GetBlackList())
             {
@@ -96,7 +96,7 @@ namespace Noice_Bot_Twitch
 
         //Checks if a user is on the Whitelist of controlling the Bot
         //Return true if he is on the list, otherwise false
-        public bool CheckWhiteList(Command c)
+        public bool CheckWhiteList(Comment c)
         {
             foreach (string s in fm.GetWhiteList())
             {

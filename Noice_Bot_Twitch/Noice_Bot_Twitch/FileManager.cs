@@ -18,14 +18,20 @@ namespace Noice_Bot_Twitch
         string blacklistFile = @"Blacklist.txt";
         string bridgelistFile = @"BridgeWordList.txt";
         string whitelistFile = @"Whitelist.txt";
-        string soundFile = @"synth.wav";
+
+        //Folder structure
+        string soundEffectsFolder = @"Soundeffects";
+        string notificationSoundsFolder = @"Notifications";
+        string soundBoardFolder = @"Soundboard";
 
         //Alias List, Blacklist, Whitelist, Settings
-        List<String> aList;
+        List<String> aliasList;
         List<String> blackList;
         List<String> bridgeWordList;
-        List<String> wList;
-        List<String> sList;
+        List<String> whiteList;
+        List<String> settingsList;
+        List<String> notificationList; //Paths to the notifications sounds
+        List<String> soundboardList; //Paths to the soundboard sounds
 
         public FileManager()
         {
@@ -38,11 +44,13 @@ namespace Noice_Bot_Twitch
         {
             try //If an error occures while trying to load a file check the existence
             {
-                aList = File.ReadAllLines(path + @"\" + aliasFile).ToList();
+                notificationList = Directory.GetFiles(path + @"\" + soundEffectsFolder + @"\" + notificationSoundsFolder).ToList();
+
+                aliasList = File.ReadAllLines(path + @"\" + aliasFile).ToList();
                 blackList = File.ReadAllLines(path + @"\" + blacklistFile).ToList();
                 bridgeWordList = File.ReadAllLines(path + @"\" + bridgelistFile).ToList();
-                wList = File.ReadAllLines(path + @"\" + whitelistFile).ToList();
-                sList = File.ReadAllLines(path + @"\" + settingsFile).ToList();
+                whiteList = File.ReadAllLines(path + @"\" + whitelistFile).ToList();
+                settingsList = File.ReadAllLines(path + @"\" + settingsFile).ToList();
             } catch
             {
                 CheckExistence(); //Check existance
@@ -53,45 +61,134 @@ namespace Noice_Bot_Twitch
         {
             if(!File.Exists(path + @"\" + aliasFile)) //Alislist.txt
             {
-                string str = "USER1,NewName\nuseer2,OtherNewName\nuSeR3,CoolName"; //Example
-                File.WriteAllText(path + @"\" + aliasFile, str);
+                File.WriteAllText(path + @"\" + aliasFile, GenAliasFile());
                 Console.WriteLine("File: " + aliasFile + " was missing");
             }
             if (!File.Exists(path + @"\" + blacklistFile)) //Blacklist.txt
             {
                 string str = "USER1\nuser2\nuSeR3"; //Example
-                File.WriteAllText(path + @"\" + blacklistFile, str);
+                File.WriteAllText(path + @"\" + blacklistFile, GenBlacklisteFile());
                 Console.WriteLine("File: " + blacklistFile + " was missing");
             }
             if (!File.Exists(path + @"\" + bridgelistFile)) //Bridgelist.txt
             {
                 string str = "says\nsay\ntells";
-                File.WriteAllText(path + @"\" + bridgelistFile, str);
+                File.WriteAllText(path + @"\" + bridgelistFile, GenBridgeListFile());
                 Console.WriteLine("File: " + bridgelistFile + " was missing");
             }
-
             if (!File.Exists(path + @"\" + whitelistFile)) //Whitelist.txt
             {
                 string str = "USER1\nuser2\nuSeR3"; //Example
-                File.WriteAllText(path + @"\" + whitelistFile, str);
+                File.WriteAllText(path + @"\" + whitelistFile, GenWhitelistFile());
                 Console.WriteLine("File: " + whitelistFile + " was missing");
             }
             if (!File.Exists(path + @"\" + settingsFile)) //Settings.txt
             {
                 //Basic Conf, the user has to put in his own oauth key and channelname
-                string str = "";
-                str = str + "--IRC Settings--";
-                str = str + "\nircclient=irc.twitch.tv\nport=6667\nbotname=noisebot\nchannelname=\noauth=oauth:"; //IRC Settings
-                str = str + "\n\n--TTS Settings--";
-                str = str + "\nttsbasespeed=3\nttsmaxspeed=7"; //TTS Settings
-                str = str + "\n\n--AntiSpam Settings--";
-                str = str + "\nmaxtextlength=150\nspamthreshold=15\nremoveemojis=true\n" + @"badcharlist=!§$%&/()=?`^\{[]}#"; //anti spam settings
-                str = str + "\n\n--Sound Device Settings--";
-                str = str + "\nttsoutputdevice=\nsoundboardoutputdevice=";
-                File.WriteAllText(path + @"\" + settingsFile, str);
+                File.WriteAllText(path + @"\" + settingsFile, GenSettingsFile());
                 Console.WriteLine("File: " + settingsFile + " was missing");
             }
+
+            //Create Folder Structure for notifications and the soundboard
+            if(!Directory.Exists(path + @"\" + soundEffectsFolder))
+            {
+                Directory.CreateDirectory(path + @"\" + soundEffectsFolder);
+            }
+            if (!Directory.Exists(path + @"\" + soundEffectsFolder + @"\" + notificationSoundsFolder))
+            {
+                Directory.CreateDirectory(path + @"\" + soundEffectsFolder + @"\" + notificationSoundsFolder);
+            }
+            if (!Directory.Exists(path + @"\" + soundEffectsFolder + @"\" + soundBoardFolder))
+            {
+                Directory.CreateDirectory(path + @"\" + soundEffectsFolder + @"\" + soundBoardFolder);
+            }
+        
         }
+
+        //File Generation
+        String GenAliasFile()
+        {
+            string str = @"
+Korpsian,the developer
+User1,CoolKid
+USER2,NiceDude
+UsEr3,TrollyDude
+";
+            return str;
+        }
+
+        String GenBlacklisteFile()
+        {
+            string str = @"
+YourBot
+TrollKid69420
+HahaFunnyGuy1
+User1
+user2
+USER3
+";
+            return str;
+        }
+
+        String GenBridgeListFile()
+        {
+            string str = @"
+says
+say
+speaks
+writes
+";
+            return str;
+        }
+
+        String GenWhitelistFile()
+        {
+            string str = @"
+User1
+USER2
+YourMods
+Yourself
+";
+            return str;
+        }
+
+        String GenSettingsFile()
+        {
+            string str = @"
+#See the GitHub Page for how to use this file correctly
+#https://github.com/Korpsian/Twitch-Noice-Bot
+
+--IrcClient Settings--
+ircclient=irc.twitch.tv
+port=6667
+botname=noisebot
+channelname=
+oauth=oauth:
+            
+--Notification Settings--
+ttsbasespeed=3
+ttsmaxspeed=7
+#n = notification sound, u = username, b = bridgeword, c = comment
+notificationExecutionOrder=ubc
+
+--Anti Spam Settings--
+maxtextlength=100
+spamthreshold=8
+removeemojis=true
+badcharlist=!§$%&/()=?`^\{[]}#
+
+--Audio Device Settings--
+ttsoutputdevice=
+soundboardoutputdevice=
+notificationoutputdevice=
+notificationVolume=0,5
+ttsVolume=1
+
+";
+            return str;
+        }
+        //File Generation
+
 
         //Getter methos for general path, alias, blacklist, whitelist and soundfile
         public string GetPath()
@@ -110,15 +207,11 @@ namespace Noice_Bot_Twitch
         {
             return whitelistFile;
         }
-        public string GetSoundFile()
-        {
-            return soundFile;
-        }
 
         //Get Specific Settings out of the Settings.txt
         public string GetIrcClient()
         {
-            foreach(string s in sList)
+            foreach(string s in settingsList)
             {
                 if(s.Contains("ircclient=") && s.Length > 10)
                 {
@@ -130,7 +223,7 @@ namespace Noice_Bot_Twitch
         } //IRC Settings
         public int GetPort()
         {
-            foreach (string s in sList)
+            foreach (string s in settingsList)
             {
                 if (s.Contains("port=") && s.Length > 5)
                 {
@@ -146,7 +239,7 @@ namespace Noice_Bot_Twitch
         }
         public string GetBotName()
         {
-            foreach (string s in sList)
+            foreach (string s in settingsList)
             {
                 if (s.Contains("botname=") && s.Length > 8)
                 {
@@ -158,7 +251,7 @@ namespace Noice_Bot_Twitch
         }
         public string GetChannelName()
         {
-            foreach (string s in sList)
+            foreach (string s in settingsList)
             {
                 if (s.Contains("channelname=") && s.Length > 12)
                 {
@@ -170,7 +263,7 @@ namespace Noice_Bot_Twitch
         }
         public string GetOAuth()
         {
-            foreach (string s in sList)
+            foreach (string s in settingsList)
             {
                 if (s.Contains("oauth=") && s.Length > 12)
                 {
@@ -182,7 +275,7 @@ namespace Noice_Bot_Twitch
         } //IRC Settings
         public int GetTTSBaseSpeed()
         {
-            foreach (string s in sList)
+            foreach (string s in settingsList)
             {
                 if (s.Contains("ttsbasespeed=") && s.Length > 13)
                 {
@@ -197,7 +290,7 @@ namespace Noice_Bot_Twitch
         }//TTS Settings
         public int GetTTSMaxSpeed()
         {
-            foreach (string s in sList)
+            foreach (string s in settingsList)
             {
                 if (s.Contains("ttsmaxspeed=") && s.Length > 12)
                 {
@@ -212,7 +305,7 @@ namespace Noice_Bot_Twitch
         } //TTS Settings
         public int GetMaxTextLength() //Anti Spam
         {
-            foreach (string s in sList)
+            foreach (string s in settingsList)
             {
                 if (s.Contains("maxtextlength=") && s.Length > 14)
                 {
@@ -227,7 +320,7 @@ namespace Noice_Bot_Twitch
         }
         public int GetSpamThreshold()
         {
-            foreach (string s in sList)
+            foreach (string s in settingsList)
             {
                 if (s.Contains("spamthreshold=") && s.Length > 14)
                 {
@@ -242,7 +335,7 @@ namespace Noice_Bot_Twitch
         } //Anti Spam
         public bool GetRemoveEmojis()
         {
-            foreach (string s in sList)
+            foreach (string s in settingsList)
             {
                 if (s.Contains("removeemojis=") && s.Length > 13)
                 {
@@ -255,7 +348,7 @@ namespace Noice_Bot_Twitch
         }
         public string GetBadCharList()
         {
-            foreach (string s in sList)
+            foreach (string s in settingsList)
             {
                 if (s.Contains("badcharlist=") && s.Length > 12)
                 {
@@ -266,7 +359,7 @@ namespace Noice_Bot_Twitch
         } //IRC Settings
         public int GetTTSOutputDeviceID()
         {
-            foreach (string s in sList)
+            foreach (string s in settingsList)
             {
                 if (s.Contains("ttsoutputdevice=") && s.Length > 16)
                 {
@@ -281,7 +374,7 @@ namespace Noice_Bot_Twitch
         } //Audio Device Settings
         public int GetSoundboardOutputDeviceID()
         {
-            foreach (string s in sList)
+            foreach (string s in settingsList)
             {
                 if (s.Contains("soundboardoutputdevice=") && s.Length > 23)
                 {
@@ -293,7 +386,65 @@ namespace Noice_Bot_Twitch
                 }
             }
             return -2;
+        }
+        public int GetNotificationOutputDeviceID()
+        {
+            foreach (string s in settingsList)
+            {
+                if (s.Contains("notificationoutputdevice=") && s.Length > 25)
+                {
+                    int i = -2;
+                    if (int.TryParse(s.Substring(s.IndexOf("=") + 1), out i))
+                    {
+                        return i;
+                    }
+                }
+            }
+            return -2;
         } //Audio Device Settings
+        public string GetNotificationExecutionOrder()
+        {
+            foreach (string s in settingsList)
+            {
+                if (s.Contains("notificationExecutionOrder=") && s.Length > 27)
+                {
+                    return s.Substring(s.IndexOf("=") + 1);
+                }
+            }
+            Console.WriteLine("INCORRECT NOTIFICATION EXECUTION ORDER DETECTED");
+            return null;
+        } //IRC Settings
+
+        public float GetNotificationVolume()
+        {
+            foreach (string s in settingsList)
+            {
+                if (s.Contains("notificationVolume=") && s.Length > 19)
+                {
+                    float f = 0f;
+                    if (float.TryParse(s.Substring(s.IndexOf("=") + 1), out f))
+                    {
+                        return f;
+                    }
+                }
+            }
+            return 0.5f;
+        }
+        public float GetTTSVolume()
+        {
+            foreach (string s in settingsList)
+            {
+                if (s.Contains("ttsVolume=") && s.Length > 10)
+                {
+                    float f = 0f;
+                    if (float.TryParse(s.Substring(s.IndexOf("=") + 1), out f))
+                    {
+                        return f;
+                    }
+                }
+            }
+            return 0.5f;
+        }
 
 
         //Return the created String lists
@@ -306,14 +457,22 @@ namespace Noice_Bot_Twitch
             return bridgeWordList;        }
         public List<String> GetAliasList()
         {
-            return aList;
+            return aliasList;
         }
         public List<String> GetWhiteList()
         {
-            return wList;
+            return whiteList;
         }
 
-        public String GetRandomBridgeWord() //Take a random bridge word out of Brideword.txt and return it
+        public String GetRandomNotificationSound()
+        {
+            Random rand = new Random();
+            string str = notificationList[rand.Next(notificationList.Count)];
+            return str;
+        }
+
+        //Take a random bridge word out of Brideword.txt and return it
+        public String GetRandomBridgeWord() 
         {
             Random rand = new Random();
             string str = bridgeWordList[rand.Next(bridgeWordList.Count)];
