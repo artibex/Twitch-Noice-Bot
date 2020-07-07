@@ -108,8 +108,7 @@ namespace Noice_Bot_Twitch
         //File Generation
         String GenAliasFile()
         {
-            string str = @"
-Korpsian,the developer
+            string str = @"Korpsian,the-developer
 User1,CoolKid
 USER2,NiceDude
 UsEr3,TrollyDude
@@ -119,8 +118,7 @@ UsEr3,TrollyDude
 
         String GenBlacklisteFile()
         {
-            string str = @"
-YourBot
+            string str = @"YourBot
 TrollKid69420
 HahaFunnyGuy1
 User1
@@ -132,8 +130,7 @@ USER3
 
         String GenBridgeListFile()
         {
-            string str = @"
-says
+            string str = @"says
 say
 speaks
 writes
@@ -143,8 +140,7 @@ writes
 
         String GenWhitelistFile()
         {
-            string str = @"
-User1
+            string str = @"User1
 USER2
 YourMods
 Yourself
@@ -154,18 +150,15 @@ Yourself
 
         String GenSettingsFile()
         {
-            string str = @"
-#See the GitHub Page for how to use this file correctly
-#https://github.com/Korpsian/Twitch-Noice-Bot
-
---IrcClient Settings--
+            string str = @"#See the GitHub Page for how to use this file correctly
+--IRC Settings--
 ircclient=irc.twitch.tv
 port=6667
 botname=noisebot
 channelname=
 oauth=oauth:
-            
---Notification Settings--
+
+--TTS Settings--
 ttsbasespeed=3
 ttsmaxspeed=7
 #n = notification sound, u = username, b = bridgeword, c = comment
@@ -181,9 +174,8 @@ badcharlist=!§$%&/()=?`^\{[]}#
 ttsoutputdevice=
 soundboardoutputdevice=
 notificationoutputdevice=
-notificationVolume=0,5
+notificationVolume=0,05
 ttsVolume=1
-
 ";
             return str;
         }

@@ -40,7 +40,7 @@ namespace Noice_Bot_Twitch
             }
 
             //Creat a new IRC Client with the Information ouf of the Settings.txt file
-            client = new IrcClient(fm.GetIrcClient(), fm.GetPort(), fm.GetBotName(), fm.GetOAuth(), fm.GetChannelName());
+            client = new IrcClient(fm.GetIrcClient(), fm.GetPort(), fm.GetBotName(), fm.GetOAuth(), fm.GetChannelName().ToLower());
             pinger = new Pinger(client); //Create a Pinger that pings the server every 5 minutes to prevent this connection getting closed
             pinger.Start(); //Start the Pinger
 
