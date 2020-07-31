@@ -115,7 +115,6 @@ UsEr3,TrollyDude
 ";
             return str;
         }
-
         String GenBlacklisteFile()
         {
             string str = @"YourBot
@@ -127,7 +126,6 @@ USER3
 ";
             return str;
         }
-
         String GenBridgeListFile()
         {
             string str = @"says
@@ -137,7 +135,6 @@ writes
 ";
             return str;
         }
-
         String GenWhitelistFile()
         {
             string str = @"User1
@@ -147,7 +144,6 @@ Yourself
 ";
             return str;
         }
-
         String GenSettingsFile()
         {
             string str = @"#See the GitHub Page for how to use this file correctly
@@ -176,6 +172,15 @@ soundboardoutputdevice=
 notificationoutputdevice=
 notificationVolume=0,05
 ttsVolume=1
+
+--Command Identifier Settings--
+commandcharacter=!
+whitelistonly=false
+
+--Soundboard Settings--
+usercooldown=30
+globalcooldown=0
+soundinterval=0
 ";
             return str;
         }
@@ -187,6 +192,11 @@ ttsVolume=1
         {
             return path;
         }
+        public string GetSoundboardPath()
+        {
+            return path + @"\" + soundEffectsFolder + @"\" + soundBoardFolder;
+        }
+
         public string GetAliasFile()
         {
             return aliasFile;
@@ -406,7 +416,6 @@ ttsVolume=1
             Console.WriteLine("INCORRECT NOTIFICATION EXECUTION ORDER DETECTED");
             return null;
         } //IRC Settings
-
         public float GetNotificationVolume()
         {
             foreach (string s in settingsList)
@@ -437,7 +446,80 @@ ttsVolume=1
             }
             return 0.5f;
         }
+        public String GetCommandCharacter()
+        {
+            foreach (string s in settingsList)
+            {
+                if (s.Contains("commandcharacter=") && s.Length > 17)
+                {
+                    return s.Substring(s.IndexOf("=") + 1);
+                }
+            }
+            Console.WriteLine("INCORRECT SPECIAL CHARACTER DETECTED");
+            return null;
+        }
+        public bool GetWhitelistOnly()
+        {
+            foreach (string s in settingsList)
+            {
+                if (s.Contains("whitelistonly=") && s.Length > 14)
+                {
+                    string b = s.Substring(s.IndexOf("=") + 1);
+                    if (b == "true" || b == "t") return true;
+                    else return false;
+                }
+            }
+            return false;
 
+        }
+
+        public int GetUserCooldown()
+        {
+            foreach (string s in settingsList)
+            {
+                if (s.Contains("usercooldown=") && s.Length > 13)
+                {
+                    int i = -2;
+                    if (int.TryParse(s.Substring(s.IndexOf("=") + 1), out i))
+                    {
+                        return i;
+                    }
+                }
+            }
+            return 0;
+        }
+
+        public int GetGlobalCooldown()
+        {
+            foreach (string s in settingsList)
+            {
+                if (s.Contains("globalcooldown=") && s.Length > 15)
+                {
+                    int i = -2;
+                    if (int.TryParse(s.Substring(s.IndexOf("=") + 1), out i))
+                    {
+                        return i;
+                    }
+                }
+            }
+            return 0;
+        }
+
+        public int GetSoundInterval()
+        {
+            foreach (string s in settingsList)
+            {
+                if (s.Contains("soundinterval=") && s.Length > 14)
+                {
+                    int i = -2;
+                    if (int.TryParse(s.Substring(s.IndexOf("=") + 1), out i))
+                    {
+                        return i;
+                    }
+                }
+            }
+            return 0;
+        }
 
         //Return the created String lists
         public List<String> GetBlackList()
@@ -455,6 +537,8 @@ ttsVolume=1
         {
             return whiteList;
         }
+
+        
 
         public String GetRandomNotificationSound()
         {

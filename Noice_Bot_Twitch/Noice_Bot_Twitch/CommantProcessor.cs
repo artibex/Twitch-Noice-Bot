@@ -8,9 +8,10 @@ using System.Text.RegularExpressions;
 //Processing a given command like changing the username, checking black and whitelisting
 namespace Noice_Bot_Twitch
 {
-    class CommandProcessor
+    class CommantProcessor
     {
         FileManager fm;
+        CommandIdentifier ci;
         private int _maxTextLength = 200;
         public int MaxTextLength
         {
@@ -25,11 +26,26 @@ namespace Noice_Bot_Twitch
         }
 
         //Init
-        public CommandProcessor(FileManager fm)
+        public CommantProcessor(FileManager fm, CommandIdentifier ci)
         {
             this.fm = fm;
+            this.ci = ci;
+            LoadSettings();
+        }
+
+        public void LoadSettings()
+        {
             _maxTextLength = fm.GetMaxTextLength();
             _spamThreshold = fm.GetSpamThreshold();
+        }
+
+        public Comment Process(Comment c)
+        {
+            ci.CheckCommand(c); //before everything else is changed, check if it's a command
+            c = CheckAlias(c);
+            c.user = RemoveNumeric(c.user);
+            c = SpamProtection(c);
+            return c;
         }
 
         //Checks the Username and replaces it with an Alias of the list
@@ -110,7 +126,7 @@ namespace Noice_Bot_Twitch
             return false;
         }
 
-        //Remove numbers in usernames for faster reading
+        //Remove numbers in usernames for faster/proper reading
         public String RemoveNumeric(string text)
         {
             string textwithoutnumeric = new String(text.Where(c => c != '-' && (c < '0' || c > '9')).ToArray());

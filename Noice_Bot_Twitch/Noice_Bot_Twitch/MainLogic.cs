@@ -25,7 +25,9 @@ namespace Noice_Bot_Twitch
             AudioDeviceManager adm; //Manages the Output Devices (if non is configured in the settings.txt ask for ID's)
             NotificationSoundManager nsm; //Manages the Notification Sound, Playing, Volume etc.
             TTS tts; //Text to Speech Synthesizer to read out the chat
-            CommandProcessor cp; //Processes the command (spam protector for example)
+            CommantProcessor cp; //Processes the command (spam protector for example)
+            SoundboardManager sm; //Manages all sounds + cooldowns of users
+            CommandIdentifier ci; //Checks the user commant for a command to execute
 
             Console.OutputEncoding = System.Text.Encoding.UTF8; //Changes the Console Encoding to UTF8 (Might be usefull, might be not)
 
@@ -48,7 +50,9 @@ namespace Noice_Bot_Twitch
             nsm = new NotificationSoundManager(fm, adm); //manages the Notification sounds
 
             tts = new TTS(fm, adm); //Create a new Text to Speech Synth
-            cp = new CommandProcessor(fm); //Create a new Command Processor
+            sm = new SoundboardManager(adm, fm, client);
+            ci = new CommandIdentifier(sm, fm);
+            cp = new CommantProcessor(fm, ci); //Create a new Command Processor
 
             Console.WriteLine(fm.GetBotName() + " is ready!");
             while (true)
@@ -61,12 +65,7 @@ namespace Noice_Bot_Twitch
                 if (!String.IsNullOrWhiteSpace(c.user) && !String.IsNullOrWhiteSpace(c.comment) && !cp.CheckBlacklist(c))
                 {
                     string ttsText = ""; //The text how it should be converted to speech
-
-                    //Command Processing Area//
-                    c = cp.CheckAlias(c); //Check for given alias
-                    c.user = cp.RemoveNumeric(c.user); //Remove numbers in names
-                    c = cp.SpamProtection(c); //Cut down the commant
-                    //End Command Processing Area//
+                    c = cp.Process(c); //Edit the given User Comment
 
                     foreach (char exe in executionOrder)
                     {
@@ -99,8 +98,6 @@ namespace Noice_Bot_Twitch
                         Console.WriteLine(ttsText);
                         tts.Speak(ttsText);
                     }
-
-
                 }
             }
         }

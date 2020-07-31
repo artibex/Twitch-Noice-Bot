@@ -19,10 +19,14 @@ namespace Noice_Bot_Twitch
         public AudioDeviceManager(FileManager fm)
         {
             this.fm = fm;
+            DetectDevices(); //Init Device Detection
+        }
+
+        public void LoadSettings()
+        {
             _ttsOutputDeviceID = fm.GetTTSOutputDeviceID();
             _soundboardOutputDeviceID = fm.GetSoundboardOutputDeviceID();
             _notificationOutputDeviceID = fm.GetNotificationOutputDeviceID();
-            DetectDevices(); //Init Device Detection
         }
 
         public void DetectDevices()
