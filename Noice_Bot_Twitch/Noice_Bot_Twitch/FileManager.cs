@@ -413,8 +413,7 @@ soundinterval=0
                     return s.Substring(s.IndexOf("=") + 1);
                 }
             }
-            Console.WriteLine("INCORRECT NOTIFICATION EXECUTION ORDER DETECTED");
-            return null;
+            return "";
         } //IRC Settings
         public float GetNotificationVolume()
         {
