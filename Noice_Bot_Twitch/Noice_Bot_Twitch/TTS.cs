@@ -57,7 +57,7 @@ namespace Noice_Bot_Twitch
             tempSynth.Speak(text); //Generate the .wav file
             tempSynth.Dispose(); //Get rid of the Synth
 
-            using (Speaker s = new Speaker(filepath, outputDeviceID,ttsVolume, true)) ; //Do nothing
+            using (Speaker s = new Speaker(filepath, outputDeviceID,ttsVolume, true, false)) ; //Do nothing
         }
 
         //Detect the connected audio devices

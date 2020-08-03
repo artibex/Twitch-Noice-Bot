@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
-using System.ComponentModel;
+using System.Text.RegularExpressions;
 
 namespace Noice_Bot_Twitch
 {
@@ -18,6 +16,7 @@ namespace Noice_Bot_Twitch
         string blacklistFile = @"Blacklist.txt";
         string bridgelistFile = @"BridgeWordList.txt";
         string whitelistFile = @"Whitelist.txt";
+        string soundOffsetFile = @"SoundfileOffset.txt";
 
         //Folder structure
         string soundEffectsFolder = @"Soundeffects";
@@ -31,12 +30,15 @@ namespace Noice_Bot_Twitch
         List<String> whiteList;
         List<String> settingsList;
         List<String> notificationList; //Paths to the notifications sounds
-        List<String> soundboardList; //Paths to the soundboard sounds
+        List<String> soundFiles; //All the Soundfiles as Path
+        List<String> soundboardSubdirektories;  //Subdirektories of the soundboard folder
+        List<String> soundfileOffsetList;
 
         public FileManager()
         {
             path = Directory.GetCurrentDirectory(); //Get the current execution Directory
-            CheckExistence(); //Check file existance of all needed files, create missing ones (with examples)
+            LoadSoundfiles(); //Load all available sound files
+            CheckFileExistence(); //Check file existance of all needed files, create missing ones (with examples)
             LoadFiles(); //Load the files into a string list object
         }
 
@@ -51,13 +53,27 @@ namespace Noice_Bot_Twitch
                 bridgeWordList = File.ReadAllLines(path + @"\" + bridgelistFile).ToList();
                 whiteList = File.ReadAllLines(path + @"\" + whitelistFile).ToList();
                 settingsList = File.ReadAllLines(path + @"\" + settingsFile).ToList();
+                soundfileOffsetList = File.ReadAllLines(path + @"\" + soundOffsetFile).ToList();
+
             } catch
             {
-                CheckExistence(); //Check existance
+                CheckFileExistence(); //Check existance
                 LoadFiles(); //Load files again
             }
         }
-        void CheckExistence() //Does all the wanted files exist? No? Then Create them and put examples in it
+
+        void LoadSoundfiles()
+        {
+            soundFiles = Directory.GetFiles(GetSoundboardPath()).ToList(); //Load spare soundfiles
+            soundboardSubdirektories = Directory.GetDirectories(GetSoundboardPath()).ToList(); //Load subdirectories
+            foreach (string dir in soundboardSubdirektories) //Get each soundfile from each subdirektorie
+            {
+                soundFiles.AddRange(Directory.GetFiles(dir).ToList());
+            }
+            Console.WriteLine("Loaded " + soundFiles.Count + " Soundfiles");
+        }
+
+        void CheckFileExistence() //Does all the wanted files exist? No? Then Create them and put examples in it
         {
             if(!File.Exists(path + @"\" + aliasFile)) //Alislist.txt
             {
@@ -66,19 +82,16 @@ namespace Noice_Bot_Twitch
             }
             if (!File.Exists(path + @"\" + blacklistFile)) //Blacklist.txt
             {
-                string str = "USER1\nuser2\nuSeR3"; //Example
                 File.WriteAllText(path + @"\" + blacklistFile, GenBlacklisteFile());
                 Console.WriteLine("File: " + blacklistFile + " was missing");
             }
             if (!File.Exists(path + @"\" + bridgelistFile)) //Bridgelist.txt
             {
-                string str = "says\nsay\ntells";
                 File.WriteAllText(path + @"\" + bridgelistFile, GenBridgeListFile());
                 Console.WriteLine("File: " + bridgelistFile + " was missing");
             }
             if (!File.Exists(path + @"\" + whitelistFile)) //Whitelist.txt
             {
-                string str = "USER1\nuser2\nuSeR3"; //Example
                 File.WriteAllText(path + @"\" + whitelistFile, GenWhitelistFile());
                 Console.WriteLine("File: " + whitelistFile + " was missing");
             }
@@ -88,9 +101,15 @@ namespace Noice_Bot_Twitch
                 File.WriteAllText(path + @"\" + settingsFile, GenSettingsFile());
                 Console.WriteLine("File: " + settingsFile + " was missing");
             }
+            if (!File.Exists(path + @"\" + soundOffsetFile)) //Soundoffsetfile.txt
+            {
+                //Sound effects offset file to adjust every sound if needed
+                File.WriteAllText(path + @"\" + soundOffsetFile, GenSoundOffsetFile());
+                Console.WriteLine("File: " + soundOffsetFile + " was missing");
+            }
 
             //Create Folder Structure for notifications and the soundboard
-            if(!Directory.Exists(path + @"\" + soundEffectsFolder))
+            if (!Directory.Exists(path + @"\" + soundEffectsFolder))
             {
                 Directory.CreateDirectory(path + @"\" + soundEffectsFolder);
             }
@@ -178,12 +197,39 @@ commandcharacter=!
 whitelistonly=false
 
 --Soundboard Settings--
-usercooldown=30
+usercooldown=90
 globalcooldown=0
+responsecooldown=30
 soundinterval=0
+usesoundcooldown=true
 ";
             return str;
         }
+        
+        String GenSoundOffsetFile()
+        {
+            string str = "---Filename, Volume offset, Timeout offset--- \n";
+            //soundfile name, volume offset (+ or - e.g.: -0.2, +0.3), timeout offset (e.g.:-10,+30)
+            foreach(string path in soundFiles)
+            {
+                str += GetSoundname(path) + ",+0,+0\n";
+            }
+            return str;
+        }
+        
+        //Update the Soundeffects offset file with new found soundeffects
+        void UpdateSoundOffsetFile()
+        {
+            if (File.Exists(path + @"\" + soundOffsetFile)) //Soundoffsetfile.txt
+            {
+
+
+                File.WriteAllText(path + @"\" + soundOffsetFile, GenSoundOffsetFile());
+                Console.WriteLine("File: " + soundOffsetFile + " was missing");
+            }
+
+        }
+
         //File Generation
 
 
@@ -348,6 +394,20 @@ soundinterval=0
             }
             return false;
         }
+        public bool GetUseSoundcooldown()
+        {
+            foreach (string s in settingsList)
+            {
+                if (s.Contains("usesoundcooldown=") && s.Length > 14)
+                {
+                    string str = s.Substring(s.IndexOf("=") + 1);
+                    if (str.Contains("true")) return true;
+                    if (str.Contains("false")) return false;
+                }
+            }
+            return false;
+        }
+
         public string GetBadCharList()
         {
             foreach (string s in settingsList)
@@ -471,7 +531,6 @@ soundinterval=0
             return false;
 
         }
-
         public int GetUserCooldown()
         {
             foreach (string s in settingsList)
@@ -487,7 +546,6 @@ soundinterval=0
             }
             return 0;
         }
-
         public int GetGlobalCooldown()
         {
             foreach (string s in settingsList)
@@ -503,7 +561,21 @@ soundinterval=0
             }
             return 0;
         }
-
+        public int GetResponseCooldown() //Bot Response Cooldown
+        {
+            foreach (string s in settingsList)
+            {
+                if (s.Contains("responsecooldown=") && s.Length > 16)
+                {
+                    int i = -2;
+                    if (int.TryParse(s.Substring(s.IndexOf("=") + 1), out i))
+                    {
+                        return i;
+                    }
+                }
+            }
+            return 0;
+        }
         public int GetSoundInterval()
         {
             foreach (string s in settingsList)
@@ -519,7 +591,19 @@ soundinterval=0
             }
             return 0;
         }
-
+        public List<String> GetSoundfiles()
+        {
+            return soundFiles;
+        }
+        public List<String> GetSoundboardSubdirektories()
+        {
+            return soundboardSubdirektories;
+        }
+        public List<String> GetSoundfileOffsetList()
+        {
+            return soundfileOffsetList;
+        }
+        
         //Return the created String lists
         public List<String> GetBlackList()
         {
@@ -537,7 +621,18 @@ soundinterval=0
             return whiteList;
         }
 
-        
+
+        //Returns a easy to write soundfile name
+        public string GetSoundname(string path)
+        {
+            string str = path.Substring(path.LastIndexOf(@"\") + 1);
+            str = Regex.Replace(str, @"\s+", "");
+            str = str.ToLower();
+            str = str.Trim();
+            str = str.Remove(str.Length - 4);
+            return str;
+        }
+
 
         public String GetRandomNotificationSound()
         {

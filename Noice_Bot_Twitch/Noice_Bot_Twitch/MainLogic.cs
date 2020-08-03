@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Speech.Synthesis.TtsEngine;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using NAudio;
 
 namespace Noice_Bot_Twitch
 {

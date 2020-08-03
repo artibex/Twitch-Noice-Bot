@@ -24,7 +24,7 @@ namespace Noice_Bot_Twitch
 
         public void Play() //Play a notification
         {
-            using (Speaker s = new Speaker(fm.GetRandomNotificationSound(), outputDeviceID, notificationVolume, false)) ;
+            using (Speaker s = new Speaker(fm.GetRandomNotificationSound(), outputDeviceID, notificationVolume, false, false)) ;
         }
 
     }

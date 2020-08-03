@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Globalization;
-
+﻿
 namespace Noice_Bot_Twitch
 {
     //Command datacontainer, used to store the command information and further processing

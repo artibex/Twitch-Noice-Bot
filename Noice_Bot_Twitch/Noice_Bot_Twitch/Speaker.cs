@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NAudio.Wave;
 using System.IO;
+using System.Threading;
 
 
 namespace Noice_Bot_Twitch
@@ -16,14 +13,19 @@ namespace Noice_Bot_Twitch
         int outputDeviceID;
         float volume = 0.9f;
 
-        public Speaker(string filepath, int outputDeviceID, float volume, bool deleteFile)
+        public Speaker(string filepath, int outputDeviceID, float volume, bool deleteFile, bool newThread)
         {
             this.filepath = filepath;
             this.deleteFile = deleteFile;
             this.volume = volume;
             this.outputDeviceID = outputDeviceID;
 
-            PlaySound();
+            if (newThread)
+            {
+                var th = new Thread(PlaySound);
+                th.Start();
+            }
+            else PlaySound();
         }
 
         public void Dispose()
@@ -44,7 +46,6 @@ namespace Noice_Bot_Twitch
                 tempWave.Volume = volume;
                 tempWave.Play();
                 
-
                 while (tempWave.PlaybackState != PlaybackState.Stopped)
                 {
                     //Wait and continue when finished
