@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Globalization;
+using System.Diagnostics;
 
 namespace Noice_Bot_Twitch
 {
@@ -37,9 +39,8 @@ namespace Noice_Bot_Twitch
         public FileManager()
         {
             path = Directory.GetCurrentDirectory(); //Get the current execution Directory
-            LoadSoundfiles(); //Load all available sound files
-            CheckFileExistence(); //Check file existance of all needed files, create missing ones (with examples)
             LoadFiles(); //Load the files into a string list object
+            CheckFileExistence(); //Check file existance of all needed files, create missing ones (with examples)
         }
 
         public void LoadFiles() //Load all the Files
@@ -53,6 +54,9 @@ namespace Noice_Bot_Twitch
                 bridgeWordList = File.ReadAllLines(path + @"\" + bridgelistFile).ToList();
                 whiteList = File.ReadAllLines(path + @"\" + whitelistFile).ToList();
                 settingsList = File.ReadAllLines(path + @"\" + settingsFile).ToList();
+
+                LoadSoundfiles();
+                UpdateSoundOffsetFile(); //Before loading the file, update it
                 soundfileOffsetList = File.ReadAllLines(path + @"\" + soundOffsetFile).ToList();
 
             } catch
@@ -189,14 +193,17 @@ badcharlist=!§$%&/()=?`^\{[]}#
 ttsoutputdevice=
 soundboardoutputdevice=
 notificationoutputdevice=
-notificationVolume=0,05
-ttsVolume=1
+notificationvolume=0.5
+ttsvolume=0.5
+soundboardvolume=0.5
+
 
 --Command Identifier Settings--
 commandcharacter=!
 whitelistonly=false
 
 --Soundboard Settings--
+customsoundboardfolder=
 usercooldown=90
 globalcooldown=0
 responsecooldown=30
@@ -220,18 +227,58 @@ usesoundcooldown=true
         //Update the Soundeffects offset file with new found soundeffects
         void UpdateSoundOffsetFile()
         {
+            List<String> data = new List<string>();
+            List<String> newData = new List<string>();
+
             if (File.Exists(path + @"\" + soundOffsetFile)) //Soundoffsetfile.txt
             {
+                data = File.ReadAllLines(path + @"\" + soundOffsetFile).ToList();
 
+                foreach(string soundfilePath in soundFiles)
+                {
+                    bool found = false;
 
-                File.WriteAllText(path + @"\" + soundOffsetFile, GenSoundOffsetFile());
-                Console.WriteLine("File: " + soundOffsetFile + " was missing");
+                    //Get the soundfile name
+                    string soundFileName = GetSoundname(soundfilePath);
+
+                    //Foreach line in the file
+                    foreach(string rawData in data)
+                    {
+                        //Split the data
+                        string[] rawSplit = rawData.Split(',');
+
+                        if(soundFileName == rawSplit[0])
+                        {
+                            //Found it in the list, break
+                            found = true;
+                            break;
+                        }
+                    }
+                    if(!found)
+                    {
+                        newData.Add(soundFileName + ",+0,+0");
+                    }
+                }
+
+                if(newData.Count > 0)
+                {
+                    foreach(string s in newData)
+                    {
+                        Console.WriteLine(s);
+                    }
+
+                    data.AddRange(newData);
+                    string writingData = "";
+                    foreach(string s in data)
+                    {
+                        writingData += s + "\n";
+                    }
+                    File.WriteAllText(path + @"\" + soundOffsetFile, writingData);
+                    //Console.WriteLine("Updated the sound offset file"); //Debugging
+                }
             }
-
+            GenSoundOffsetFile(); //If the file does not exist, create it
         }
-
-        //File Generation
-
 
         //Getter methos for general path, alias, blacklist, whitelist and soundfile
         public string GetPath()
@@ -240,6 +287,15 @@ usesoundcooldown=true
         }
         public string GetSoundboardPath()
         {
+            //See if a custom path was given
+            foreach (string s in settingsList)
+            {
+                if (s.Contains("customsoundboardfolder=") && s.Length > 23)
+                {
+                    return s.Substring(s.IndexOf("=") + 1);
+                }
+            }
+            //If not, return the default path
             return path + @"\" + soundEffectsFolder + @"\" + soundBoardFolder;
         }
 
@@ -479,12 +535,16 @@ usesoundcooldown=true
         {
             foreach (string s in settingsList)
             {
-                if (s.Contains("notificationVolume=") && s.Length > 19)
+                if (s.Contains("notificationvolume=") && s.Length > 19)
                 {
-                    float f = 0f;
-                    if (float.TryParse(s.Substring(s.IndexOf("=") + 1), out f))
+                    try
                     {
-                        return f;
+                        return float.Parse(s.Substring(s.IndexOf("=") + 1), CultureInfo.InvariantCulture);
+                    }
+                    catch
+                    {
+                        Console.WriteLine("Could not read proper Notification Volume");
+                        return 0.5f;
                     }
                 }
             }
@@ -494,17 +554,41 @@ usesoundcooldown=true
         {
             foreach (string s in settingsList)
             {
-                if (s.Contains("ttsVolume=") && s.Length > 10)
+                if (s.Contains("ttsvolume=") && s.Length > 10)
                 {
-                    float f = 0f;
-                    if (float.TryParse(s.Substring(s.IndexOf("=") + 1), out f))
+                    try
                     {
-                        return f;
+                        return float.Parse(s.Substring(s.IndexOf("=")+1), CultureInfo.InvariantCulture);
+                    } catch
+                    {
+                        Console.WriteLine("Could not read proper TTS Volume");
+                        return 0.5f;
                     }
                 }
             }
             return 0.5f;
         }
+        public float GetSoundboardVolume()
+        {
+            foreach (string s in settingsList)
+            {
+                if (s.Contains("soundboardvolume=") && s.Length > 17)
+                {
+                    try
+                    {
+                        return float.Parse(s.Substring(s.IndexOf("=") + 1), CultureInfo.InvariantCulture);
+                    }
+                    catch
+                    {
+                        Console.WriteLine("Could not read proper Soundboard Volume");
+                        return 0.5f;
+                    }
+                }
+            }
+            return 0.5f;
+
+        }
+
         public String GetCommandCharacter()
         {
             foreach (string s in settingsList)

@@ -19,6 +19,7 @@ namespace Noice_Bot_Twitch
         public AudioDeviceManager(FileManager fm)
         {
             this.fm = fm;
+            LoadSettings();
             DetectDevices(); //Init Device Detection
         }
 

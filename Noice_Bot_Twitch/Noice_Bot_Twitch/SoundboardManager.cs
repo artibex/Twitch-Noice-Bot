@@ -159,7 +159,12 @@ namespace Noice_Bot_Twitch
                 }
 
                 float combinedCooldown = userCooldown + GetTimeoutOffset(path) + extraTimeout;
-                Speaker s = new Speaker(path, 0, 1f + GetVolumeOffset(path), false, true);
+                float volume = fm.GetSoundboardVolume() + GetVolumeOffset(path);
+                if (volume > 1f) volume = 1f;
+                if (volume < 0f) volume = 0.05f;
+
+
+                Speaker s = new Speaker(path, 0, volume, false, true);
                 CooldownUser(c, combinedCooldown, GetIDInt(path));
                 client.SendChatMessage("Playing: " + fm.GetSoundname(path) + " ID:" + GetIDString(path) + " (cd: " + combinedCooldown + "sec)");
                 SetGlobalCooldown();
