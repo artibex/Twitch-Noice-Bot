@@ -64,9 +64,9 @@ namespace Noice_Bot_Twitch
 
             if (c.comment.Substring(1) == "play") //Info on how to use this command
             {
-                string folders = "";
-                foreach (string s in subDirektories) folders += " " + GetDirName(s);
-                client.SendChatMessage("Use " + fm.GetCommandCharacter() + "play + a sound name, ID or foldername. Foldernames:" + folders);
+                string folders = " ";
+                foreach (string s in subDirektories) folders += GetDirName(s) + ", ";
+                client.SendChatMessage("Use " + fm.GetCommandCharacter() + "play + a sound name, ID or category. Foldernames:" + folders);
                 return;
             }
             foreach (UserCooldown uc in cooldownList) //If the user is on the cooldown list, return
@@ -201,19 +201,15 @@ namespace Noice_Bot_Twitch
                         case int n when (n < 10): //Between 0 and 9
                             //Add 3 Zeros infront of the number
                             return "000" + count;
-                            break;
                         case int n when (n >= 10 && n < 100): //Between 10 and 99
                             //Add 2 Zeros infront of the number
                             return "00" + count;
-                            break;
                         case int n when (n >= 100 && n < 1000): //Between 100 and 999
                             //Add 1 Zero infront of the number
                             return "0" + count;
-                            break;
                         case int n when (n >= 1000 && n < 10000): //Between 1000 and 9999
                             //Ad no Zero infront of the number
                             return count.ToString();
-                            break;
 
                     }
 

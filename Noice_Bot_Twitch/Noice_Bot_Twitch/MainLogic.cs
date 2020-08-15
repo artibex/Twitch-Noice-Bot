@@ -12,8 +12,10 @@ namespace Noice_Bot_Twitch
 
         void Init()
         {
+            Console.WriteLine("I'm here");
             FileManager fm; //Manages all Files 
             fm = new FileManager(); //Init FileManager to get all infos feed into the programm
+            Bot twitchBot = new Bot(fm);
             IrcClient client; //Create new Connection to a IRC Server
             Pinger pinger; //Ping the server every 5 Minutes so the connection is not getting closed
             AudioDeviceManager adm; //Manages the Output Devices (if non is configured in the settings.txt ask for ID's)

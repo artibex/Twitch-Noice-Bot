@@ -13,6 +13,7 @@ namespace Noice_Bot_Twitch
         SoundboardManager sm;
         FileManager fm;
         string commandCharacter;
+        bool whitelistOnly = false;
 
         //If the user put a "!" or similar infront, check list for commands
         public CommandIdentifier(SoundboardManager sm, FileManager fm)
@@ -25,14 +26,20 @@ namespace Noice_Bot_Twitch
         public void LoadSettings()
         {
             commandCharacter = fm.GetCommandCharacter();
+            whitelistOnly = fm.GetWhitelistOnly();
         }
 
         public bool CheckCommand(Comment c)
         {
             if(c.comment.StartsWith(commandCharacter))
             {
-                Console.WriteLine("Found Character!");
-                sm.PlaySoundeffect(c);
+                if (whitelistOnly)
+                {
+                    foreach (string s in fm.GetWhiteList())
+                    {
+                        if (c.user.ToLower() == s.ToLower()) sm.PlaySoundeffect(c);
+                    }
+                } else sm.PlaySoundeffect(c);
             }
 
             return false;

@@ -40,6 +40,7 @@ namespace Noice_Bot_Twitch
         {
             path = Directory.GetCurrentDirectory(); //Get the current execution Directory
             LoadFiles(); //Load the files into a string list object
+
             CheckFileExistence(); //Check file existance of all needed files, create missing ones (with examples)
         }
 
@@ -61,6 +62,7 @@ namespace Noice_Bot_Twitch
 
             } catch
             {
+                Console.WriteLine("Failed at loading files");
                 CheckFileExistence(); //Check existance
                 LoadFiles(); //Load files again
             }
@@ -175,6 +177,7 @@ ircclient=irc.twitch.tv
 port=6667
 botname=noisebot
 channelname=
+channelID=
 oauth=oauth:
 
 --TTS Settings--
@@ -364,6 +367,19 @@ usesoundcooldown=true
             }
             Console.WriteLine("INCORRECT CHANNELNAME DETECTED");
             return null;
+        }
+        public string GetChannelID()
+        {
+            foreach (string s in settingsList)
+            {
+                if (s.Contains("channelID=") && s.Length > 10)
+                {
+                    return s.Substring(s.IndexOf("=") + 1);
+                }
+            }
+            Console.WriteLine("INCORRECT CHANNEL ID DETECTED");
+            return null;
+
         }
         public string GetOAuth()
         {
