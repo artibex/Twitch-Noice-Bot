@@ -132,7 +132,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AudioDeviceManager.cs" />
-    <Compile Include="Bot.cs" />
+    <Compile Include="PubSubService.cs" />
     <Compile Include="Comment.cs" />
     <Compile Include="CommandIdentifier.cs" />
     <Compile Include="CommantProcessor.cs" />

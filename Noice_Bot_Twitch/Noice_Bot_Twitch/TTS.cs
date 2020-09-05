@@ -23,6 +23,7 @@ namespace Noice_Bot_Twitch
         public TTS (FileManager fm, AudioDeviceManager adm)
         {
             this.fm = fm; //Set the Filemanager
+            this.adm = adm;
             outputDeviceID = adm.GetTTSOutputDeviceID(); //Get the configured device
             ttsVolume = fm.GetTTSVolume();            
 

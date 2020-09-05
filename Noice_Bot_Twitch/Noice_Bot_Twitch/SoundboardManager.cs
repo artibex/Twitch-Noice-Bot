@@ -4,6 +4,7 @@ using System.Linq;
 using System.IO;
 using System.Globalization;
 using System.Timers;
+using TwitchLib.PubSub.Events;
 
 namespace Noice_Bot_Twitch
 {
@@ -19,7 +20,6 @@ namespace Noice_Bot_Twitch
         bool globalCooldownActive = false; //Is the cooldown active?
         bool responseCooldownActive = false; //Prevent spamming in the chat the same thing over and over again
         bool useSoundCooldown = false; //Use the sound cooldown system
-        bool soundCooldownActive = false; //The current sound is unavailable due to other user usage
         DateTime globalCooldownEndTimer; //The time when the bot will be back available
 
         System.Timers.Timer globalCooldownTimer;
@@ -78,20 +78,13 @@ namespace Noice_Bot_Twitch
                         client.SendChatMessage("@" + c.user + " not ready (" + uc.TimeLeft() + "sec)");
                         SetResponseCooldown();
                         return;
-                    } else
-                    {
-                        return;
-                    }
+                    } else return;
                 }
             }
             //Play a random sound out of the library
             if(c.comment.Substring(1) == "play random")
             {
-                string randomSoundPath;
-                int id;
-
-                GetRandomPath (out id, out randomSoundPath, soundFiles);
-                PlaySound(randomSoundPath, c, 20);
+                PlayRandom(c);
             }
             else if(c.comment.Substring(1).Contains("play") && c.comment.Length > 6) //Search for a specific sound. ID or name
             {
@@ -100,44 +93,91 @@ namespace Noice_Bot_Twitch
                 int idSearch;
 
                 //Check if it's a ID
-                if(int.TryParse(cSubstring, out idSearch))
-                {
-                    if(GetPathByID(idSearch) != null)
-                    {
-                        string path = GetPathByID(idSearch);
-                        PlaySound(path, c, 0);
-                    }
-                }
+                if(int.TryParse(cSubstring, out idSearch)) if(GetPathByID(idSearch) != null) PlayID(c, idSearch);
                 //Check if it's a soundfile name
-                foreach(string path in soundFiles)
-                {
-                    if (cSubstring.Equals(fm.GetSoundname(path)))
-                    {
-                        PlaySound(path, c, 0);
-                    }
-                }
+                foreach(string path in soundFiles) if (cSubstring.Equals(fm.GetSoundname(path))) PlaySound(path, c, 0);
                 //Check if it's a folder name
-                foreach(string s in subDirektories)
-                {
-                   //type friendly name
-                   string dirName = s.Substring(s.LastIndexOf(@"\")+1);
-                   //If the user typed in a directory name, play a random sound from that directory
-                   if (cSubstring.Equals(dirName))
-                   {
-                        string randomSoundPath;
-                        int id;
-                        //Create a temp list with all the available soundfiles
-                        List<String> dirSoundFiles = Directory.GetFiles(s).ToList();
-
-                        GetRandomPath(out id, out randomSoundPath, dirSoundFiles);
-                        PlaySound(randomSoundPath, c, 0);
-                    }
-                }
+                //If the user typed in a directory name, play a random sound from that directory
+                foreach (string s in subDirektories) if (cSubstring.Equals(s.Substring(s.LastIndexOf(@"\") + 1))) PlayFolder(c, s);
             }
         }
 
-        //Play the actual sound
-        void PlaySound(string path, Comment c, int extraTimeout)
+        //Triggerd by Command
+        void PlayRandom(Comment c)
+        {
+            string randomSoundPath;
+            int id;
+
+            GetRandomPath(out id, out randomSoundPath, soundFiles);
+            PlaySound(randomSoundPath, c, 20);
+        }
+        void PlayID(Comment c, int id)
+        {
+            string cSubstring = c.comment.Substring(c.comment.IndexOf(" ") + 1);
+            string path = GetPathByID(id);
+            PlaySound(path, c, 0);
+        }
+        void PlayName(Comment c, string name)
+        {
+            foreach (string path in soundFiles)
+            {
+                if (name.Equals(fm.GetSoundname(path))) PlaySound(path, c, 0);
+            }
+        }
+        void PlayFolder(Comment c, string folderPath)
+        {
+            string randomSoundPath;
+            int id;
+            //Create a temp list with all the available soundfiles
+            List<String> dirSoundFiles = Directory.GetFiles(folderPath).ToList();
+
+            GetRandomPath(out id, out randomSoundPath, dirSoundFiles);
+            PlaySound(randomSoundPath, c, 0);
+        }
+
+        //Triggerd by Channel Point Redemption
+        public void PlayRandom()
+        {
+            string randomSoundPath;
+            int id;
+            GetRandomPath(out id, out randomSoundPath, soundFiles);
+            PlaySound(randomSoundPath, "");
+        }
+        public void PlayName(OnRewardRedeemedArgs e)
+        {
+            foreach (string path in soundFiles)
+            {
+                if (e.Message.Equals(fm.GetSoundname(path)))
+                {
+                    PlaySound(path, "");
+                    return;
+                }
+            }
+
+            string randomSoundPath;
+            int id;
+            GetRandomPath(out id, out randomSoundPath, soundFiles);
+            PlaySound(randomSoundPath, " Can't find name:" + e.Message + " play random instead");
+        }
+        public void PlayID(OnRewardRedeemedArgs e)
+        {
+            int ID;
+            if (int.TryParse(e.Message, out ID)) PlaySound(GetPathByID(ID), "");
+            else
+            {
+                string randomSoundPath;
+                int id;
+                GetRandomPath(out id, out randomSoundPath, soundFiles);
+                PlaySound(randomSoundPath, " Can't find ID:" + e.Message + " play random instead");
+            }
+        }
+        public void PlayFolder(OnRewardRedeemedArgs e) //Currently unused
+        {
+
+        }
+
+        //Play sound, or tell user he have to wait
+        public void PlaySound(string path, Comment c, int extraTimeout)
         {
             if(!globalCooldownActive) //If the global cooldown is not active, play the sound
             {
@@ -160,9 +200,8 @@ namespace Noice_Bot_Twitch
 
                 float combinedCooldown = userCooldown + GetTimeoutOffset(path) + extraTimeout;
                 float volume = fm.GetSoundboardVolume() + GetVolumeOffset(path);
-                if (volume > 1f) volume = 1f;
+                if (volume > 1f) volume = 1f; //Set Volume maximum and minimum
                 if (volume < 0f) volume = 0.05f;
-
 
                 Speaker s = new Speaker(path, 0, volume, false, true);
                 CooldownUser(c, combinedCooldown, GetIDInt(path));
@@ -175,8 +214,18 @@ namespace Noice_Bot_Twitch
                     client.SendChatMessage("Global cd (" + GetGlobalCooldownLeft() + "sec)");
                     SetResponseCooldown();
                 }
-
             }
+        }
+
+        //Ignore all cooldowns and play it
+        void PlaySound(string path, string extraInfo) 
+        {
+            float volume = fm.GetSoundboardVolume() + GetVolumeOffset(path);
+            if (volume > 1f) volume = 1f; //Set Volume maximum and minimum
+            if (volume < 0f) volume = 0.05f;
+
+            Speaker s = new Speaker(path, 0, volume, false, true);
+            client.SendChatMessage("Playing: " + fm.GetSoundname(path) + " ID:" + GetIDString(path) + extraInfo);
         }
 
         //Returns the subdirektorie name of the given path

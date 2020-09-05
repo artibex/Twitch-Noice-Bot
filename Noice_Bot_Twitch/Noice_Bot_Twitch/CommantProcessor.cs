@@ -2,15 +2,15 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 
-//Processing a given command like changing the username, checking black and whitelisting
+//Processing a given command like changing the username, checking black, whitelist and if it's a command
 namespace Noice_Bot_Twitch
 {
     class CommantProcessor
     {
-        FileManager fm;
-        CommandIdentifier ci;
-        private int _maxTextLength = 200;
-        public int MaxTextLength
+        FileManager fm; //Manages all files and data
+        CommandIdentifier ci; //Identify a command
+        private int _maxTextLength = 200; //Max amount of chars for TTS
+        public int MaxTextLength //This is how I should write and plan it, but i don't...
         {
             get { return _maxTextLength; }
             set { _maxTextLength = value; }
@@ -27,37 +27,35 @@ namespace Noice_Bot_Twitch
         {
             this.fm = fm;
             this.ci = ci;
-            LoadSettings();
+            LoadSettings(); //Loading...
         }
 
+        //Load all the settings from the file manager
         public void LoadSettings()
         {
             _maxTextLength = fm.GetMaxTextLength();
             _spamThreshold = fm.GetSpamThreshold();
         }
 
+        //Process the given command and return it
         public Comment Process(Comment c)
         {
             ci.CheckCommand(c); //before everything else is changed, check if it's a command
-            c = CheckAlias(c);
-            c.user = RemoveNumeric(c.user);
-            c = SpamProtection(c);
+            c = CheckAlias(c); //Replce username with given alias
+            c.user = RemoveNumeric(c.user); //Remove numbers from name for faster reading? Hm... could be bad
+            c = SpamProtection(c); //Check with the Spam protection before giving it back
             return c;
         }
 
         //Checks the Username and replaces it with an Alias of the list
         public Comment CheckAlias(Comment c)
         {
+            //For each string in the alias list, check if you can find the username
             foreach (string s in fm.GetAliasList())
             {
                 string username = s.Substring(0, s.IndexOf(","));
                 string alias = s.Substring(s.IndexOf(",")+1);
-
-
-                if (c.user == username.ToLower())
-                {
-                    c.user = alias.ToLower();
-                }
+                if (c.user == username.ToLower())  c.user = alias.ToLower();
             }
             return c;
         }
@@ -69,40 +67,34 @@ namespace Noice_Bot_Twitch
             //Cut the comment down
             if(c.comment.Length > _maxTextLength) c.comment = c.comment.Substring(0, _maxTextLength);
 
-            if (fm.GetRemoveEmojis()) 
+            //If true, remove ASCII emojis
+            if (fm.GetRemoveEmojis())
             {
                 c.comment = Regex.Replace(c.comment, @"\p{Cs}", ""); //Remove all unicode emojis if true
-                if (c.comment == "") //If the comment where just unicode emojis say "unicode emoji"
-                {
-                    c.comment = "unicode Emoji";
-                }
+                //If the comment where just unicode emojis say "unicode emoji"
+                if (c.comment == "") c.comment = "unicode Emojis";
             }
 
-            string badStuff = @fm.GetBadCharList(); //Remove unwanted spamming of specific symboles
-            int badCounter = 0;
+            //Remove unwanted spamming of specific symboles
+            string badStuff = @fm.GetBadCharList();
+            int badCounter = 0; //If this counter is to high, remove the command
             foreach(char comChar in c.comment)
             {
-                foreach(char badChar in badStuff)
-                {
-                    if (comChar == badChar) badCounter++;
-                }
-                if(badCounter >= _spamThreshold) c.comment = "";
+                //check with each char in the badStuff string the comment, if badCounter is too high, remove comment
+                foreach(char badChar in badStuff) if (comChar == badChar) badCounter++;
+                if(badCounter >= _spamThreshold) c.comment = ""; //Remove the comment completly
             }
             return c;
         }
 
         //Checks if a user is on the Blacklist of TTS
-        //Return true if he is on the list, otherwise false
+        //Return true if user is on the list, otherwise false
         public bool CheckBlacklist(Comment c)
         {
             foreach (string s in fm.GetBlackList())
             {
                 string username = s.ToLower();
-
-                if (c.user == username.ToLower())
-                {
-                    return true;
-                }
+                if (c.user == username.ToLower()) return true;
             }
             return false;
         }

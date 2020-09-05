@@ -33,14 +33,23 @@ namespace Noice_Bot_Twitch
         {
             if(c.comment.StartsWith(commandCharacter))
             {
-                if (whitelistOnly)
+                if (whitelistOnly) //Check if only whitelisted people are allowed (Channel Point's work allways)
                 {
-                    foreach (string s in fm.GetWhiteList())
-                    {
-                        if (c.user.ToLower() == s.ToLower()) sm.PlaySoundeffect(c);
-                    }
+                    foreach (string s in fm.GetWhiteList()) if (c.user.ToLower() == s.ToLower()) sm.PlaySoundeffect(c);
                 } else sm.PlaySoundeffect(c);
             }
+            return false;
+        }
+        public bool CheckCommand(TwitchLib.PubSub.Events.OnRewardRedeemedArgs e)
+        {
+            //Play Random
+            if (e.RewardTitle.ToLower() == fm.GetCPPlayRandom().ToLower()) sm.PlayRandom();
+            //Play Name or Random
+            else if (e.RewardTitle.ToLower() == fm.GetCPPlayName().ToLower()) sm.PlayName(e);
+            //Play ID or Random
+            else if (e.RewardTitle.ToLower() == fm.GetCPPlayID().ToLower()) sm.PlayID(e);
+            //Play Folder or Random
+            else if (e.RewardTitle.ToLower() == fm.GetCPPlayFolder().ToLower()) sm.PlayFolder(e);
 
             return false;
         }
