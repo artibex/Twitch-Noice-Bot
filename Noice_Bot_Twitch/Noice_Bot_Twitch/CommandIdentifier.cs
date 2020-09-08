@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Noice_Bot_Twitch
+﻿namespace Noice_Bot_Twitch
 {
     //Checks each commant and looks for a bot command (usually begins with "!") and executes further
     class CommandIdentifier
@@ -29,6 +22,7 @@ namespace Noice_Bot_Twitch
             whitelistOnly = fm.GetWhitelistOnly();
         }
 
+        //Return false if it's not a command
         public bool CheckCommand(Comment c)
         {
             if(c.comment.StartsWith(commandCharacter))
@@ -37,20 +31,37 @@ namespace Noice_Bot_Twitch
                 {
                     foreach (string s in fm.GetWhiteList()) if (c.user.ToLower() == s.ToLower()) sm.PlaySoundeffect(c);
                 } else sm.PlaySoundeffect(c);
+                return true;
             }
             return false;
         }
+        //Trigger with Channel Points
         public bool CheckCommand(TwitchLib.PubSub.Events.OnRewardRedeemedArgs e)
         {
             //Play Random
-            if (e.RewardTitle.ToLower() == fm.GetCPPlayRandom().ToLower()) sm.PlayRandom();
+            if (e.RewardTitle.ToLower() == fm.GetCPPlayRandom().ToLower())
+            {
+                sm.PlayRandom();
+                return true;
+            }
             //Play Name or Random
-            else if (e.RewardTitle.ToLower() == fm.GetCPPlayName().ToLower()) sm.PlayName(e);
+            else if (e.RewardTitle.ToLower() == fm.GetCPPlayName().ToLower())
+            {
+                sm.PlayName(e);
+                return true;
+            }
             //Play ID or Random
-            else if (e.RewardTitle.ToLower() == fm.GetCPPlayID().ToLower()) sm.PlayID(e);
+            else if (e.RewardTitle.ToLower() == fm.GetCPPlayID().ToLower())
+            {
+                sm.PlayID(e);
+                return true;
+            }
             //Play Folder or Random
-            else if (e.RewardTitle.ToLower() == fm.GetCPPlayFolder().ToLower()) sm.PlayFolder(e);
-
+            else if (e.RewardTitle.ToLower() == fm.GetCPPlayFolder().ToLower())
+            {
+                sm.PlayFolder(e);
+                return true;
+            }
             return false;
         }
     }

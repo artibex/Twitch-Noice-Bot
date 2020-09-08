@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Remoting.Channels;
 using TwitchLib.PubSub;
 using TwitchLib.PubSub.Events;
 
@@ -8,9 +7,9 @@ namespace Noice_Bot_Twitch
     //Check Channel Points Redemption of the given Channel ID, Can also be used to check Bit's donations etc.
     class PubSubService    
     {
-        FileManager fm;
-        CommandIdentifier ci;
-        TwitchPubSub pubsub;
+        FileManager fm; //Get Settings
+        CommandIdentifier ci; //Trigger here a sound playing
+        TwitchPubSub pubsub; //Pub Sub to get Events like Bits, Channel Points etc.
 
         public PubSubService(FileManager fm, CommandIdentifier ci)
         {
@@ -23,16 +22,18 @@ namespace Noice_Bot_Twitch
             pubsub.OnListenResponse += Pubsub_OnListenResponse;
             pubsub.OnRewardRedeemed += Pubsub_OnRewardRedeemed;
             //pubsub.OnBitsReceived += Pubsub_OnBitsReceived; //Unused
-            //pubsub.OnLog += PubSub_OnLog; //Pure Logging Function of PubSub
-            //pubsub.OnWhisper += Pubsub_OnWhisper; //Testing
+            //pubsub.OnLog += PubSub_OnLog; //Pure Logging Function of PubSub //Unused
+            //pubsub.OnWhisper += Pubsub_OnWhisper; //Unused
             pubsub.Connect(); //Connect
         }
 
+        //Pure debugging with every information
         void PubSub_OnLog(object sender, OnLogArgs a)
         {
             Console.WriteLine(a.Data);
         }
 
+        //Authentication with OAuth and to connect to what ChannelID
         private void Pubsub_OnPubSubServiceConnected(object sender, System.EventArgs e)
         {
             pubsub.ListenToRewards(fm.GetChannelID()); //Set Channel ID
@@ -48,22 +49,21 @@ namespace Noice_Bot_Twitch
         }
 
         //Unused
-        //private void Pubsub_OnWhisper(object sender, OnWhisperArgs e)
-        //{
-        //    Console.WriteLine("Whisper recived");
-        //}
+        private void Pubsub_OnWhisper(object sender, OnWhisperArgs e)
+        {
+            Console.WriteLine("Whisper recived");
+        }
 
         //Test Method to see bit redemption
         private void Pubsub_OnBitsReceived(object sender, OnBitsReceivedArgs e)
         {
             Console.WriteLine($"Just received {e.BitsUsed} bits from {e.Username}. That brings their total to {e.TotalBitsUsed} bits!");
         }
-
-        
+        //Channel Point redemption, Check if redemption is connected to code
         private void Pubsub_OnRewardRedeemed(object sender, OnRewardRedeemedArgs e)
         {
             ci.CheckCommand(e);
-            //RewardRedeemedDebug(e);
+            //RewardRedeemedDebug(e); //Log everything of a channel point redemption
         }
 
         //Pure Debug to see what containes a OnRewardRedeemedArgs

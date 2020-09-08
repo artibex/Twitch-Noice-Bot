@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
-using System.Text;
 
 namespace Noice_Bot_Twitch
 {
+    //Manages the connection to the chat
     public class IrcClient
     {
         private string userName;
@@ -49,4 +49,4 @@ namespace Noice_Bot_Twitch
     }
 }
 //© 2020 GitHub, Inc.
-//babelshift
+//https://github.com/babelshift/SimpleTwitchBot 

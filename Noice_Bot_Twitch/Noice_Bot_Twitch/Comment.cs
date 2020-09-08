@@ -1,7 +1,4 @@
-﻿
-using System;
-
-namespace Noice_Bot_Twitch
+﻿namespace Noice_Bot_Twitch
 {
     //Command datacontainer, used to store the command information and further processing
     class Comment
@@ -20,7 +17,7 @@ namespace Noice_Bot_Twitch
             rawMsg = rawMsg.ToLower();
             rawMsg = rawMsg.Trim();
 
-            //Check if it's a user command
+            //Check if it's a user command made in the chat
             if(rawMsg.Contains("privmsg") == true)
             {
                 //Find the index of specific characters

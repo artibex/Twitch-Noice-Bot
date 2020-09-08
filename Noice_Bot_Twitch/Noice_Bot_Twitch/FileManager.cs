@@ -4,8 +4,6 @@ using System.Linq;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Globalization;
-using System.Diagnostics;
-using TwitchLib.Api.Helix.Models.Tags;
 
 namespace Noice_Bot_Twitch
 {
@@ -199,7 +197,7 @@ removeemojis=true
 badcharlist=!§$%&/()=?`^\{[]}#
 
 --Audio Device Settings--
-# Standard output device is 0 of your PC, leave empty to get asked which one you want
+# Standard output device is 0 of your PC, leave these options empty to get asked which one you would like to use
 ttsoutputdevice=0
 soundboardoutputdevice=0
 notificationoutputdevice=0

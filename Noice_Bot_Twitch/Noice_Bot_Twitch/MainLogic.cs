@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace Noice_Bot_Twitch
 {
-    //Main instance of everything. *insert 42 joke*
+    //Main instance of everything. The answer to everything. *insert 42 joke*
     class MainLogic
     {
         FileManager fm; //Manages all Files 

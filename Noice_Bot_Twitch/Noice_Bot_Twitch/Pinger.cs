@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 
 namespace Noice_Bot_Twitch
 {
+    //Pinger to stay connected to the Chat
     public class Pinger
     {
         private IrcClient client;

@@ -8,27 +8,27 @@ using TwitchLib.PubSub.Events;
 
 namespace Noice_Bot_Twitch
 {
+    //Manages the playing of soundeffects and cooldowns
     class SoundboardManager
     {
-        AudioDeviceManager adm;
-        FileManager fm;
-        IrcClient client;
-        int userCooldown = 0;
+        AudioDeviceManager adm; //Load output device ID here
+        FileManager fm; //Get Paths to soundfiles here
+        IrcClient client; //Write Chat masseges with that
+        int userCooldown = 0; // Basic user cooldown, get's loaded by Settings.txt
         int globalCooldown = 0; //Global Cooldown, nobody is allowed to play another one untill it's over
-        int responseCooldown = 0;
+        int responseCooldown = 0; //If set, the bot will not answer to failed tasks
         int soundInterval = 0; //Should there be an intervall between any given soundfile? Like 1 Second etc.?
-        bool globalCooldownActive = false; //Is the cooldown active?
-        bool responseCooldownActive = false; //Prevent spamming in the chat the same thing over and over again
-        bool useSoundCooldown = false; //Use the sound cooldown system
+        bool globalCooldownActive = false; //Is a global cooldown currenlty active?
+        bool responseCooldownActive = false; //Is response cooldown active?
+        bool useSoundCooldown = false; //Use the soundfile cooldown system
         DateTime globalCooldownEndTimer; //The time when the bot will be back available
-
-        System.Timers.Timer globalCooldownTimer;
-        System.Timers.Timer responseCooldownTimer;
+        System.Timers.Timer globalCooldownTimer; //Global timer to set
+        System.Timers.Timer responseCooldownTimer; //Response timer to set
 
         List<String> soundFiles = new List<string>(); //The list of every collected sound
         List<String> subDirektories = new List<string>(); //List of all subdirektories containing sounds
         List<UserCooldown> cooldownList = new List<UserCooldown>(); //List of users in cooldown
-        List<String> soundfileOffsetList = new List<string>();
+        List<String> soundfileOffsetList = new List<string>(); //List of all offsets
 
         public SoundboardManager(AudioDeviceManager adm, FileManager fm, IrcClient client)
         {
@@ -38,6 +38,7 @@ namespace Noice_Bot_Twitch
             LoadSettings();
         }
 
+        //Use this to reload stuff
         public void LoadSettings()
         {
             userCooldown = fm.GetUserCooldown();
@@ -50,26 +51,29 @@ namespace Noice_Bot_Twitch
             useSoundCooldown = fm.GetUseSoundcooldown();
         }
 
-        public void CheckCooldownList() //Checks if any timer is done and deletes this entry
+        //Checks if any timer is done and deletes this entry
+        public void CheckCooldownList()
         {
             List<int> rmList = new List<int>();
             //Checks if a usertimer is over and removes it from the list
             foreach(UserCooldown uc in cooldownList.ToList()) if(uc.done) cooldownList.Remove(uc);
         }
 
-        //Public Method to trigger a soundeffect, check for global, user and interval cooldowns
+        //Trigger sound by chat
         public void PlaySoundeffect(Comment c)
         {
             CheckCooldownList(); //Clear out the list of any left over user
 
-            if (c.comment.Substring(1) == "play") //Info on how to use this command
+            //Info on how to use this command
+            if (c.comment.Substring(1) == "play")
             {
                 string folders = " ";
-                foreach (string s in subDirektories) folders += GetDirName(s) + ", ";
-                client.SendChatMessage("Use " + fm.GetCommandCharacter() + "play + a sound name, ID or category. Foldernames:" + folders);
+                foreach (string s in subDirektories) folders += GetDirName(s) + ", "; //Display all folders/Sublibraries to choose from
+                client.SendChatMessage("Use " + fm.GetCommandCharacter() + "play + a sound name, ID or category OR random. Sublibraries:" + folders);
                 return;
             }
-            foreach (UserCooldown uc in cooldownList) //If the user is on the cooldown list, return
+            //If the user is on the cooldown list, return
+            foreach (UserCooldown uc in cooldownList) 
             {
                 if (uc.username == c.user)
                 {
@@ -86,19 +90,19 @@ namespace Noice_Bot_Twitch
             {
                 PlayRandom(c);
             }
-            else if(c.comment.Substring(1).Contains("play") && c.comment.Length > 6) //Search for a specific sound. ID or name
+            //Search for a specific sound. ID or name
+            else if (c.comment.Substring(1).Contains("play") && c.comment.Length > 6) 
             {
-                //Get the comment Substring
+                //Get the comment Substring without !play
                 string cSubstring = c.comment.Substring(c.comment.IndexOf(" ") + 1);
-                int idSearch;
+                int idSearch; //ID to try to parse
 
                 //Check if it's a ID
                 if(int.TryParse(cSubstring, out idSearch)) if(GetPathByID(idSearch) != null) PlayID(c, idSearch);
+                //Check if it's a Sublibrarie name
+                foreach (string s in subDirektories) if (cSubstring.Equals(s.Substring(s.LastIndexOf(@"\") + 1))) PlayFolder(c, s);
                 //Check if it's a soundfile name
                 foreach(string path in soundFiles) if (cSubstring.Equals(fm.GetSoundname(path))) PlaySound(path, c, 0);
-                //Check if it's a folder name
-                //If the user typed in a directory name, play a random sound from that directory
-                foreach (string s in subDirektories) if (cSubstring.Equals(s.Substring(s.LastIndexOf(@"\") + 1))) PlayFolder(c, s);
             }
         }
 
@@ -119,30 +123,34 @@ namespace Noice_Bot_Twitch
         }
         void PlayName(Comment c, string name)
         {
-            foreach (string path in soundFiles)
-            {
-                if (name.Equals(fm.GetSoundname(path))) PlaySound(path, c, 0);
-            }
+            PlaySound(name, c, 0);
+
+            //No need for this?
+            //foreach (string path in soundFiles)
+            //{
+            //    if (name.Equals(fm.GetSoundname(path))) PlaySound(path, c, 0);
+            //}
         }
         void PlayFolder(Comment c, string folderPath)
         {
-            string randomSoundPath;
-            int id;
+            string randomSoundPath; //Random path that got pulled out of the Sublibrarie
+            int id; //ID of this soundfile
             //Create a temp list with all the available soundfiles
-            List<String> dirSoundFiles = Directory.GetFiles(folderPath).ToList();
-
-            GetRandomPath(out id, out randomSoundPath, dirSoundFiles);
-            PlaySound(randomSoundPath, c, 0);
+            List<String> dirSoundFiles = Directory.GetFiles(folderPath).ToList(); //Get all soundfiles from this folder
+            GetRandomPath(out id, out randomSoundPath, dirSoundFiles); //Get a random path by a given list
+            PlaySound(randomSoundPath, c, 0); //Play it
         }
 
         //Triggerd by Channel Point Redemption
-        public void PlayRandom()
+        //Random Sound
+        public void PlayRandom() 
         {
             string randomSoundPath;
-            int id;
+            int id; //ID
             GetRandomPath(out id, out randomSoundPath, soundFiles);
             PlaySound(randomSoundPath, "");
         }
+        //Specific Name or Random if not found
         public void PlayName(OnRewardRedeemedArgs e)
         {
             foreach (string path in soundFiles)
@@ -159,6 +167,7 @@ namespace Noice_Bot_Twitch
             GetRandomPath(out id, out randomSoundPath, soundFiles);
             PlaySound(randomSoundPath, " Can't find name:" + e.Message + " play random instead");
         }
+        //Play ID or Random if not found
         public void PlayID(OnRewardRedeemedArgs e)
         {
             int ID;
@@ -173,7 +182,20 @@ namespace Noice_Bot_Twitch
         }
         public void PlayFolder(OnRewardRedeemedArgs e) //Currently unused
         {
-
+            foreach (string s in subDirektories)
+            {
+                if (e.Message.Equals(s.Substring(s.LastIndexOf(@"\") + 1)))
+                {
+                    string randomSoundPath; //Random path that got pulled out of the Sublibrarie
+                    int id; //ID of this soundfile
+                    //Create a temp list with all the available soundfiles
+                    List<String> dirSoundFiles = Directory.GetFiles(s).ToList(); //Get all soundfiles from this folder
+                    GetRandomPath(out id, out randomSoundPath, dirSoundFiles); //Get a random path by a given list
+                    PlaySound(randomSoundPath, ""); //Play it
+                    return;
+                }
+            }
+            PlayRandom();
         }
 
         //Play sound, or tell user he have to wait
@@ -298,12 +320,12 @@ namespace Noice_Bot_Twitch
         //Get the Path by a given ID
         string GetPathByID(int id)
         {
-            //If the user put in a to high number, return -1
-            if (id >= soundFiles.Count) return null; //Out of Range
-            else if (id <= -1) return null; //Out of Range
+            //If the user put in a to high number, return las in list
+            if (id >= soundFiles.Count) return soundFiles[soundFiles.Count-1]; //Out of Range
+            else if (id <= -1) return soundFiles[soundFiles.Count - 1]; //Out of Range
             else return soundFiles[id]; //Return the path
         }
-
+        //Get offset for the soundeffect and add or subtract it to the volume
         float GetVolumeOffset(string path)
         {
             string name = fm.GetSoundname(path);
@@ -321,6 +343,7 @@ namespace Noice_Bot_Twitch
             return 0;
         }
 
+        //Get the timeout offset of a soundfile to add or subtract it to the usercooldown
         float GetTimeoutOffset(string path)
         {
             string name = fm.GetSoundname(path);
@@ -338,12 +361,13 @@ namespace Noice_Bot_Twitch
             return 0;
         }
 
+        //Add a new user cooldown
         void CooldownUser(Comment c, double time, int soundfileID)
         {
             cooldownList.Add(new UserCooldown(c.user, time, soundfileID));
         }
 
-        //Set the response cooldown to prevent chat spam
+        //Response cooldown to prevent chat spamming
         void SetResponseCooldown()
         {
             responseCooldownTimer = new System.Timers.Timer(responseCooldown * 1000);
@@ -352,6 +376,7 @@ namespace Noice_Bot_Twitch
             responseCooldownActive = true;
         }
 
+        //Get's triggerd when timer elapses
         void DeactivateResponseCooldown(Object source, ElapsedEventArgs e)
         {
             responseCooldownActive = false;

@@ -6,13 +6,15 @@ using System.Threading;
 
 namespace Noice_Bot_Twitch
 {
+    //Speaker to play soundfiles
     class Speaker : IDisposable
     {
-        string filepath;
-        bool deleteFile;
-        int outputDeviceID;
-        float volume = 0.9f;
+        string filepath; //Path to file to play
+        bool deleteFile; //Should the file be deleted after using?
+        int outputDeviceID; //ID where to play
+        float volume = 0.9f; //Volume of speaker (Is global, need to create a mixer I think)
 
+        //Init
         public Speaker(string filepath, int outputDeviceID, float volume, bool deleteFile, bool newThread)
         {
             this.filepath = filepath;
@@ -20,7 +22,7 @@ namespace Noice_Bot_Twitch
             this.volume = volume;
             this.outputDeviceID = outputDeviceID;
 
-            if (newThread)
+            if (newThread) //Play sound in a new thread to don't block the bot
             {
                 var th = new Thread(PlaySound);
                 th.Start();
@@ -30,9 +32,10 @@ namespace Noice_Bot_Twitch
 
         public void Dispose()
         {
-            //throw new NotImplementedException();
+            //I need this to dispose stuff and don't get errors
         }
 
+        //Create a disposable Sound Player
         void PlaySound()
         {
             using (WaveOutEvent tempWave = new WaveOutEvent())

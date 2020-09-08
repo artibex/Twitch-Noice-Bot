@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Text;
-using System.Threading.Tasks;
 using System.Speech.Synthesis;
-using NAudio.Wave;
-using System.IO;
-using System.Runtime.InteropServices;
-using System.Threading;
 
 namespace Noice_Bot_Twitch
 {
+    //Give this Text To Speech module a text and it will read it
     class TTS
     {
         private FileManager fm;
@@ -24,77 +19,54 @@ namespace Noice_Bot_Twitch
         {
             this.fm = fm; //Set the Filemanager
             this.adm = adm;
-            outputDeviceID = adm.GetTTSOutputDeviceID(); //Get the configured device
-            ttsVolume = fm.GetTTSVolume();            
+            LoadSettings();
+        }
 
-            normalSpeed = fm.GetTTSBaseSpeed();
-            fastestSpeed = fm.GetTTSMaxSpeed();
+        public void LoadSettings()
+        {
+            outputDeviceID = adm.GetTTSOutputDeviceID(); //Get the configured device
+            ttsVolume = fm.GetTTSVolume(); //Get the volume
+            normalSpeed = fm.GetTTSBaseSpeed(); //Get the normal speed
+            fastestSpeed = fm.GetTTSMaxSpeed(); //Get the max speed
             //fasterSpeed is in the middle of base and max, so calculate it
             fasterSpeed = Convert.ToInt32((normalSpeed + fastestSpeed) / 2);
         }
 
+        //Method to speak any given text, create a .wav file and play it. Then delete it
         public void Speak(string text)
         {
             int speed = 0; //Defined PlaybackSpeed
             string filepath = String.Empty; //Filepath
 
-            int maxChar = fm.GetMaxTextLength();
-            if (text.Length > Convert.ToInt32(fm.GetMaxTextLength()*0.5)) speed = fasterSpeed; //Set the speed according to the length
-            if (text.Length > Convert.ToInt32(fm.GetMaxTextLength()*0.8)) speed = fastestSpeed;
-            else speed = normalSpeed;
+            if (text.Length > Convert.ToInt32(fm.GetMaxTextLength()*0.5)) speed = fasterSpeed; //50% of 100 letters = 50
+            if (text.Length > Convert.ToInt32(fm.GetMaxTextLength()*0.8)) speed = fastestSpeed; //80% of 100 letters = 80
+            else speed = normalSpeed; //If the text is small enough, use normal speed
 
             //Create a hash with the current date and format out useless characters
             string filename = text.GetHashCode().ToString() + DateTime.Now; //Generate filename
-            filename = filename.Replace(".", String.Empty);
+            filename = filename.Replace(".", String.Empty); //Kick some stuff out that would lead to file errors
             filename = filename.Replace(":", String.Empty);
+            filename = filename.Replace(")", String.Empty);
+            filename = filename.Replace("(", String.Empty);
+            filename = filename.Replace("%", String.Empty);
+            filename = filename.Replace("!", String.Empty);
+            filename = filename.Replace("=", String.Empty);
+            filename = filename.Replace("§", String.Empty);
+            filename = filename.Replace("$", String.Empty);
+            filename = filename.Replace("&", String.Empty);
+            filename = filename.Replace("/", String.Empty);
             filename = filename.Replace(" ", String.Empty);
             filename = filename + ".wav";
 
-            filepath = fm.GetPath() + @"\" + filename;
+            filepath = fm.GetPath() + @"\" + filename; //Get the path to save to
 
-            SpeechSynthesizer tempSynth = new SpeechSynthesizer();
+            SpeechSynthesizer tempSynth = new SpeechSynthesizer(); //Create a new synth
             tempSynth.SetOutputToWaveFile(filepath); //Set the output path
-            tempSynth.Rate = speed;
+            tempSynth.Rate = speed; //Create with that speed
             tempSynth.Speak(text); //Generate the .wav file
             tempSynth.Dispose(); //Get rid of the Synth
 
-            using (Speaker s = new Speaker(filepath, outputDeviceID,ttsVolume, true, false)) ; //Do nothing
-        }
-
-        //Detect the connected audio devices
-        void DetectDevices()
-        {
-            if(outputDeviceID == -2) //If no device is given via config, let the user determen one
-            {
-                //Count the available devices
-                int deviceCount = -2;
-                for (int n = -1; n < WaveOut.DeviceCount; n++)
-                {
-                    var caps = WaveOut.GetCapabilities(n);
-                    Console.WriteLine($"{n}: {caps.ProductName}");
-                    deviceCount++;
-                }
-                SetDevice(deviceCount);
-            }
-        }
-        //Let the user Select a audio device
-        void SetDevice(int deviceCount)
-        {
-            //Check the given numeric input, if it's not usable, try again
-            Console.WriteLine("Please select the Text to Speech output device (number)");
-            while (outputDeviceID == -2)
-            {
-                string input = Console.ReadLine();
-                if (int.TryParse(input, out outputDeviceID))
-                {
-                    if(outputDeviceID > deviceCount || outputDeviceID < -1)
-                    {
-                        outputDeviceID = -2;
-                        Console.WriteLine("Wrong Input, please select a audiodevice (0-" + deviceCount);
-                    } else Console.WriteLine("You selected " + outputDeviceID);
-                }
-                else Console.WriteLine("Wrong Input, please select a audiodevice (0-" + deviceCount);
-            }
+            using (Speaker s = new Speaker(filepath, outputDeviceID,ttsVolume, true, false)) ; //Do nothing, exept playing it
         }
     }
 }
