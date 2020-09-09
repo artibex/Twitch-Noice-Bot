@@ -65,10 +65,10 @@ namespace Noice_Bot_Twitch
         public Comment SpamProtection(Comment c)
         {
             //Cut the comment down
-            if(c.comment.Length > _maxTextLength) c.comment = c.comment.Substring(0, _maxTextLength);
+            if(c.comment != null && c.comment.Length > _maxTextLength) c.comment = c.comment.Substring(0, _maxTextLength);
 
             //If true, remove ASCII emojis
-            if (fm.GetRemoveEmojis())
+            if (fm.GetRemoveEmojis() && c.comment != null)
             {
                 c.comment = Regex.Replace(c.comment, @"\p{Cs}", ""); //Remove all unicode emojis if true
                 //If the comment where just unicode emojis say "unicode emoji"
@@ -78,11 +78,14 @@ namespace Noice_Bot_Twitch
             //Remove unwanted spamming of specific symboles
             string badStuff = @fm.GetBadCharList();
             int badCounter = 0; //If this counter is to high, remove the command
-            foreach(char comChar in c.comment)
+            if (c.comment != null)
             {
-                //check with each char in the badStuff string the comment, if badCounter is too high, remove comment
-                foreach(char badChar in badStuff) if (comChar == badChar) badCounter++;
-                if(badCounter >= _spamThreshold) c.comment = ""; //Remove the comment completly
+                foreach (char comChar in c.comment)
+                {
+                    //check with each char in the badStuff string the comment, if badCounter is too high, remove comment
+                    foreach (char badChar in badStuff) if (comChar == badChar) badCounter++;
+                    if (badCounter >= _spamThreshold) c.comment = ""; //Remove the comment completly
+                }
             }
             return c;
         }
@@ -118,7 +121,8 @@ namespace Noice_Bot_Twitch
         //Remove numbers in usernames for faster/proper reading
         public String RemoveNumeric(string text)
         {
-            string textwithoutnumeric = new String(text.Where(c => c != '-' && (c < '0' || c > '9')).ToArray());
+            string textwithoutnumeric = "";
+            if (text != null) textwithoutnumeric = new String(text.Where(c => c != '-' && (c < '0' || c > '9')).ToArray());
             return (textwithoutnumeric);
         }
     }

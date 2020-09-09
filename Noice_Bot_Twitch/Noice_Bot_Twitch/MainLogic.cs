@@ -56,14 +56,13 @@ namespace Noice_Bot_Twitch
             {
                 var rawMsg = client.ReadMessage(); //The whole Message from the IRC Server
                 Comment c = new Comment(rawMsg); //Create a new Comment out of it. Cut out the Username ans the Message
+                c = cp.Process(c); //Edit the given User Comment
                 string executionOrder = fm.GetNotificationExecutionOrder(); //Check if to read it out and how
+                string ttsText = ""; //The text how it should be converted to speech
 
                 //If the Comment is not empty or just spaces execute a notification
-                if (!String.IsNullOrWhiteSpace(c.user) && !String.IsNullOrWhiteSpace(c.comment) && !cp.CheckBlacklist(c))
+                if (!String.IsNullOrWhiteSpace(c.user) && !String.IsNullOrWhiteSpace(c.comment) && !cp.CheckBlacklist(c) && executionOrder != "")
                 {
-                    string ttsText = ""; //The text how it should be converted to speech
-                    c = cp.Process(c); //Edit the given User Comment
-
                     foreach (char exe in executionOrder)
                     {
                         if (exe.ToString() == "u") //Username
@@ -84,18 +83,19 @@ namespace Noice_Bot_Twitch
                             //Play Random Notification Sound
                         }
                     }
-
                     //Cut out the first space if there is one (there should be allways one)
-                    if(ttsText.IndexOf(" ") == 0) ttsText = ttsText.Substring(1, ttsText.Length - 1);
+                    if (ttsText.IndexOf(" ") == 0) ttsText = ttsText.Substring(1, ttsText.Length - 1);
                     if (ttsText == "") //If string is empty, at least write the normal commant in the console
                     {
                         Console.WriteLine(c.user + ": " + c.comment);
-                    } else
+                    }
+                    else
                     {
                         Console.WriteLine(ttsText);
                         tts.Speak(ttsText);
                     }
                 }
+                else if(c.user != "") Console.WriteLine(c.user + ": " + c.comment);
             }
         }
     }

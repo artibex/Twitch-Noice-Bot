@@ -70,12 +70,16 @@ namespace Noice_Bot_Twitch
         //Load all soundfiles in a given path
         void LoadSoundfiles()
         {
+            soundFiles = new List<string>();
             //Check all files in direktory and subdirektories and add every supported file to the list
-            soundFiles = Directory.EnumerateFiles(GetSoundboardPath(), "*.*", SearchOption.AllDirectories)
-            .Where(s => s.EndsWith(".mp3") || s.EndsWith(".wav") || s.EndsWith(".aiff") || s.EndsWith(".wma")).ToList();
+            if(Directory.Exists(GetSoundboardPath()))
+            {
+                soundFiles = Directory.EnumerateFiles(GetSoundboardPath(), "*.*", SearchOption.AllDirectories)
+                .Where(s => s.EndsWith(".mp3") || s.EndsWith(".wav") || s.EndsWith(".aiff") || s.EndsWith(".wma")).ToList();
 
-            soundboardSubdirektories = Directory.GetDirectories(GetSoundboardPath()).ToList(); //Load subdirectories
-            Console.WriteLine("Loaded " + soundFiles.Count + " Soundfiles"); //Display the loaded amount in console to flex
+                soundboardSubdirektories = Directory.GetDirectories(GetSoundboardPath()).ToList(); //Load subdirectories
+                Console.WriteLine("Loaded " + soundFiles.Count + " Soundfiles"); //Display the loaded amount in console to flex
+            }
         }
 
         void CheckFileExistence() //Does all the wanted files exist? No? Then Create them and put examples in it
@@ -182,8 +186,8 @@ ttsbasespeed=3
 # Max speed = when the text is getting quit long, hurry up!
 ttsmaxspeed=7
 # n = notification sound, u = username, b = bridgeword, c = comment
-# EXAMPLE: 'notificationExecutionOrder=ubc' Username, bridgeword, comment
-# EXAMPLE2: 'notificationExecutionOrder=n' Just notification sound
+# EXAMPLE: 'order=ubc' Username, bridgeword, comment
+# EXAMPLE2: 'order=n' Just notification sound
 notificationExecutionOrder=
 
 --Anti Spam Settings--
@@ -207,7 +211,6 @@ notificationvolume=0.5
 ttsvolume=0.5
 # Soundboard volume, value between 0 and 1, for more adjustments see sound offset settings
 soundboardvolume=0.5
-
 
 --Command Identifier Settings--
 # The character to look in the chat, can be changed to anything else, exept empty
@@ -244,12 +247,17 @@ cpplayfolder=Play Folder
             string str = @"---Filename, Volume offset, Timeout offset---
 --- Volume Offset between -0.5 and +0.5 (don't forget to put + and - infront of it)
 --- Timeout offset can be between -9999 and +9999 or bigger (don't forget to put + and - infront of it)
-            //soundfile name, volume offset (+ or - e.g.: -0.2, +0.3), timeout offset (e.g.:-10,+30) ";
-            foreach(string path in soundFiles)
+            //soundfile name, volume offset (+ or - e.g.: -0.2, +0.3), timeout offset (e.g.:-10,+30)";
+            str += "\n";
+            if (soundFiles != null)
             {
-                str += GetSoundname(path) + ",+0,+0\n";
+                foreach (string path in soundFiles)
+                {
+                    str += GetSoundname(path) + ",+0,+0\n";
+                }
+                return str;
             }
-            return str;
+            else return str;
         }
         
         //Update the Soundeffects offset file with new found soundeffects, this will not delete any out
@@ -409,7 +417,7 @@ cpplayfolder=Play Folder
                 }
             }
             Console.WriteLine("INCORRECT CHANNEL ID DETECTED");
-            return null;
+            return "";
 
         }
         //Oauth Key, needed for connecting to the chat

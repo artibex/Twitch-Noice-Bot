@@ -25,7 +25,7 @@
         //Return false if it's not a command
         public bool CheckCommand(Comment c)
         {
-            if(c.comment.StartsWith(commandCharacter))
+            if(c.comment != null && c.comment.StartsWith(commandCharacter))
             {
                 if (whitelistOnly) //Check if only whitelisted people are allowed (Channel Point's work allways)
                 {
