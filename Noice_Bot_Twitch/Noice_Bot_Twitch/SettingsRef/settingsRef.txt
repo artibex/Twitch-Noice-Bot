@@ -1,0 +1,73 @@
+﻿#See the GitHub Page for how to use this file correctly
+--IRC Settings--
+ircclient=irc.twitch.tv
+port=6667
+# The Botname is currenlty not displayed in the chat, idk if I even need it?
+botname=Noicebot
+channelname=
+# Get your ID with this: https://chrome.google.com/webstore/detail/twitch-username-and-user/laonpoebfalkjijglbjbnkfndibbcoon
+channelID=
+# Get your oauth key here: https://www.twitchapps.com/tmi/
+oauth=oauth:
+
+--TTS Settings--
+# Use TTS System?
+enabletts=false
+# Base speed = normal read speed, when the text is not too long
+# TTS speed can be between 1 and 10
+ttsbasespeed=3
+# Max speed = when the text is getting quit long, hurry up!
+ttsmaxspeed=7
+# n = notification sound, u = username, b = bridgeword, c = comment
+# EXAMPLE: 'order=ubc' Username, bridgeword, comment
+# EXAMPLE2: 'order=n' Just notification sound
+notificationExecutionOrder=ubc
+
+--Anti Spam Settings--
+# Meximum amount of characters the bot read out
+maxtextlength=100
+# Find 8 bad chars in a message and ignore it
+spamthreshold=8
+# Remove ASCII emojis when reading out, NOT Twitch emotes
+removeemojis=true
+# All the bad stuff in one place, feel free to add more
+badcharlist=!§$%&/()=?`^\{[]}#
+
+--Audio Device Settings--
+# Standard output device is 0 of your PC, leave these options empty to get asked which one you would like to use
+ttsoutputdevice=0
+soundboardoutputdevice=0
+notificationoutputdevice=0
+# Notification volume, value between 0 and 1
+notificationvolume=0.5
+# Text to Speech volume, value between 0 and 1
+ttsvolume=0.5
+# Soundboard volume, value between 0 and 1, for more adjustments see sound offset settings
+soundboardvolume=0.5
+
+--Command Identifier Settings--
+# The character to look in the chat, can be changed to anything else, exept empty
+commandcharacter=!
+# Only users on the whitelist can use this bot (Channel Point redemptions are not influenced by this)
+whitelistonly=false
+
+--Soundboard Settings--
+# Past path of externel folder here, leave empty for standard
+# EXAMPLE: folder=Z:\Soundeffects\Meme Collection
+customsoundboardfolder=
+# Cooldown of the specific user, can play sound after 90 seconds again
+usercooldown=90
+# Global cooldown, nobody can play a sound when it's active
+globalcooldown=0
+# Lower Bot spamming, ignore every incoming message for 30 seconds, if not completed task
+responsecooldown=30
+# Prevent sound stacking by putting in a intervall timer, idk if it actually works lul.
+soundinterval=0
+# Prevent spamming the same soundfile by putting the used file in cooldown connected to the user
+usesoundcooldown=true
+#Create Channel Point Redemptions with these names to trigger the Soundboard
+cpplayrandom=Play Random
+# The User have to type in something that these 3 work
+cpplayname=Play Name
+cpplayid=Play ID
+cpplayfolder=Play Folder

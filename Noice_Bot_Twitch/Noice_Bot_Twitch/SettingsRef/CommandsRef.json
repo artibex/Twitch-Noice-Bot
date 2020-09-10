@@ -1,0 +1,122 @@
+{
+  "noice": {
+    "name": "noice",
+    "help": "List all availeble commands"
+  },
+  "help": {
+    "name": "help",
+    "help": "List all availeble commands"
+  },
+
+  "ttson": {
+    "name": "ttson",
+    "help": "Turn on TTS"
+  },
+  "ttsoff": {
+    "name": "ttsoff",
+    "help": "Turn TTS off"
+  },
+  "ttsvol": {
+    "name": "ttsvol",
+    "help": "Change TTS Volume"
+  },
+  "ttsskip": {
+    "name": "ttsskip",
+    "help": "Skip current TTS line"
+  },
+  "ttsexecutionorder": {
+    "name": "ttsexecutionorder",
+    "help": "Adjust execution order u,b,c,n"
+  },
+  "ttsspeed": {
+    "name": "ttsspeed",
+    "help": "Basic read speed of TTS"
+  },
+  "ttsmaxspeed": {
+    "name": "ttsmaxspeed",
+    "help": "Maximum TTS read speed"
+  },
+  "ttstextlength": {
+    "name": "ttstextlength",
+    "help": "Maximum chars to read"
+  },
+  "ttsspamthreshold": {
+    "name": "ttsspamthreshold",
+    "help": "Set Spam threshold"
+  },
+  "ttsremoveemojis": {
+    "name": "ttsremoveemojis",
+    "help": "Allow ASCII emojis"
+  },
+  "ttsbadcharlist": {
+    "name": "ttsbadcharlist",
+    "help": "Set all bad chars"
+  },
+  "ttsread": {
+    "name": "ttsread",
+    "help": "Read out given Text"
+  },
+
+  "   ttsoutput": {
+    "name": "ttsoutput",
+    "help": "Set TTS device ID"
+  },
+  "soundboardoutput": {
+    "name": "soundboardoutput",
+    "help": "Set Soundboard device ID"
+  },
+  "notificationoutput": {
+    "name": "notificationoutput",
+    "help": "Set Notification device ID"
+  },
+
+  "notificationvol": {
+    "name": "notificationvol",
+    "help": "Change notification volume"
+  },
+
+  "play": {
+    "name": "play",
+    "help": "Play a soundeffect, name or ID"
+  },
+  "playrandom": {
+    "name": "play random",
+    "help": "Play a random soundeffect"
+  },
+  "sbvol": {
+    "name": "sbvol",
+    "help": "Change Soundboard volume"
+  },
+  "sbglobalcooldown": {
+    "name": "sbglobalcooldown",
+    "help": "Change the global cooldown of the Soundboard"
+  },
+  "sbusercooldown": {
+    "name": "sbusercooldown",
+    "help": "Change the user cooldown of the Soundboard"
+  },
+  "sbresponsecooldown": {
+    "name": "sbresponsecooldown",
+    "help": "Change the response cooldown of the Soundboard"
+  },
+  "sbsoundinterval": {
+    "name": "sbsoundinterval",
+    "help": "Change the sound interval cooldown of the Soundboard"
+  },
+  "sbsoundcooldownon": {
+    "name": "sbsoundcooldownon",
+    "help": "Enable Sound cooldown"
+  },
+  "sbsoundcooldownoff": {
+    "name": "sbsoundcooldownoff",
+    "help": "Disable Sound cooldown"
+  },
+  "sbreload": {
+    "name": "sbreload",
+    "help": "Reload Soundboard"
+  },
+  "reloadsettings": {
+    "name": "reloadsettings",
+    "help": "Reload All settings if changes where made in the configs"
+  }
+}

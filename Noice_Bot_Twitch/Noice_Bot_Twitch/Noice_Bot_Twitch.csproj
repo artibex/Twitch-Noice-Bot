@@ -152,6 +152,15 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+    <EmbeddedResource Include="SettingsRef\CommandsRef.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SettingsRef\whitelistRef.txt" />
+    <EmbeddedResource Include="SettingsRef\soundfileOffsetRef.txt" />
+    <EmbeddedResource Include="SettingsRef\bridgewordListRef.txt" />
+    <EmbeddedResource Include="SettingsRef\blacklistRef.txt" />
+    <EmbeddedResource Include="SettingsRef\aliaslistRef.txt" />
+    <EmbeddedResource Include="SettingsRef\settingsRef.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -4,6 +4,8 @@ using System.Linq;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Globalization;
+using System.Reflection;
+using Newtonsoft.Json.Linq;
 
 namespace Noice_Bot_Twitch
 {
@@ -18,8 +20,10 @@ namespace Noice_Bot_Twitch
         string bridgelistFile = @"BridgeWordList.txt"; //Bridgewords file name
         string whitelistFile = @"Whitelist.txt"; //Whitelist file name
         string soundOffsetFile = @"SoundfileOffset.txt"; //Soundboard offsets file name
+        string commandsFile = @"Commands.json";
 
         //Folder structure
+        string settingsFolder = @"Settings"; //Settings of the bot
         string soundEffectsFolder = @"Soundeffects"; //Soundeffects folder usually contains Notification folder and Soundboard folder
         string notificationSoundsFolder = @"Notifications"; //Notification sounds folder
         string soundBoardFolder = @"Soundboard"; //Soundboard folder name, can be defined via Settings file
@@ -50,15 +54,17 @@ namespace Noice_Bot_Twitch
                 //Load all notification sounds as paths
                 notificationList = Directory.GetFiles(path + @"\" + soundEffectsFolder + @"\" + notificationSoundsFolder).ToList();
 
-                settingsList = File.ReadAllLines(path + @"\" + settingsFile).ToList(); //Read "Settings.txt"
-                aliasList = File.ReadAllLines(path + @"\" + aliasFile).ToList(); //Read "Aliaslist.txt"
-                blackList = File.ReadAllLines(path + @"\" + blacklistFile).ToList(); //Read "Blacklist.txt"
-                bridgeWordList = File.ReadAllLines(path + @"\" + bridgelistFile).ToList(); //Read "BridgeWordList.txt"
-                whiteList = File.ReadAllLines(path + @"\" + whitelistFile).ToList(); //Read "Whitelist.txt"
+                settingsList = File.ReadAllLines(path + @"\" + settingsFolder + @"\" + settingsFile).ToList(); //Read "Settings.txt"
+                aliasList = File.ReadAllLines(path + @"\" + settingsFolder + @"\" + aliasFile).ToList(); //Read "Aliaslist.txt"
+                blackList = File.ReadAllLines(path + @"\" + settingsFolder + @"\" + blacklistFile).ToList(); //Read "Blacklist.txt"
+                bridgeWordList = File.ReadAllLines(path + @"\" + settingsFolder + @"\" + bridgelistFile).ToList(); //Read "BridgeWordList.txt"
+                whiteList = File.ReadAllLines(path + @"\" + settingsFolder + @"\" + whitelistFile).ToList(); //Read "Whitelist.txt"
+                //JObject obj = JObject.Parse(path + @"\" + settingsFolder + @"\" + commandsFile);
+
 
                 LoadSoundfiles(); //Check in the given path for soundfiles and put them in the list
                 UpdateSoundOffsetFile(); //Before loading the file, update it to check if new sounds are added
-                soundfileOffsetList = File.ReadAllLines(path + @"\" + soundOffsetFile).ToList(); //Load sound offset
+                soundfileOffsetList = File.ReadAllLines(path + @"\" + settingsFolder + @"\" + soundOffsetFile).ToList(); //Load sound offset
             } catch
             {
                 Console.WriteLine("Failed at loading files");
@@ -84,171 +90,113 @@ namespace Noice_Bot_Twitch
 
         void CheckFileExistence() //Does all the wanted files exist? No? Then Create them and put examples in it
         {
-            if(!File.Exists(path + @"\" + aliasFile)) //Alislist.txt
-            {
-                File.WriteAllText(path + @"\" + aliasFile, GenAliasFile());
-                Console.WriteLine("File: " + aliasFile + " was missing");
-            }
-            if (!File.Exists(path + @"\" + blacklistFile)) //Blacklist.txt
-            {
-                File.WriteAllText(path + @"\" + blacklistFile, GenBlacklisteFile());
-                Console.WriteLine("File: " + blacklistFile + " was missing");
-            }
-            if (!File.Exists(path + @"\" + bridgelistFile)) //Bridgelist.txt
-            {
-                File.WriteAllText(path + @"\" + bridgelistFile, GenBridgeListFile());
-                Console.WriteLine("File: " + bridgelistFile + " was missing");
-            }
-            if (!File.Exists(path + @"\" + whitelistFile)) //Whitelist.txt
-            {
-                File.WriteAllText(path + @"\" + whitelistFile, GenWhitelistFile());
-                Console.WriteLine("File: " + whitelistFile + " was missing");
-            }
-            if (!File.Exists(path + @"\" + settingsFile)) //Settings.txt
-            {
-                //Basic Conf, the user has to put in his own oauth key, channelname and Channel ID for Channel Point support
-                File.WriteAllText(path + @"\" + settingsFile, GenSettingsFile());
-                Console.WriteLine("File: " + settingsFile + " was missing");
-            }
-            if (!File.Exists(path + @"\" + soundOffsetFile)) //Soundoffsetfile.txt
-            {
-                //Sound effects offset file to adjust every sound if needed
-                File.WriteAllText(path + @"\" + soundOffsetFile, GenSoundOffsetFile());
-                Console.WriteLine("File: " + soundOffsetFile + " was missing");
-            }
-
             //Create Folder Structure for notifications and the soundboard if not existing
             if (!Directory.Exists(path + @"\" + soundEffectsFolder)) Directory.CreateDirectory(path + @"\" + soundEffectsFolder);
             if (!Directory.Exists(path + @"\" + soundEffectsFolder + @"\" + notificationSoundsFolder)) Directory.CreateDirectory(path + @"\" + soundEffectsFolder + @"\" + notificationSoundsFolder);
             if (!Directory.Exists(path + @"\" + soundEffectsFolder + @"\" + soundBoardFolder)) Directory.CreateDirectory(path + @"\" + soundEffectsFolder + @"\" + soundBoardFolder);
+            if (!Directory.Exists(path + @"\" + settingsFolder)) Directory.CreateDirectory(path + @"\" + settingsFolder);
+
+            if (!File.Exists(path + @"\" + settingsFolder + @"\" + aliasFile)) //Alislist.txt
+            {
+                var assembly = Assembly.GetExecutingAssembly();
+                var resourceName = "Noice_Bot_Twitch.SettingsRef.aliaslistRef.txt";
+
+                using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    string result = reader.ReadToEnd();
+                    File.WriteAllText(path + @"\" + settingsFolder + @"\" + aliasFile, result);
+                }
+                Console.WriteLine("File: " + aliasFile + " was missing");
+            }
+            if (!File.Exists(path + @"\" + settingsFolder + @"\" + blacklistFile)) //Blacklist.txt
+            {
+                var assembly = Assembly.GetExecutingAssembly();
+                var resourceName = "Noice_Bot_Twitch.SettingsRef.blacklistRef.txt";
+
+                using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    string result = reader.ReadToEnd();
+                    File.WriteAllText(path + @"\" + settingsFolder + @"\" + blacklistFile, result);
+                }
+                Console.WriteLine("File: " + blacklistFile + " was missing");
+            }
+            if (!File.Exists(path + @"\" + settingsFolder + @"\" +  bridgelistFile)) //BridgeWordlist.txt
+            {
+                var assembly = Assembly.GetExecutingAssembly();
+                var resourceName = "Noice_Bot_Twitch.SettingsRef.bridgewordListRef.txt";
+
+                using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    string result = reader.ReadToEnd();
+                    File.WriteAllText(path + @"\" + settingsFolder + @"\" + bridgelistFile, result);
+                }
+                Console.WriteLine("File: " + bridgelistFile + " was missing");
+            }
+            if (!File.Exists(path + @"\" + settingsFolder + @"\" + whitelistFile)) //Whitelist.txt
+            {
+                var assembly = Assembly.GetExecutingAssembly();
+                var resourceName = "Noice_Bot_Twitch.SettingsRef.whitelistRef.txt";
+
+                using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    string result = reader.ReadToEnd();
+                    File.WriteAllText(path + @"\" + settingsFolder + @"\" + whitelistFile, result);
+                }
+                Console.WriteLine("File: " + whitelistFile + " was missing");
+            }
+            if (!File.Exists(path + @"\" + settingsFolder + @"\" + settingsFile)) //Settings.txt
+            {
+                //Basic Conf, the user has to put in his own oauth key, channelname and Channel ID for Channel Point support
+                var assembly = Assembly.GetExecutingAssembly();
+                var resourceName = "Noice_Bot_Twitch.SettingsRef.settingsRef.txt";
+
+                using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    string result = reader.ReadToEnd();
+                    File.WriteAllText(path + @"\" + settingsFolder + @"\" + settingsFile, result);
+                }
+                Console.WriteLine("File: " + settingsFile + " was missing");
+            }
+            if (!File.Exists(path + @"\" + settingsFolder + @"\" +  soundOffsetFile)) //Soundoffsetfile.txt
+            {
+                //Sound effects offset file to adjust every sound if needed
+                var assembly = Assembly.GetExecutingAssembly();
+                var resourceName = "Noice_Bot_Twitch.SettingsRef.soundfileOffsetRef.txt";
+
+                using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    string result = reader.ReadToEnd();
+                    result += "\n" + GenSoundfileOffsetList();
+                    File.WriteAllText(path + @"\" + settingsFolder + @"\" + soundOffsetFile, result);
+                }
+                Console.WriteLine("File: " + soundOffsetFile + " was missing");
+            }
+            if (!File.Exists(path + @"\" + settingsFolder + @"\" + commandsFile)) //Commands.json
+            {
+                //Basic Conf, the user has to put in his own oauth key, channelname and Channel ID for Channel Point support
+                var assembly = Assembly.GetExecutingAssembly();
+                var resourceName = "Noice_Bot_Twitch.SettingsRef.CommandsRef.json";
+
+                using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    string result = reader.ReadToEnd();
+                    File.WriteAllText(path + @"\" + settingsFolder + @"\" + commandsFile, result);
+                }
+                Console.WriteLine("File: " + commandsFile + " was missing");
+            }
         }
 
         //File Generation, just a simple string that will be pasted in to the file
-        String GenAliasFile()
+        String GenSoundfileOffsetList()
         {
-            string str = @"Korpsian,the-developer
-User1,CoolKid
-USER2,NiceDude
-UsEr3,TrollyDude
-";
-            return str;
-        }
-        String GenBlacklisteFile()
-        {
-            string str = @"YourBot
-TrollKid69420
-HahaFunnyGuy1
-User1
-user2
-USER3
-Korpsian
-";
-            return str;
-        }
-        String GenBridgeListFile()
-        {
-            string str = @"says
-say
-speaks
-writes
-tells
-";
-            return str;
-        }
-        String GenWhitelistFile()
-        {
-            string str = @"User1
-USER2
-YourMods
-Yourself
-YourBro42069
-";
-            return str;
-        }
-        String GenSettingsFile()
-        {
-            string str = @"#See the GitHub Page for how to use this file correctly
---IRC Settings--
-ircclient=irc.twitch.tv
-port=6667
-# The Botname is currenlty not displayed in the chat, idk if I even need it?
-botname=noisebot
-channelname=
-# Get your ID with this: https://chrome.google.com/webstore/detail/twitch-username-and-user/laonpoebfalkjijglbjbnkfndibbcoon
-channelID=
-# Get your oauth key here: https://www.twitchapps.com/tmi/
-oauth=oauth:
-
---TTS Settings--
-# Base speed = normal read speed, when the text is not too long
-# TTS speed can be between 1 and 10
-ttsbasespeed=3
-# Max speed = when the text is getting quit long, hurry up!
-ttsmaxspeed=7
-# n = notification sound, u = username, b = bridgeword, c = comment
-# EXAMPLE: 'order=ubc' Username, bridgeword, comment
-# EXAMPLE2: 'order=n' Just notification sound
-notificationExecutionOrder=
-
---Anti Spam Settings--
-# Meximum amount of characters the bot read out
-maxtextlength=100
-# Find 8 bad chars in a message and ignore it
-spamthreshold=8
-# Remove ASCII emojis when reading out, NOT Twitch emotes
-removeemojis=true
-# All the bad stuff in one place, feel free to add more
-badcharlist=!§$%&/()=?`^\{[]}#
-
---Audio Device Settings--
-# Standard output device is 0 of your PC, leave these options empty to get asked which one you would like to use
-ttsoutputdevice=0
-soundboardoutputdevice=0
-notificationoutputdevice=0
-# Notification volume, value between 0 and 1
-notificationvolume=0.5
-# Text to Speech volume, value between 0 and 1
-ttsvolume=0.5
-# Soundboard volume, value between 0 and 1, for more adjustments see sound offset settings
-soundboardvolume=0.5
-
---Command Identifier Settings--
-# The character to look in the chat, can be changed to anything else, exept empty
-commandcharacter=!
-# Only users on the whitelist can use this bot (Channel Point redemptions are not influenced by this)
-whitelistonly=false
-
---Soundboard Settings--
-# Past path of externel folder here, leave empty for standard
-# EXAMPLE: customsoundboardfolder=Z:\Soundeffects\Meme Collection
-customsoundboardfolder=
-# Cooldown of the specific user, can play sound after 90 seconds again
-usercooldown=90
-# Global cooldown, nobody can play a sound when it's active
-globalcooldown=0
-# Lower Bot spamming, ignore every incoming message for 30 seconds, if not completed task
-responsecooldown=30
-# Prevent sound stacking by putting in a intervall timer, idk if it actually works lul.
-soundinterval=0
-# Prevent spamming the same soundfile by putting the used file in cooldown connected to the user
-usesoundcooldown=true
-#Create Channel Point Redemptions with these names to trigger the Soundboard
-cpplayrandom=Play Random
-# The User have to type in something that these 3 work
-cpplayname=Play Name
-cpplayid=Play ID
-cpplayfolder=Play Folder
-";
-            return str;
-        }
-        
-        String GenSoundOffsetFile()
-        {
-            string str = @"---Filename, Volume offset, Timeout offset---
---- Volume Offset between -0.5 and +0.5 (don't forget to put + and - infront of it)
---- Timeout offset can be between -9999 and +9999 or bigger (don't forget to put + and - infront of it)
-            //soundfile name, volume offset (+ or - e.g.: -0.2, +0.3), timeout offset (e.g.:-10,+30)";
-            str += "\n";
+            string str = "";
             if (soundFiles != null)
             {
                 foreach (string path in soundFiles)
@@ -267,10 +215,10 @@ cpplayfolder=Play Folder
             List<String> newData = new List<string>();
 
             //If the file dows not exist, generate it first
-            if (File.Exists(path + @"\" + soundOffsetFile)) //Soundoffsetfile.txt
+            if (File.Exists(path + @"\" + settingsFolder + @"\" + soundOffsetFile)) //Soundoffsetfile.txt
             {
                 //Read every colum in the file
-                data = File.ReadAllLines(path + @"\" + soundOffsetFile).ToList();
+                data = File.ReadAllLines(path + @"\" + settingsFolder + @"\" + soundOffsetFile).ToList();
 
                 //For each soundfile check if it's in the list
                 foreach(string soundfilePath in soundFiles)
@@ -309,7 +257,7 @@ cpplayfolder=Play Folder
                     //Write the file
                     File.WriteAllText(path + @"\" + soundOffsetFile, writingData);
                 }
-            } else GenSoundOffsetFile(); //If the file does not exist, create it
+            } else GenSoundfileOffsetList(); //If the file does not exist, create it
         }
 
         //#### Getter Methods for all kind of stuff ####
@@ -538,6 +486,21 @@ cpplayfolder=Play Folder
             return "";
         }
         //Text to Speech output device number, ask for one if null
+        public bool GetUseTTS()
+        {
+            foreach (string s in settingsList)
+            {
+                if (s.Contains("enabletts=") && s.Length > 10)
+                {
+                    string str = s.Substring(s.IndexOf("=") + 1);
+                    if (str.Contains("true")) return true;
+                    if (str.Contains("false")) return false;
+                }
+            }
+            return false;
+        }
+
+
         public int GetTTSOutputDeviceID()
         {
             foreach (string s in settingsList)
@@ -752,37 +715,45 @@ cpplayfolder=Play Folder
         //All paths to the soundfiles
         public List<String> GetSoundfiles()
         {
-            return soundFiles;
+            if (soundFiles != null) return soundFiles;
+            else return new List<string>(); //If list is null, return empty list
         }
         //All the subdirektories of the soundboard, these are new libraries that can be also triggerd
         public List<String> GetSoundboardSubdirektories()
         {
-            return soundboardSubdirektories;
+            if (soundboardSubdirektories != null) return soundboardSubdirektories;
+            else return new List<string>(); //If list is null, return empty list
         }
         //Offsets of every soundfile
         public List<String> GetSoundfileOffsetList()
         {
-            return soundfileOffsetList;
+            if(soundfileOffsetList != null) return soundfileOffsetList;
+            else return new List<string>(); //If list is null, return empty list
         }
         //Return the created String lists
         //All the bad peoples in your small little life, these are extra bad, right?
         public List<String> GetBlackList()
         {
-            return blackList;
+            if(blacklistFile != null) return blackList;
+            else return new List<string>(); //If list is null, return empty list
         }
         //The magical bridge that connects the username with his comment. Hand in hand they will exist in a perfect sentence. 
         public List<String> GetBridgeWordList()
         {
-            return bridgeWordList;        }
+            if(bridgeWordList != null) return bridgeWordList;
+            else return new List<string>(); //If list is null, return empty list
+        }
         //Convert any boring, uncool username in 'John' or 'Yo mama'
         public List<String> GetAliasList()
         {
-            return aliasList;
+            if(aliasList != null) return aliasList;
+            else return new List<string>(); //If list is null, return empty list
         }
         //All the nice guy's in one place. These people can use the force/pressing F on the Keyboard at the perfect timing + Can use bot commands (but that's kinda boring)
         public List<String> GetWhiteList()
         {
-            return whiteList;
+            if(whiteList != null) return whiteList;
+            else return new List<string>(); //If list is null, return empty list
         }
         //Returns a easy to write soundfile name
         public string GetSoundname(string path)

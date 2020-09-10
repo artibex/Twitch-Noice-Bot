@@ -61,7 +61,7 @@ namespace Noice_Bot_Twitch
                 string ttsText = ""; //The text how it should be converted to speech
 
                 //If the Comment is not empty or just spaces execute a notification
-                if (!String.IsNullOrWhiteSpace(c.user) && !String.IsNullOrWhiteSpace(c.comment) && !cp.CheckBlacklist(c) && executionOrder != "")
+                if (!String.IsNullOrWhiteSpace(c.user) && !String.IsNullOrWhiteSpace(c.comment) && !cp.CheckBlacklist(c) && executionOrder != "" && fm.GetUseTTS())
                 {
                     foreach (char exe in executionOrder)
                     {

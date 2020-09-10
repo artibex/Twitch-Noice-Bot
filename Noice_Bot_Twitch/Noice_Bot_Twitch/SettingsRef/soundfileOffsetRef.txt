@@ -1,0 +1,4 @@
+﻿---Filename, Volume offset, Timeout offset---
+--- Volume Offset between -0.5 and +0.5 (don't forget to put + and - infront of it)
+--- Timeout offset can be between -9999 and +9999 or bigger (don't forget to put + and - infront of it)
+//soundfile name, volume offset (+ or - e.g.: -0.2, +0.3), timeout offset (e.g.: mycoolsound,-10,+30)
