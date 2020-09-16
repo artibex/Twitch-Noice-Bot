@@ -27,7 +27,7 @@
         {
             if(c.comment != null && c.comment.StartsWith(commandCharacter))
             {
-                if (whitelistOnly) //Check if only whitelisted people are allowed (Channel Point's work allways)
+                if (whitelistOnly) //Check if only whitelisted people are allowed (Channel Point redemption work allways)
                 {
                     foreach (string s in fm.GetWhiteList()) if (c.user.ToLower() == s.ToLower()) sm.PlaySoundeffect(c);
                 } else sm.PlaySoundeffect(c);

@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Globalization;
 using System.Reflection;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace Noice_Bot_Twitch
 {
@@ -60,7 +61,6 @@ namespace Noice_Bot_Twitch
                 bridgeWordList = File.ReadAllLines(path + @"\" + settingsFolder + @"\" + bridgelistFile).ToList(); //Read "BridgeWordList.txt"
                 whiteList = File.ReadAllLines(path + @"\" + settingsFolder + @"\" + whitelistFile).ToList(); //Read "Whitelist.txt"
                 //JObject obj = JObject.Parse(path + @"\" + settingsFolder + @"\" + commandsFile);
-
 
                 LoadSoundfiles(); //Check in the given path for soundfiles and put them in the list
                 UpdateSoundOffsetFile(); //Before loading the file, update it to check if new sounds are added

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using TwitchLib.PubSub;
 using TwitchLib.PubSub.Events;
 
@@ -19,6 +20,8 @@ namespace Noice_Bot_Twitch
 
             //Connect PubSub events with custom Methods
             pubsub.OnPubSubServiceConnected += Pubsub_OnPubSubServiceConnected;
+            pubsub.OnPubSubServiceClosed += Pubsub_OnPubSubServiceDisconnect; //Reconnect if connection is lost
+            pubsub.OnPubSubServiceError += Pubsub_OnPubSubServiceError; //Reconnect if error
             pubsub.OnListenResponse += Pubsub_OnListenResponse;
             pubsub.OnRewardRedeemed += Pubsub_OnRewardRedeemed;
             //pubsub.OnBitsReceived += Pubsub_OnBitsReceived; //Unused
@@ -39,6 +42,21 @@ namespace Noice_Bot_Twitch
             pubsub.ListenToRewards(fm.GetChannelID()); //Set Channel ID
             pubsub.SendTopics(fm.GetOAuth()); //Give OAuth Key and connect
         }
+
+        private void Pubsub_OnPubSubServiceError(object sender, System.EventArgs e)
+        {
+            Console.WriteLine("Some Pubsub Error Occured, try to reconnect");
+            Console.WriteLine(e);
+            Pubsub_OnPubSubServiceConnected(sender, e);
+        }
+        private void Pubsub_OnPubSubServiceDisconnect(object sender, System.EventArgs e)
+        {
+            Console.WriteLine("PubSub got Disconnected, try to reconnect");
+            Console.WriteLine(e);
+            Pubsub_OnPubSubServiceConnected(sender, e);
+
+        }
+
 
         //Give feedback if connected sucessfully or failed
         private void Pubsub_OnListenResponse(object sender, OnListenResponseArgs e)
