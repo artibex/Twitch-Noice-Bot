@@ -7,12 +7,13 @@ using System.Threading;
 namespace Noice_Bot_Twitch
 {
     //Speaker to play soundfiles
-    class Speaker : IDisposable
+    public class Speaker : IDisposable
     {
         string filepath; //Path to file to play
         bool deleteFile; //Should the file be deleted after using?
         int outputDeviceID; //ID where to play
         float volume = 0.9f; //Volume of speaker (Is global, need to create a mixer I think)
+        public bool stop = false; //Bool to stop current speaker
 
         //Init
         public Speaker(string filepath, int outputDeviceID, float volume, bool deleteFile, bool newThread)
@@ -52,8 +53,10 @@ namespace Noice_Bot_Twitch
                 while (tempWave.PlaybackState != PlaybackState.Stopped)
                 {
                     //Wait and continue when finished
+                    if (stop) tempWave.Stop();
                 }
 
+                AudioMixer.RemoveSpeaker(this); //Remove Speaker from lists
                 reader.Dispose(); //Dispose reader
                 tempWave.Dispose(); //Dispose wave
 

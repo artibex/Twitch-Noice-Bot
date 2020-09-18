@@ -5,62 +5,69 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Globalization;
 using System.Reflection;
-using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 
 namespace Noice_Bot_Twitch
 {
     //This class Manages all Files the bot needs to operate
-    class FileManager
+    public static class FileManager
     {
         //Path and Filenames of every used file
-        string path;
-        string settingsFile = @"Settings.txt"; //Settings file name
-        string aliasFile = @"Aliaslist.txt"; //Alias file name
-        string blacklistFile = @"Blacklist.txt"; //Blacklist file name
-        string bridgelistFile = @"BridgeWordList.txt"; //Bridgewords file name
-        string whitelistFile = @"Whitelist.txt"; //Whitelist file name
-        string soundOffsetFile = @"SoundfileOffset.txt"; //Soundboard offsets file name
-        string commandsFile = @"Commands.json";
+        static string path;
+        static string settingsFile = @"Settings.txt"; //Settings file name
+        static string aliasFile = @"Aliaslist.txt"; //Alias file name
+        static string blacklistFile = @"Blacklist.txt"; //Blacklist file name
+        static string bridgelistFile = @"BridgeWordList.txt"; //Bridgewords file name
+        static string whitelistFile = @"Whitelist.txt"; //Whitelist file name
+        static string soundOffsetFile = @"SoundfileOffset.txt"; //Soundboard offsets file name
+        static string commandsFile = @"Commands.json";
 
         //Folder structure
-        string settingsFolder = @"Settings"; //Settings of the bot
-        string soundEffectsFolder = @"Soundeffects"; //Soundeffects folder usually contains Notification folder and Soundboard folder
-        string notificationSoundsFolder = @"Notifications"; //Notification sounds folder
-        string soundBoardFolder = @"Soundboard"; //Soundboard folder name, can be defined via Settings file
+        static string settingsFolder = @"Settings"; //Settings of the bot
+        static string soundEffectsFolder = @"Soundeffects"; //Soundeffects folder usually contains Notification folder and Soundboard folder
+        static string notificationSoundsFolder = @"Notifications"; //Notification sounds folder
+        static string soundBoardFolder = @"Soundboard"; //Soundboard folder name, can be defined via Settings file
 
         //Alias List, Blacklist, Whitelist, Settings
-        List<String> aliasList; //Loaded Aliases
-        List<String> blackList; //Loaded Blacklist
-        List<String> bridgeWordList; //Loaded Bridgewords
-        List<String> whiteList; //Loaded Whitelist
-        List<String> settingsList; //Loaded Settings
-        List<String> notificationList; //Paths to the notifications sounds
-        List<String> soundFiles; //All the Soundfiles as Path
-        List<String> soundboardSubdirektories; //Subdirektories of the soundboard folder
-        List<String> soundfileOffsetList; //Loaded offsets of soundfiles
+        static List<String> aliasList; //Loaded Aliases
+        static List<String> blackList; //Loaded Blacklist
+        static List<String> bridgeWordList; //Loaded Bridgewords
+        static List<String> whiteList; //Loaded Whitelist
+        static List<String> settingsList; //Loaded Settings
+        static List<String> notificationList; //Paths to the notifications sounds
+        static List<String> soundFiles; //All the Soundfiles as Path
+        static List<String> soundboardSubdirektories; //Subdirektories of the soundboard folder
+        static List<String> soundfileOffsetList; //Loaded offsets of soundfiles
+        static List<Command> commands;
 
         //Init Filemanager
-        public FileManager()
+        //public static FileManager()
+        //{
+        //    path = Directory.GetCurrentDirectory(); //Get the current execution Directory
+        //    LoadFiles(); //Load the files into string lists
+        //    CheckFileExistence(); //Check file existance of all needed files, create missing ones (with examples)
+        //}
+
+        public static void LoadSettings()
         {
             path = Directory.GetCurrentDirectory(); //Get the current execution Directory
             LoadFiles(); //Load the files into string lists
             CheckFileExistence(); //Check file existance of all needed files, create missing ones (with examples)
         }
 
-        public void LoadFiles() //Load all the Files
+        public static void LoadFiles() //Load all the Files
         {
             try //If an error occures while trying to load a file check the existence
             {
                 //Load all notification sounds as paths
                 notificationList = Directory.GetFiles(path + @"\" + soundEffectsFolder + @"\" + notificationSoundsFolder).ToList();
-
+                
                 settingsList = File.ReadAllLines(path + @"\" + settingsFolder + @"\" + settingsFile).ToList(); //Read "Settings.txt"
                 aliasList = File.ReadAllLines(path + @"\" + settingsFolder + @"\" + aliasFile).ToList(); //Read "Aliaslist.txt"
                 blackList = File.ReadAllLines(path + @"\" + settingsFolder + @"\" + blacklistFile).ToList(); //Read "Blacklist.txt"
                 bridgeWordList = File.ReadAllLines(path + @"\" + settingsFolder + @"\" + bridgelistFile).ToList(); //Read "BridgeWordList.txt"
                 whiteList = File.ReadAllLines(path + @"\" + settingsFolder + @"\" + whitelistFile).ToList(); //Read "Whitelist.txt"
-                //JObject obj = JObject.Parse(path + @"\" + settingsFolder + @"\" + commandsFile);
+                commands = JsonConvert.DeserializeObject<List<Command>>(File.ReadAllText(path + @"\" + settingsFolder + @"\" + commandsFile));
 
                 LoadSoundfiles(); //Check in the given path for soundfiles and put them in the list
                 UpdateSoundOffsetFile(); //Before loading the file, update it to check if new sounds are added
@@ -74,7 +81,7 @@ namespace Noice_Bot_Twitch
         }
 
         //Load all soundfiles in a given path
-        void LoadSoundfiles()
+        static void LoadSoundfiles()
         {
             soundFiles = new List<string>();
             //Check all files in direktory and subdirektories and add every supported file to the list
@@ -88,7 +95,7 @@ namespace Noice_Bot_Twitch
             }
         }
 
-        void CheckFileExistence() //Does all the wanted files exist? No? Then Create them and put examples in it
+        static void CheckFileExistence() //Does all the wanted files exist? No? Then Create them and put examples in it
         {
             //Create Folder Structure for notifications and the soundboard if not existing
             if (!Directory.Exists(path + @"\" + soundEffectsFolder)) Directory.CreateDirectory(path + @"\" + soundEffectsFolder);
@@ -194,7 +201,7 @@ namespace Noice_Bot_Twitch
         }
 
         //File Generation, just a simple string that will be pasted in to the file
-        String GenSoundfileOffsetList()
+        static String GenSoundfileOffsetList()
         {
             string str = "";
             if (soundFiles != null)
@@ -207,9 +214,9 @@ namespace Noice_Bot_Twitch
             }
             else return str;
         }
-        
+
         //Update the Soundeffects offset file with new found soundeffects, this will not delete any out
-        void UpdateSoundOffsetFile()
+        static void UpdateSoundOffsetFile()
         {
             List<String> data = new List<string>();
             List<String> newData = new List<string>();
@@ -262,12 +269,12 @@ namespace Noice_Bot_Twitch
 
         //#### Getter Methods for all kind of stuff ####
         //Get the directory where the bot got started
-        public string GetPath()
+        public static string GetPath()
         {
             return path;
         }
         //Get the path where the Soundboard is
-        public string GetSoundboardPath()
+        public static string GetSoundboardPath()
         {
             //See if a custom path was given
             foreach (string s in settingsList)
@@ -282,24 +289,24 @@ namespace Noice_Bot_Twitch
         }
 
         //Get the Alias file name
-        public string GetAliasFile()
+        public static string GetAliasFile()
         {
             return aliasFile;
         }
         //Get the Blacklist file name
-        public string GetBlacklistFile()
+        public static string GetBlacklistFile()
         {
             return blacklistFile;
         }
         //Get the Whitelist file name
-        public string GetWhitelistFile()
+        public static string GetWhitelistFile()
         {
             return whitelistFile;
         }
 
         //###Get Specific Settings out of the Settings.txt
         //irc.twitch.tv or other irc capeble plattform
-        public string GetIrcClient()
+        public static string GetIrcClient()
         {
             foreach(string s in settingsList)
             {
@@ -312,7 +319,7 @@ namespace Noice_Bot_Twitch
             return null;
         }
         //Port to connect to IRC server
-        public int GetPort()
+        public static int GetPort()
         {
             foreach (string s in settingsList)
             {
@@ -329,7 +336,7 @@ namespace Noice_Bot_Twitch
             return 0;
         }
         //Name of the bot, possibly useless?
-        public string GetBotName()
+        public static string GetBotName()
         {
             foreach (string s in settingsList)
             {
@@ -342,7 +349,7 @@ namespace Noice_Bot_Twitch
             return null;
         }
         //Name of the channel to connect to
-        public string GetChannelName()
+        public static string GetChannelName()
         {
             foreach (string s in settingsList)
             {
@@ -355,7 +362,7 @@ namespace Noice_Bot_Twitch
             return null;
         }
         //Chanel ID used for Channel Point redemption, you need a tool to get your Channel ID
-        public string GetChannelID()
+        public static string GetChannelID()
         {
             foreach (string s in settingsList)
             {
@@ -369,7 +376,7 @@ namespace Noice_Bot_Twitch
 
         }
         //Oauth Key, needed for connecting to the chat
-        public string GetOAuth()
+        public static string GetOAuth()
         {
             foreach (string s in settingsList)
             {
@@ -382,7 +389,7 @@ namespace Noice_Bot_Twitch
             return null;
         } //IRC Settings
         //Basic Text to Speech Speed, how slow is it?
-        public int GetTTSBaseSpeed()
+        public static int GetTTSBaseSpeed()
         {
             foreach (string s in settingsList)
             {
@@ -398,7 +405,7 @@ namespace Noice_Bot_Twitch
             return -11;
         }//TTS Settings
         //Max speed of Test to Speech, gotta go extra fast today
-        public int GetTTSMaxSpeed()
+        public static int GetTTSMaxSpeed()
         {
             foreach (string s in settingsList)
             {
@@ -414,7 +421,7 @@ namespace Noice_Bot_Twitch
             return -11;
         } //TTS Settings
         //How much talking without a pause can you handle?
-        public int GetMaxTextLength() //Anti Spam
+        public static int GetMaxTextLength() //Anti Spam
         {
             foreach (string s in settingsList)
             {
@@ -430,7 +437,7 @@ namespace Noice_Bot_Twitch
             return 0;
         }
         //Maximum amount of bad trashy chars in a comment to read out
-        public int GetSpamThreshold()
+        public static int GetSpamThreshold()
         {
             foreach (string s in settingsList)
             {
@@ -446,7 +453,7 @@ namespace Noice_Bot_Twitch
             return 0;
         } //Anti Spam
         //Trust me, you don't want to  hear ASCII emojis. But if you hate yourself, go for it ofc.
-        public bool GetRemoveEmojis()
+        public static bool GetRemoveEmojis()
         {
             foreach (string s in settingsList)
             {
@@ -460,7 +467,7 @@ namespace Noice_Bot_Twitch
             return false;
         }
         //Should also be the soundfile on cooldown? Or do you want to hear the same funny haha.mp3 50 times in a row?
-        public bool GetUseSoundcooldown()
+        public static bool GetUseSoundcooldown()
         {
             foreach (string s in settingsList)
             {
@@ -474,7 +481,7 @@ namespace Noice_Bot_Twitch
             return false;
         }
         //This is the bad stuff. Be aware of it and your wallet.
-        public string GetBadCharList()
+        public static string GetBadCharList()
         {
             foreach (string s in settingsList)
             {
@@ -486,7 +493,7 @@ namespace Noice_Bot_Twitch
             return "";
         }
         //Text to Speech output device number, ask for one if null
-        public bool GetUseTTS()
+        public static bool GetUseTTS()
         {
             foreach (string s in settingsList)
             {
@@ -501,7 +508,7 @@ namespace Noice_Bot_Twitch
         }
 
 
-        public int GetTTSOutputDeviceID()
+        public static int GetTTSOutputDeviceID()
         {
             foreach (string s in settingsList)
             {
@@ -517,7 +524,7 @@ namespace Noice_Bot_Twitch
             return -2;
         }
         //Get soundboard output device number, ask for one if null
-        public int GetSoundboardOutputDeviceID()
+        public static int GetSoundboardOutputDeviceID()
         {
             foreach (string s in settingsList)
             {
@@ -533,7 +540,7 @@ namespace Noice_Bot_Twitch
             return -2;
         }
         //Get notification output device number, ask for one if null
-        public int GetNotificationOutputDeviceID()
+        public static int GetNotificationOutputDeviceID()
         {
             foreach (string s in settingsList)
             {
@@ -549,7 +556,7 @@ namespace Noice_Bot_Twitch
             return -2;
         } //Audio Device Settings
         //Get in what order the comment should be read out, leave empty for nothing
-        public string GetNotificationExecutionOrder()
+        public static string GetNotificationExecutionOrder()
         {
             foreach (string s in settingsList)
             {
@@ -561,7 +568,7 @@ namespace Noice_Bot_Twitch
             return "";
         } //IRC Settings
         //Volume of notification
-        public float GetNotificationVolume()
+        public static float GetNotificationVolume()
         {
             foreach (string s in settingsList)
             {
@@ -581,7 +588,7 @@ namespace Noice_Bot_Twitch
             return 0.5f;
         }
         //Text to Speech volume
-        public float GetTTSVolume()
+        public static float GetTTSVolume()
         {
             foreach (string s in settingsList)
             {
@@ -600,7 +607,7 @@ namespace Noice_Bot_Twitch
             return 0.5f;
         }
         //Soundboard base volume (offset will change more)
-        public float GetSoundboardVolume()
+        public static float GetSoundboardVolume()
         {
             foreach (string s in settingsList)
             {
@@ -621,7 +628,7 @@ namespace Noice_Bot_Twitch
 
         }
         //Special character to look for. '!' is standard
-        public String GetCommandCharacter()
+        public static String GetCommandCharacter()
         {
             foreach (string s in settingsList)
             {
@@ -634,7 +641,7 @@ namespace Noice_Bot_Twitch
             return null;
         }
         //Your personal cool kids list
-        public bool GetWhitelistOnly()
+        public static bool GetWhitelistOnly()
         {
             foreach (string s in settingsList)
             {
@@ -649,7 +656,7 @@ namespace Noice_Bot_Twitch
 
         }
         //User cooldown, how much time for THIS specific user
-        public int GetUserCooldown()
+        public static int GetUserCooldown()
         {
             foreach (string s in settingsList)
             {
@@ -665,7 +672,7 @@ namespace Noice_Bot_Twitch
             return 0;
         }
         //Globally cool, nobody allowed to touch. Bad touch till time over.
-        public int GetGlobalCooldown()
+        public static int GetGlobalCooldown()
         {
             foreach (string s in settingsList)
             {
@@ -681,7 +688,7 @@ namespace Noice_Bot_Twitch
             return 0;
         }
         //No bot error respone for a specific time window
-        public int GetResponseCooldown()
+        public static int GetResponseCooldown()
         {
             foreach (string s in settingsList)
             {
@@ -697,7 +704,7 @@ namespace Noice_Bot_Twitch
             return 0;
         }
         //Idk if this even works? 2 soundfiles are requested at the same time, put this time in between when playing to strech out the sound stacking
-        public int GetSoundInterval()
+        public static int GetSoundInterval()
         {
             foreach (string s in settingsList)
             {
@@ -713,50 +720,56 @@ namespace Noice_Bot_Twitch
             return 0;
         }
         //All paths to the soundfiles
-        public List<String> GetSoundfiles()
+        public static List<String> GetSoundfiles()
         {
             if (soundFiles != null) return soundFiles;
             else return new List<string>(); //If list is null, return empty list
         }
         //All the subdirektories of the soundboard, these are new libraries that can be also triggerd
-        public List<String> GetSoundboardSubdirektories()
+        public static List<String> GetSoundboardSubdirektories()
         {
             if (soundboardSubdirektories != null) return soundboardSubdirektories;
             else return new List<string>(); //If list is null, return empty list
         }
         //Offsets of every soundfile
-        public List<String> GetSoundfileOffsetList()
+        public static List<String> GetSoundfileOffsetList()
         {
             if(soundfileOffsetList != null) return soundfileOffsetList;
             else return new List<string>(); //If list is null, return empty list
         }
         //Return the created String lists
         //All the bad peoples in your small little life, these are extra bad, right?
-        public List<String> GetBlackList()
+        public static List<String> GetBlackList()
         {
             if(blacklistFile != null) return blackList;
             else return new List<string>(); //If list is null, return empty list
         }
         //The magical bridge that connects the username with his comment. Hand in hand they will exist in a perfect sentence. 
-        public List<String> GetBridgeWordList()
+        public static List<String> GetBridgeWordList()
         {
             if(bridgeWordList != null) return bridgeWordList;
             else return new List<string>(); //If list is null, return empty list
         }
         //Convert any boring, uncool username in 'John' or 'Yo mama'
-        public List<String> GetAliasList()
+        public static List<String> GetAliasList()
         {
             if(aliasList != null) return aliasList;
             else return new List<string>(); //If list is null, return empty list
         }
         //All the nice guy's in one place. These people can use the force/pressing F on the Keyboard at the perfect timing + Can use bot commands (but that's kinda boring)
-        public List<String> GetWhiteList()
+        public static List<String> GetWhiteList()
         {
             if(whiteList != null) return whiteList;
             else return new List<string>(); //If list is null, return empty list
         }
         //Returns a easy to write soundfile name
-        public string GetSoundname(string path)
+        public static List<Command> GetCommandsList()
+        {
+            if (commands != null) return commands;
+            else return new List<Command>();
+        }
+        
+        public static string GetSoundname(string path)
         {
             string str = path.Substring(path.LastIndexOf(@"\") + 1);
             str = Regex.Replace(str, @"\s+", "");
@@ -768,7 +781,7 @@ namespace Noice_Bot_Twitch
 
         //Get Channel Points Redemption Names
         //Play random with this Redemption
-        public string GetCPPlayRandom()
+        public static string GetCPPlayRandom()
         {
             foreach (string s in settingsList)
             {
@@ -781,7 +794,7 @@ namespace Noice_Bot_Twitch
             return null;
         }
         //Play specific sound file with this Redemption
-        public string GetCPPlayName()
+        public static string GetCPPlayName()
         {
             foreach (string s in settingsList)
             {
@@ -794,7 +807,7 @@ namespace Noice_Bot_Twitch
             return null;
         }
         //Play specific sound by Number with this Redemption
-        public string GetCPPlayID()
+        public static string GetCPPlayID()
         {
             foreach (string s in settingsList)
             {
@@ -807,7 +820,7 @@ namespace Noice_Bot_Twitch
             return null;
         }
         //Play a random sound from a folder library 
-        public string GetCPPlayFolder()
+        public static string GetCPPlayFolder()
         {
             foreach (string s in settingsList)
             {
@@ -821,7 +834,7 @@ namespace Noice_Bot_Twitch
         }
 
         //Gives you a plimp, bloop, bonk or anyhing else you like
-        public String GetRandomNotificationSound()
+        public static String GetRandomNotificationSound()
         {
             Random rand = new Random();
             string str = notificationList[rand.Next(notificationList.Count)];
@@ -829,7 +842,7 @@ namespace Noice_Bot_Twitch
         }
 
         //Take a random bridge word out of the bridgeWordList
-        public String GetRandomBridgeWord() 
+        public static String GetRandomBridgeWord() 
         {
             Random rand = new Random();
             string str = bridgeWordList[rand.Next(bridgeWordList.Count)];

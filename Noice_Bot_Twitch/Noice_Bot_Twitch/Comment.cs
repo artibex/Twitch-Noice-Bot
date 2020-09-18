@@ -1,7 +1,7 @@
 ﻿namespace Noice_Bot_Twitch
 {
     //Command datacontainer, used to store the command information and further processing
-    class Comment
+    public class Comment
     {
         public string user;
         public string comment;

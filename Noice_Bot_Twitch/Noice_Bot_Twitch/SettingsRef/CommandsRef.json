@@ -1,122 +1,132 @@
-{
-  "noice": {
+[
+  {
+    "functionName": "noice",
     "name": "noice",
-    "help": "List all availeble commands"
+    "helpComment": "Twitch Noice bot made by Korpsian, make some Noice! Commands:"
   },
-  "help": {
+  {
+    "functionName": "help",
     "name": "help",
-    "help": "List all availeble commands"
+    "helpComment": "use ![command] ? to get help with the Command. Commands:"
   },
-
-  "ttson": {
-    "name": "ttson",
-    "help": "Turn on TTS"
+  {
+    "functionName": "ttsenabled",
+    "name": "ttsenabled",
+    "helpComment": "Turn on TTS. Usage: !ttsenabled true/false"
   },
-  "ttsoff": {
-    "name": "ttsoff",
-    "help": "Turn TTS off"
-  },
-  "ttsvol": {
+  {
+    "functionName": "ttsvol",
     "name": "ttsvol",
-    "help": "Change TTS Volume"
+    "helpComment": "Change TTS Volume (Value between 0 and 1. Usage: !ttsvol 0,5"
   },
-  "ttsskip": {
+  {
+    "functionName": "ttsskip",
     "name": "ttsskip",
-    "help": "Skip current TTS line"
+    "helpComment": "Skip current TTS readout. Usage: !ttsskip"
   },
-  "ttsexecutionorder": {
+  {
+    "functionName": "ttsexecutionorder",
     "name": "ttsexecutionorder",
-    "help": "Adjust execution order u,b,c,n"
+    "helpComment": "Adjust execution order u,b,c,n. Usage: !ttsexecutionorder ubc"
   },
-  "ttsspeed": {
+  {
+    "functionName": "ttsspeed",
     "name": "ttsspeed",
-    "help": "Basic read speed of TTS"
+    "helpComment": "Basic read speed of TTS. Value between 1 and 10. Usage: !ttsspeed 5"
   },
-  "ttsmaxspeed": {
+  {
+    "functionName": "ttsmaxspeed",
     "name": "ttsmaxspeed",
-    "help": "Maximum TTS read speed"
+    "helpComment": "Maximum TTS read speed. Value between 1 and 10. Usage: !ttsmaxspeed 8"
   },
-  "ttstextlength": {
+  {
+    "functionName": "ttstextlength",
     "name": "ttstextlength",
-    "help": "Maximum chars to read"
+    "helpComment": "Maximum chars to read. Usage: !ttstextlength 200"
   },
-  "ttsspamthreshold": {
+  {
+    "functionName": "ttsspamthreshold",
     "name": "ttsspamthreshold",
-    "help": "Set Spam threshold"
+    "helpComment": "Set Spam threshold. Usage: !ttsspamthreshold 5"
   },
-  "ttsremoveemojis": {
+  {
+    "functionName": "ttsremoveemojis",
     "name": "ttsremoveemojis",
-    "help": "Allow ASCII emojis"
+    "helpComment": "Allow ASCII emojis. Usage: !ttsremoveemojis true/false"
   },
-  "ttsbadcharlist": {
+  {
+    "functionName": "ttsbadcharlist",
     "name": "ttsbadcharlist",
-    "help": "Set all bad chars"
+    "helpComment": "Set bad Chars. Usage: !ttsbadcharlist !'§$%&/()=?"
   },
-  "ttsread": {
+  {
+    "functionName": "ttsread",
     "name": "ttsread",
-    "help": "Read out given Text"
+    "helpComment": "Read out given Text. Usage: !ttsread Hello everybody!"
   },
-
-  "   ttsoutput": {
+  {
+    "functionName": "ttsoutput",
     "name": "ttsoutput",
-    "help": "Set TTS device ID"
+    "helpComment": "Set TTS device ID. Usage: !ttsoutput 0"
   },
-  "soundboardoutput": {
+  {
+    "functionName": "soundboardoutput",
     "name": "soundboardoutput",
-    "help": "Set Soundboard device ID"
+    "helpComment": "Set Soundboard device ID. Usage: !soundboardoutput 0"
   },
-  "notificationoutput": {
+  {
+    "functionName": "notificationoutput",
     "name": "notificationoutput",
-    "help": "Set Notification device ID"
+    "helpComment": "Set Notification device ID. Usage: !notificationoutput 0"
   },
-
-  "notificationvol": {
+  {
+    "functionName": "notificationvol",
     "name": "notificationvol",
-    "help": "Change notification volume"
+    "helpComment": "Change notification volume. Value between 0 and 1. Usage: !notificationvol 0.5"
   },
-
-  "play": {
+  {
+    "functionName": "play",
     "name": "play",
-    "help": "Play a soundeffect, name or ID"
+    "helpComment": "Play a soundeffect, name or ID. Usage: !play random/[SoundfileName]/[SoundfileID]"
   },
-  "playrandom": {
-    "name": "play random",
-    "help": "Play a random soundeffect"
-  },
-  "sbvol": {
+  {
+    "functionName": "sbvol",
     "name": "sbvol",
-    "help": "Change Soundboard volume"
+    "helpComment": "Change Soundboard volume. Value between 0 and 1. Usage: !sbvol 0,5"
   },
-  "sbglobalcooldown": {
+  {
+    "functionName": "sbglobalcooldown",
     "name": "sbglobalcooldown",
-    "help": "Change the global cooldown of the Soundboard"
+    "helpComment": "Change the global cooldown of the Soundboard. Usage: !sbglobalcooldown 50"
   },
-  "sbusercooldown": {
+  {
+    "functionName": "sbusercooldown",
     "name": "sbusercooldown",
-    "help": "Change the user cooldown of the Soundboard"
+    "helpComment": "Change the user cooldown of the Soundboard. Usage: !sbusercooldown 100"
   },
-  "sbresponsecooldown": {
+  {
+    "functionName": "sbresponsecooldown",
     "name": "sbresponsecooldown",
-    "help": "Change the response cooldown of the Soundboard"
+    "helpComment": "Change the response cooldown of the Soundboard. Usage: !sbresponsecooldown 69"
   },
-  "sbsoundinterval": {
+  {
+    "functionName": "sbsoundinterval",
     "name": "sbsoundinterval",
-    "help": "Change the sound interval cooldown of the Soundboard"
+    "helpComment": "Change the sound interval cooldown of the Soundboard. Usage: !sbsoundinterval 10"
   },
-  "sbsoundcooldownon": {
+  {
+    "functionName": "sbenablesoundcooldown",
     "name": "sbsoundcooldownon",
-    "help": "Enable Sound cooldown"
+    "helpComment": "Enable or Disable Soundbaord sound cooldown. Usage: !sbenablesoundcooldown true/false"
   },
-  "sbsoundcooldownoff": {
-    "name": "sbsoundcooldownoff",
-    "help": "Disable Sound cooldown"
-  },
-  "sbreload": {
+  {
+    "functionName": "sbreload",
     "name": "sbreload",
-    "help": "Reload Soundboard"
+    "helpComment": "Reload Soundboard. Usage: !sbreload"
   },
-  "reloadsettings": {
+  {
+    "functionName": "reloadsettings",
     "name": "reloadsettings",
-    "help": "Reload All settings if changes where made in the configs"
+    "helpComment": "Reload All settings if changes where made in the configs. Usage: !reloadsettings"
   }
-}
+]

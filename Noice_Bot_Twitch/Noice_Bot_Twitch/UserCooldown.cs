@@ -4,7 +4,7 @@ using System.Timers;
 namespace Noice_Bot_Twitch
 {
     //Hold information about what user played what soundfile and for how long the usercooldown/soundfile cooldown is
-    class UserCooldown
+    public class UserCooldown
     {
         DateTime EndTime; //When the timer have to end, needed for returning in seconds how long cooldown still is
         private System.Timers.Timer cooldown; //Timer
