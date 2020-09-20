@@ -6,7 +6,13 @@
         //FileManager fm;
         //AudioDeviceManager adm;
         static int outputDeviceID = -2; //Get's determend via AudioDeviceManager
-        static float notificationVolume = 0.5f; //Volume get's loaded via settings.txt
+        private static float _notificationVolume = 0.5f; //Volume get's loaded via settings.txt
+        public static float notificationVolume
+        {
+            get { return _notificationVolume; }
+            set { if (value > 0 && value <= 1) _notificationVolume = value; }
+        }
+
 
         //public static NotificationSoundManager(FileManager fm, AudioDeviceManager adm)
         //{
@@ -18,12 +24,12 @@
         public static void LoadSettings()
         {
             outputDeviceID = AudioDeviceManager.GetNotificationOutputDeviceID();
-            notificationVolume = FileManager.GetNotificationVolume();
+            _notificationVolume = FileManager.GetNotificationVolume();
         }
 
         public static void Play() //Play a notification
         {
-            Speaker s = new Speaker(FileManager.GetRandomNotificationSound(), outputDeviceID, notificationVolume, false, true);
+            Speaker s = new Speaker(FileManager.GetRandomNotificationSound(), outputDeviceID, _notificationVolume, false, true);
             AudioMixer.AddNotificationSpeaker(s);
         }
     }

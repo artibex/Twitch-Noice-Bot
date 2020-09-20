@@ -166,5 +166,8 @@
     <EmbeddedResource Include="SettingsRef\aliaslistRef.txt" />
     <EmbeddedResource Include="SettingsRef\settingsRef.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SettingsRef\ttsblacklistRef.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

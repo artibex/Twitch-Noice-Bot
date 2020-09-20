@@ -54,11 +54,10 @@ namespace Noice_Bot_Twitch
         //Process the given command and return it
         public static Comment Process(Comment c)
         {
-            if (CheckBlacklist(c)) return new Comment("", ""); //Return empty comment and do nothing
+            if (CheckBlacklist(c)) return new Comment(c.user, ""); //Return empty comment and do nothing
 
             if (!CommandIdentifier.CheckCommand(c)) //before everything else is changed, check if it's a command
             {
-                c = CheckAlias(c); //Replce username with given alias
                 c.user = RemoveNumeric(c.user); //Remove numbers from name for faster reading? Hm... could be bad
                 c = SpamProtection(c); //Check with the Spam protection before giving it back
                 return c;
@@ -115,7 +114,7 @@ namespace Noice_Bot_Twitch
         //Return true if user is on the list, otherwise false
         public static bool CheckBlacklist(Comment c)
         {
-            foreach (string s in FileManager.GetBlackList())
+            foreach (string s in FileManager.GetBlacklist())
             {
                 string username = s.ToLower();
                 if (c.user == username.ToLower()) return true;

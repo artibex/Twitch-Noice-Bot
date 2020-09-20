@@ -97,5 +97,6 @@ namespace Noice_Bot_Twitch
             Speaker s = new Speaker(filepath, _outputDeviceID, _ttsVolume, true, true);
             AudioMixer.AddTTSSpeaker(s);
         }
+
     }
 }

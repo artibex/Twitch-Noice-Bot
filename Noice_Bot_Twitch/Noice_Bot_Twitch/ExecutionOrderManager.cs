@@ -32,9 +32,11 @@ namespace Noice_Bot_Twitch
             _executionOrder = FileManager.GetNotificationExecutionOrder();
         }
 
-        public static String GetTTSText(Comment c)
+        public static string GetTTSText(Comment c)
         {
             string ttsText = "";
+            if (CheckTTSBlacklist(c)) return ""; //Check if user is allowed to be read out
+            c = CommentProcessor.CheckAlias(c); // Then replace
 
             if (!String.IsNullOrWhiteSpace(c.user) && !String.IsNullOrWhiteSpace(c.comment) && _executionOrder != "")
             {
@@ -63,6 +65,15 @@ namespace Noice_Bot_Twitch
                 return ttsText;
             }
             else return "";
+        }
+    
+        static bool CheckTTSBlacklist(Comment c)
+        {
+            foreach(string s in FileManager.GetTTSBlacklist())
+            {
+                if (c.user.ToLower() == s.ToLower()) return true;
+            }
+            return false;
         }
     }
 }

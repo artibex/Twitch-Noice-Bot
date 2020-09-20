@@ -14,12 +14,13 @@ namespace Noice_Bot_Twitch
     {
         //Path and Filenames of every used file
         static string path;
-        static string settingsFile = @"Settings.txt"; //Settings file name
-        static string aliasFile = @"Aliaslist.txt"; //Alias file name
-        static string blacklistFile = @"Blacklist.txt"; //Blacklist file name
-        static string bridgelistFile = @"BridgeWordList.txt"; //Bridgewords file name
-        static string whitelistFile = @"Whitelist.txt"; //Whitelist file name
-        static string soundOffsetFile = @"SoundfileOffset.txt"; //Soundboard offsets file name
+        static string settingsFile = @"Settings.txt";
+        static string aliasFile = @"Aliaslist.txt"; 
+        static string blacklistFile = @"Blacklist.txt"; 
+        static string ttsblacklistFile = @"TTSBlacklist.txt";
+        static string bridgelistFile = @"BridgeWordList.txt"; 
+        static string whitelistFile = @"Whitelist.txt"; 
+        static string soundOffsetFile = @"SoundfileOffset.txt";
         static string commandsFile = @"Commands.json";
 
         //Folder structure
@@ -31,6 +32,7 @@ namespace Noice_Bot_Twitch
         //Alias List, Blacklist, Whitelist, Settings
         static List<String> aliasList; //Loaded Aliases
         static List<String> blackList; //Loaded Blacklist
+        static List<String> ttsBlacklist;
         static List<String> bridgeWordList; //Loaded Bridgewords
         static List<String> whiteList; //Loaded Whitelist
         static List<String> settingsList; //Loaded Settings
@@ -65,6 +67,7 @@ namespace Noice_Bot_Twitch
                 settingsList = File.ReadAllLines(path + @"\" + settingsFolder + @"\" + settingsFile).ToList(); //Read "Settings.txt"
                 aliasList = File.ReadAllLines(path + @"\" + settingsFolder + @"\" + aliasFile).ToList(); //Read "Aliaslist.txt"
                 blackList = File.ReadAllLines(path + @"\" + settingsFolder + @"\" + blacklistFile).ToList(); //Read "Blacklist.txt"
+                ttsBlacklist = File.ReadAllLines(path + @"\" + settingsFolder + @"\" + ttsblacklistFile).ToList(); //Read "TTSBlacklist.txt"
                 bridgeWordList = File.ReadAllLines(path + @"\" + settingsFolder + @"\" + bridgelistFile).ToList(); //Read "BridgeWordList.txt"
                 whiteList = File.ReadAllLines(path + @"\" + settingsFolder + @"\" + whitelistFile).ToList(); //Read "Whitelist.txt"
                 commands = JsonConvert.DeserializeObject<List<Command>>(File.ReadAllText(path + @"\" + settingsFolder + @"\" + commandsFile));
@@ -81,7 +84,7 @@ namespace Noice_Bot_Twitch
         }
 
         //Load all soundfiles in a given path
-        static void LoadSoundfiles()
+        public static void LoadSoundfiles()
         {
             soundFiles = new List<string>();
             //Check all files in direktory and subdirektories and add every supported file to the list
@@ -129,6 +132,21 @@ namespace Noice_Bot_Twitch
                 }
                 Console.WriteLine("File: " + blacklistFile + " was missing");
             }
+            if (!File.Exists(path + @"\" + settingsFolder + @"\" + ttsblacklistFile)) //Blacklist.txt
+            {
+                var assembly = Assembly.GetExecutingAssembly();
+                var resourceName = "Noice_Bot_Twitch.SettingsRef.ttsblacklistRef.txt";
+
+                using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    string result = reader.ReadToEnd();
+                    File.WriteAllText(path + @"\" + settingsFolder + @"\" + ttsblacklistFile, result);
+                }
+                Console.WriteLine("File: " + blacklistFile + " was missing");
+            }
+
+
             if (!File.Exists(path + @"\" + settingsFolder + @"\" +  bridgelistFile)) //BridgeWordlist.txt
             {
                 var assembly = Assembly.GetExecutingAssembly();
@@ -739,12 +757,18 @@ namespace Noice_Bot_Twitch
         }
         //Return the created String lists
         //All the bad peoples in your small little life, these are extra bad, right?
-        public static List<String> GetBlackList()
+        public static List<String> GetBlacklist()
         {
-            if(blacklistFile != null) return blackList;
+            if(blackList != null) return blackList;
             else return new List<string>(); //If list is null, return empty list
         }
         //The magical bridge that connects the username with his comment. Hand in hand they will exist in a perfect sentence. 
+        public static List<String> GetTTSBlacklist()
+        {
+            if (ttsBlacklist != null) return ttsBlacklist;
+            else return new List<string>(); //If list is null, return empty list
+        }
+
         public static List<String> GetBridgeWordList()
         {
             if(bridgeWordList != null) return bridgeWordList;
