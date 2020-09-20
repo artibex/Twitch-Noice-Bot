@@ -64,10 +64,12 @@ namespace Noice_Bot_Twitch
             if(c.comment.Length > 2)
             {
                 string userCommand = c.comment.Substring(1, c.comment.Length-1).ToLower();
+                Console.WriteLine(userCommand);
                 if (userCommand.Contains(" ")) userCommand = userCommand.Substring(0, userCommand.IndexOf(" "));
+                Console.WriteLine(userCommand);
 
                 Command foundCommand = new Command("","","");
-                foreach(Command co in commands) if (userCommand == co.name.ToLower()) foundCommand = co;
+                foreach(Command co in commands) if (userCommand.Trim() == co.name.ToLower()) foundCommand = co;
                 if(foundCommand.name != "")
                 {
                     switch (foundCommand.functionName)
@@ -201,7 +203,6 @@ namespace Noice_Bot_Twitch
             }
             if(float.TryParse(s[1], out i))
             {
-                Console.WriteLine(i);
                 if(i > 0 && i <= 1)
                 {
                     TTS.ttsVolume = i;
@@ -257,6 +258,7 @@ namespace Noice_Bot_Twitch
         }
         static void TTSSpeed(Command command, Comment c)
         {
+            int i;
             string[] s = c.comment.Split();
             if (s.Length < 2) return;
             if (s[1].Contains("?"))
@@ -264,21 +266,45 @@ namespace Noice_Bot_Twitch
                 client.SendChatMessage(command.helpComment);
                 return;
             }
-
+            if(int.TryParse(s[1], out i)) {
+                if(i > 0 && i <= 10)
+                {
+                    if(i > TTS.fastestSpeed)
+                    {
+                        TTS.normalSpeed = i;
+                        client.SendChatMessage("Set TTS base speed to " + i);
+                    }
+                    else client.SendChatMessage("TTS base speed can't be higher then max speed. Max Speed=" + TTS.fastestSpeed);
+                }
+            }
         }
         static void TTSMaxSpeed(Command command, Comment c)
         {
+            int i;
             string[] s = c.comment.Split();
             if (s.Length < 2) return;
             if (s[1].Contains("?"))
             {
                 client.SendChatMessage(command.helpComment);
                 return;
+            }
+            if (int.TryParse(s[1], out i))
+            {
+                if (i > 0 && i <= 10)
+                {
+                    if(i > TTS.normalSpeed)
+                    {
+                        TTS.fastestSpeed = i;
+                        client.SendChatMessage("Set TTS max speed to " + i);
+                    }
+                    else client.SendChatMessage("TTS max speed must be higher then base speed. Base speed=" + TTS.normalSpeed);
+                }
             }
 
         }
         static void TTSTextLength(Command command, Comment c)
         {
+            int i;
             string[] s = c.comment.Split();
             if (s.Length < 2) return;
             if (s[1].Contains("?"))
@@ -286,21 +312,40 @@ namespace Noice_Bot_Twitch
                 client.SendChatMessage(command.helpComment);
                 return;
             }
-
+            if(int.TryParse(s[1], out i))
+            {
+                if(i > 0)
+                {
+                    CommentProcessor.maxTextLength = i;
+                    client.SendChatMessage("Set TTS max text length to " + i);
+                }
+                else client.SendChatMessage("Value must be higher then 0");
+            }
         }
         static void TTSSpamThreshHold(Command command, Comment c)
         {
+            int i;
             string[] s = c.comment.Split();
             if (s.Length < 2) return;
             if (s[1].Contains("?"))
             {
                 client.SendChatMessage(command.helpComment);
                 return;
+            }
+            if (int.TryParse(s[1], out i))
+            {
+                if (i > 0)
+                {
+                    CommentProcessor.spamThreshold = i;
+                    client.SendChatMessage("Set TTS spam threshold to " + i);
+                }
+                else client.SendChatMessage("Value must be higher then 0");
             }
 
         }
         static void TTSRemoveEmojis(Command command, Comment c)
         {
+            bool b;
             string[] s = c.comment.Split();
             if (s.Length < 2) return;
             if (s[1].Contains("?"))
@@ -308,18 +353,23 @@ namespace Noice_Bot_Twitch
                 client.SendChatMessage(command.helpComment);
                 return;
             }
-
+            if(bool.TryParse(s[1], out b))
+            {
+                CommentProcessor.removeEmojis = b;
+                client.SendChatMessage("Removing ASCII Emojis set to " + b.ToString());
+            }
         }
         static void TTSBadCharList(Command command, Comment c)
         {
             string[] s = c.comment.Split();
             if (s.Length < 2) return;
-            if (s[1].Contains("?"))
+            if (s[1].Contains("?") && s[1].Length < 2)
             {
                 client.SendChatMessage(command.helpComment);
                 return;
             }
-
+            CommentProcessor.badChars = s[1];
+            client.SendChatMessage("Updated bad char list. New list: " + s[1]);
         }
         static void TTSRead(Command command, Comment c)
         {
@@ -331,9 +381,24 @@ namespace Noice_Bot_Twitch
                 return;
             }
 
+            string ttsText = "";
+            int count = 0;
+            foreach(string split in s)
+            {
+                if (count > 0) ttsText += split + " ";
+                count++;
+            }
+            if (!TTS.useTTS)
+            {
+                TTS.useTTS = true;
+                TTS.Speak(ttsText);
+                TTS.useTTS = false;
+            }
+            else TTS.Speak(ttsText);
         }
         static void TTSOutput(Command command, Comment c)
         {
+            int i;
             string[] s = c.comment.Split();
             if (s.Length < 2) return;
             if (s[1].Contains("?"))
@@ -341,7 +406,11 @@ namespace Noice_Bot_Twitch
                 client.SendChatMessage(command.helpComment);
                 return;
             }
-
+            if(int.TryParse(s[1], out i))
+            {
+                AudioDeviceManager.ttsOutputDeviceID = i;
+                client.SendChatMessage("Set TTS output device to " + i);
+            }
         }
         static void SoundboardOutput(Command command, Comment c)
         {
@@ -378,7 +447,7 @@ namespace Noice_Bot_Twitch
         }
         static void Play(Command command, Comment c)
         {
-            SoundboardManager.PlaySoundeffect(c);
+            SoundboardManager.PlaySoundeffect(c, command);
         }
         static void SBVol(Command command, Comment c)
         {

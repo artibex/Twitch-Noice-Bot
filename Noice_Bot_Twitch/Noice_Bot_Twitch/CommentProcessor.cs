@@ -9,17 +9,30 @@ namespace Noice_Bot_Twitch
     {
         //CommandIdentifier ci; //Identify a command
         private static int _maxTextLength = 200; //Max amount of chars for TTS
-        public static int MaxTextLength //This is how I should write and plan it, but i don't...
+        public static int maxTextLength
         {
             get { return _maxTextLength; }
-            set { _maxTextLength = value; }
+            set { if(value > 0) _maxTextLength = value; }
         }
         private static int _spamThreshold = 30;
-        public static int BadThreshold
+        public static int spamThreshold
         {
             get { return _spamThreshold; }
-            set { _spamThreshold = value; }
+            set { if(value > 0) _spamThreshold = value; }
         }
+        private static bool _removeEmojis;
+        public static bool removeEmojis
+        {
+            get { return _removeEmojis; }
+            set { _removeEmojis = value; }
+        }
+        private static string _badChars;
+        public static string badChars
+        {
+            get { return _badChars; }
+            set { badChars = value; }
+        }
+
 
         //Init
         //public CommantProcessor(FileManager fm, CommandIdentifier ci)
@@ -34,11 +47,15 @@ namespace Noice_Bot_Twitch
         {
             _maxTextLength = FileManager.GetMaxTextLength();
             _spamThreshold = FileManager.GetSpamThreshold();
+            _removeEmojis = FileManager.GetRemoveEmojis();
+            _badChars = FileManager.GetBadCharList();
         }
 
         //Process the given command and return it
         public static Comment Process(Comment c)
         {
+            if (CheckBlacklist(c)) return new Comment("", ""); //Return empty comment and do nothing
+
             if (!CommandIdentifier.CheckCommand(c)) //before everything else is changed, check if it's a command
             {
                 c = CheckAlias(c); //Replce username with given alias
@@ -73,7 +90,7 @@ namespace Noice_Bot_Twitch
             if(c.comment != null && c.comment.Length > _maxTextLength) c.comment = c.comment.Substring(0, _maxTextLength);
 
             //If true, remove ASCII emojis
-            if (FileManager.GetRemoveEmojis() && c.comment != null)
+            if (_removeEmojis && c.comment != null)
             {
                 c.comment = Regex.Replace(c.comment, @"\p{Cs}", ""); //Remove all unicode emojis if true
                 //If the comment where just unicode emojis say "unicode emoji"
@@ -81,14 +98,13 @@ namespace Noice_Bot_Twitch
             }
 
             //Remove unwanted spamming of specific symboles
-            string badStuff = @FileManager.GetBadCharList();
             int badCounter = 0; //If this counter is to high, remove the command
             if (c.comment != null)
             {
                 foreach (char comChar in c.comment)
                 {
                     //check with each char in the badStuff string the comment, if badCounter is too high, remove comment
-                    foreach (char badChar in badStuff) if (comChar == badChar) badCounter++;
+                    foreach (char ch in _badChars) if (comChar == ch) badCounter++;
                     if (badCounter >= _spamThreshold) c.comment = ""; //Remove the comment completly
                 }
             }

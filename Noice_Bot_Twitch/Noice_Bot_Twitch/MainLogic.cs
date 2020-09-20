@@ -54,16 +54,6 @@ namespace Noice_Bot_Twitch
                 return;
             }
 
-            //Creat a new IRC Client with the Information ouf of the Settings.txt file
-            //eom = new ExecutionOrderManager(fm, nsm, cp);
-            //adm = new AudioDeviceManager(fm); //Manages the Audio ID's
-            //nsm = new NotificationSoundManager(fm, adm); //manages the Notification sounds
-            //tts = new TTS(fm, adm); //Create a new Text to Speech Synth
-            //sm = new SoundboardManager(adm, fm, client); //Manages the beatzzzz
-            //ci = new CommandIdentifier(sm, fm, client, adm, nsm, tts, cp, eom); //Snoopen around in the comments
-            //cp = new CommantProcessor(fm); //Create a new Command Processor
-            //pubSub = new PubSubService(fm); //Sub to the Pub to read all the cool Twitch stuff
-
             pinger.Start(); //Start the Pinger
             Console.WriteLine(FileManager.GetBotName() + " is ready!");
             while (true) //Loop throu this, react when something in the chat happend

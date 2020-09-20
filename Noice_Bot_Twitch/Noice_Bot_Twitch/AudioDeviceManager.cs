@@ -6,9 +6,26 @@ namespace Noice_Bot_Twitch
     //Manages all audio device ID's for the bot
     public static class AudioDeviceManager
     {
-        static int _ttsOutputDeviceID = -2; //Text to Speech
-        static int _soundboardOutputDeviceID = -2; //Soundboard
-        static int _notificationOutputDeviceID = -2; //Notification
+        private static int _ttsOutputDeviceID = -2; //Text to Speech
+        public static int ttsOutputDeviceID
+        {
+            get { return _ttsOutputDeviceID; }
+            set { if (value > -2) _ttsOutputDeviceID = value; }
+        }
+
+        private static int _soundboardOutputDeviceID = -2; //Soundboard
+        public static int soundboardOutputDeviceID
+        {
+            get { return _soundboardOutputDeviceID; }
+            set { if (value > -2) _soundboardOutputDeviceID = value; }
+        }
+        private static int _notificationOutputDeviceID = -2; //Notification
+        public static int notificationOutputDeviceID
+        {
+            get { return _notificationOutputDeviceID; }
+            set { if (value > -2) _notificationOutputDeviceID = value; }
+        }
+
         //FileManager fm; //File Manager
 
         //public static AudioDeviceManager(FileManager fm)

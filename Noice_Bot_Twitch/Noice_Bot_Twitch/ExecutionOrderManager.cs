@@ -36,7 +36,7 @@ namespace Noice_Bot_Twitch
         {
             string ttsText = "";
 
-            if (!String.IsNullOrWhiteSpace(c.user) && !String.IsNullOrWhiteSpace(c.comment) && !CommentProcessor.CheckBlacklist(c) && _executionOrder != "")
+            if (!String.IsNullOrWhiteSpace(c.user) && !String.IsNullOrWhiteSpace(c.comment) && _executionOrder != "")
             {
                 foreach (char exe in _executionOrder)
                 {
@@ -60,9 +60,9 @@ namespace Noice_Bot_Twitch
                     }
                 }
                 if (ttsText.IndexOf(" ") == 0) ttsText = ttsText.Substring(1, ttsText.Length - 1);
+                return ttsText;
             }
             else return "";
-            return ttsText;
         }
     }
 }

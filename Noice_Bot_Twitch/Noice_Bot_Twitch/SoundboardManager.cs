@@ -67,12 +67,12 @@ namespace Noice_Bot_Twitch
         }
 
         //Trigger sound by chat
-        public static void PlaySoundeffect(Comment c)
+        public static void PlaySoundeffect(Comment c, Command command)
         {
             CheckCooldownList(); //Clear out the list of any left over user
 
             //Info on how to use this command
-            if (c.comment.Substring(1) == "play")
+            if (c.comment.Substring(1) == command.name)
             {
                 string folders = " ";
                 foreach (string s in subDirektories) folders += GetDirName(s) + ", "; //Display all folders/Sublibraries to choose from
@@ -93,12 +93,12 @@ namespace Noice_Bot_Twitch
                 }
             }
             //Play a random sound out of the library
-            if(c.comment.Substring(1) == "play random")
+            if(c.comment.Substring(1) == command.name + " random")
             {
                 PlayRandom(c);
             }
             //Search for a specific sound. ID or name
-            else if (c.comment.Substring(1).Contains("play") && c.comment.Length > 6) 
+            else if (c.comment.Substring(1).Contains(command.name) && c.comment.Length > command.name.Length) 
             {
                 //Get the comment Substring without !play
                 string cSubstring = c.comment.Substring(c.comment.IndexOf(" ") + 1);

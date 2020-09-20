@@ -1,7 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
-using System.Diagnostics;
-using TwitchLib.Api.Core.Models.Undocumented.Comments;
+﻿using System;
 using TwitchLib.PubSub;
 using TwitchLib.PubSub.Events;
 
@@ -65,14 +62,13 @@ namespace Noice_Bot_Twitch
         {
             Console.WriteLine("Some Pubsub Error Occured, try to reconnect");
             Console.WriteLine(e);
-            Pubsub_OnPubSubServiceConnected(sender, e);
+            pubsub.Connect();
         }
         private static void Pubsub_OnPubSubServiceDisconnect(object sender, System.EventArgs e)
         {
             Console.WriteLine("PubSub got Disconnected, try to reconnect");
             Console.WriteLine(e);
-            Pubsub_OnPubSubServiceConnected(sender, e);
-
+            pubsub.Connect();
         }
 
 
