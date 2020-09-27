@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace Noice_Bot_Twitch
@@ -7,7 +8,7 @@ namespace Noice_Bot_Twitch
     class MainLogic
     {
         //FileManager fm; //Manages all Files 
-        //PubSubService pubSub;
+        PubSubService pubSub = new PubSubService();
         IrcClient client; //Create new Connection to a IRC Server
         Pinger pinger; //Ping the server every 5 Minutes so the connection is not getting closed
         //AudioDeviceManager adm; //Manages the Output Devices (if non is configured in the settings.txt ask for ID's)
@@ -39,9 +40,9 @@ namespace Noice_Bot_Twitch
             NotificationSoundManager.LoadSettings();
             TTS.LoadSettings();
             SoundboardManager.LoadSettings(client);
+            pubSub.LoadSettings();
             CommandIdentifier.LoadSettings(client);
             CommentProcessor.LoadSettings();
-            PubSubService.LoadSettings();
             ExecutionOrderManager.LoadSettings();
 
             //Check the needed settings to create a connection, exit if something is wrong

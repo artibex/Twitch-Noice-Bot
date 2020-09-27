@@ -71,6 +71,8 @@ namespace Noice_Bot_Twitch
             else speed = _normalSpeed; //If the text is small enough, use normal speed
 
             //Create a hash with the current date and format out useless characters
+            Random rand = new Random();
+            int randomnumber = rand.Next(0, 420);
             string filename = text.GetHashCode().ToString() + DateTime.Now; //Generate filename
             filename = filename.Replace(".", String.Empty); //Kick some stuff out that would lead to file errors
             filename = filename.Replace(":", String.Empty);
@@ -84,6 +86,7 @@ namespace Noice_Bot_Twitch
             filename = filename.Replace("&", String.Empty);
             filename = filename.Replace("/", String.Empty);
             filename = filename.Replace(" ", String.Empty);
+            filename += randomnumber.ToString();
             filename = filename + ".wav";
 
             filepath = FileManager.GetPath() + @"\" + filename; //Get the path to save to

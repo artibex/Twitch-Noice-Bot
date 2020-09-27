@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Runtime.CompilerServices;
 
 namespace Noice_Bot_Twitch
 {
@@ -19,6 +20,7 @@ namespace Noice_Bot_Twitch
         public static string commandCharacter;
         public static bool whitelistOnly = false;
         public static List<Command> commands = new List<Command>();
+        public static PubSubService pubsub;
 
         //If the user put a "!" or similar infront, check list for commands
         //public CommandIdentifier(SoundboardManager sm, FileManager fm, IrcClient client, AudioDeviceManager adm, NotificationSoundManager nsm, TTS tts, CommantProcessor cp, ExecutionOrderManager eom)
@@ -613,7 +615,7 @@ namespace Noice_Bot_Twitch
             CommandIdentifier.LoadSettings();
             CommentProcessor.LoadSettings();
             ExecutionOrderManager.LoadSettings();
-            PubSubService.LoadSettings();
+            if(pubsub != null) pubsub.LoadSettings();
             SoundboardManager.LoadSettings();
             TTS.LoadSettings();
             client.SendChatMessage("Reloaded all settings");

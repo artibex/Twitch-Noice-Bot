@@ -13,15 +13,15 @@ namespace Noice_Bot_Twitch
     public static class FileManager
     {
         //Path and Filenames of every used file
-        static string path;
-        static string settingsFile = @"Settings.txt";
-        static string aliasFile = @"Aliaslist.txt"; 
-        static string blacklistFile = @"Blacklist.txt"; 
-        static string ttsblacklistFile = @"TTSBlacklist.txt";
-        static string bridgelistFile = @"BridgeWordList.txt"; 
-        static string whitelistFile = @"Whitelist.txt"; 
-        static string soundOffsetFile = @"SoundfileOffset.txt";
-        static string commandsFile = @"Commands.json";
+        private static string path;
+        private static string settingsFile = @"Settings.txt";
+        private static string aliasFile = @"Aliaslist.txt";
+        private static string blacklistFile = @"Blacklist.txt";
+        private static string ttsblacklistFile = @"TTSBlacklist.txt";
+        private static string bridgelistFile = @"BridgeWordList.txt";
+        private static string whitelistFile = @"Whitelist.txt";
+        private static string soundOffsetFile = @"SoundfileOffset.txt";
+        private static string commandsFile = @"Commands.json";
 
         //Folder structure
         static string settingsFolder = @"Settings"; //Settings of the bot
@@ -280,7 +280,7 @@ namespace Noice_Bot_Twitch
                     //Stitch every object of the list together to a string
                     foreach(string s in data) writingData += s + "\n";
                     //Write the file
-                    File.WriteAllText(path + @"\" + soundOffsetFile, writingData);
+                    File.WriteAllText(path + @"\" + settingsFolder + @"\" + soundOffsetFile, writingData);
                 }
             } else GenSoundfileOffsetList(); //If the file does not exist, create it
         }
