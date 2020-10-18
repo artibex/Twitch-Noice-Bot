@@ -9,6 +9,13 @@ channelname=
 channelID=
 # Get your oauth key here: https://www.twitchapps.com/tmi/
 oauth=oauth:
+# If you want to trigger stuff via Channel Points you have to go throu hell to get a appauth key
+# First, Go to https://dev.twitch.tv/ and create a new application
+# Give it a name and enter as Oauth Redirect URL this: https://twitchapps.com/tokengen/
+# Survive the Captcha (Spoiler, it sucks!)
+# Go to https://twitchapps.com/tokengen/ enter the created Client-ID of your application and as Scope "channel:read:redemptions" (without "")
+# Copy the token and paste it here
+appauth=
 
 --TTS Settings--
 # Use TTS System?
@@ -67,7 +74,11 @@ soundinterval=0
 usesoundcooldown=true
 #Create Channel Point Redemptions with these names to trigger the Soundboard
 cpplayrandom=Play Random
-# The User have to type in something that these 3 work
+#Enable or disable the Text to Speech via Channel Point redemption
+cptoggletts=Toggle TTS
+#Read out this Text given via Text to Speech
+cpttsread=TTS Read
+# The User have to type in something that these work
 cpplayname=Play Name
 cpplayid=Play ID
 cpplayfolder=Play Folder

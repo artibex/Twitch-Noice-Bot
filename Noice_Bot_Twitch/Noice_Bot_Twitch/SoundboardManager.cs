@@ -196,11 +196,11 @@ namespace Noice_Bot_Twitch
             PlaySound(randomSoundPath, "");
         }
         //Specific Name or Random if not found
-        public static void PlayName(OnRewardRedeemedArgs e)
+        public static void PlayName(string name)
         {
             foreach (string path in soundFiles)
             {
-                if (e.Message.Equals(FileManager.GetSoundname(path)))
+                if (name.Equals(FileManager.GetSoundname(path)))
                 {
                     PlaySound(path, "");
                     return;
@@ -210,26 +210,26 @@ namespace Noice_Bot_Twitch
             string randomSoundPath;
             int id;
             GetRandomPath(out id, out randomSoundPath, soundFiles);
-            PlaySound(randomSoundPath, " Can't find name:" + e.Message + " play random instead");
+            PlaySound(randomSoundPath, " Can't find name:" + name + " play random instead");
         }
         //Play ID or Random if not found
-        public static void PlayID(OnRewardRedeemedArgs e)
+        public static void PlayID(string str)
         {
             int ID;
-            if (int.TryParse(e.Message, out ID)) PlaySound(GetPathByID(ID), "");
+            if (int.TryParse(str, out ID)) PlaySound(GetPathByID(ID), "");
             else
             {
                 string randomSoundPath;
                 int id;
                 GetRandomPath(out id, out randomSoundPath, soundFiles);
-                PlaySound(randomSoundPath, " Can't find ID:" + e.Message + " play random instead");
+                PlaySound(randomSoundPath, " Can't find ID:" + id + " play random instead");
             }
         }
-        public static void PlayFolder(OnRewardRedeemedArgs e) //Currently unused
+        public static void PlayFolder(string folder) //Currently unused
         {
             foreach (string s in subDirektories)
             {
-                if (e.Message.Equals(s.Substring(s.LastIndexOf(@"\") + 1)))
+                if (folder.Equals(s.Substring(s.LastIndexOf(@"\") + 1)))
                 {
                     string randomSoundPath; //Random path that got pulled out of the Sublibrarie
                     int id; //ID of this soundfile

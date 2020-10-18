@@ -8,7 +8,8 @@ namespace Noice_Bot_Twitch
     class MainLogic
     {
         //FileManager fm; //Manages all Files 
-        PubSubService pubSub = new PubSubService();
+        TwitchJsonBuilder tjb;
+        PubSubService pubSub;
         IrcClient client; //Create new Connection to a IRC Server
         Pinger pinger; //Ping the server every 5 Minutes so the connection is not getting closed
         //AudioDeviceManager adm; //Manages the Output Devices (if non is configured in the settings.txt ask for ID's)
@@ -34,14 +35,15 @@ namespace Noice_Bot_Twitch
 
             client = new IrcClient(FileManager.GetIrcClient(), FileManager.GetPort(), FileManager.GetBotName(), FileManager.GetOAuth(), FileManager.GetChannelName().ToLower());
             pinger = new Pinger(client); //Create a Pinger that pings the server every 5 minutes to prevent this connection getting closed
-            
+            tjb = new TwitchJsonBuilder(new string[] { "channel-points-channel-v1." + FileManager.GetChannelID()}, FileManager.GetAppAuth());
+            pubSub = new PubSubService(tjb);
+
             //Load all Settings in (These functions can also be used to reload settings)
             AudioDeviceManager.LoadSettings();
             NotificationSoundManager.LoadSettings();
             TTS.LoadSettings();
             SoundboardManager.LoadSettings(client);
-            pubSub.LoadSettings();
-            CommandIdentifier.LoadSettings(client);
+            CommandIdentifier.LoadSettings(client, pubSub);
             CommentProcessor.LoadSettings();
             ExecutionOrderManager.LoadSettings();
 

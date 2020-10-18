@@ -404,8 +404,21 @@ namespace Noice_Bot_Twitch
                 }
             }
             Console.WriteLine("INCORRECT OAUTH DETECTED");
-            return null;
+            return "";
         } //IRC Settings
+        //Fuck you twitch, this is dumb
+        public static string GetAppAuth()
+        {
+            foreach (string s in settingsList)
+            {
+                if (s.Contains("appauth=") && s.Length > 8)
+                {
+                    return s.Substring(s.IndexOf("=") + 1);
+                }
+            }
+            Console.WriteLine("INCORRECT APPAUTH DETECTED");
+            return "";
+        }
         //Basic Text to Speech Speed, how slow is it?
         public static int GetTTSBaseSpeed()
         {
@@ -815,7 +828,7 @@ namespace Noice_Bot_Twitch
                 }
             }
             Console.WriteLine("INCORRECT CP PLAY RANDOM DETECTED");
-            return null;
+            return "";
         }
         //Play specific sound file with this Redemption
         public static string GetCPPlayName()
@@ -828,7 +841,7 @@ namespace Noice_Bot_Twitch
                 }
             }
             Console.WriteLine("INCORRECT CP PLAY NAME DETECTED");
-            return null;
+            return "";
         }
         //Play specific sound by Number with this Redemption
         public static string GetCPPlayID()
@@ -841,7 +854,7 @@ namespace Noice_Bot_Twitch
                 }
             }
             Console.WriteLine("INCORRECT CP PLAY ID DETECTED");
-            return null;
+            return "";
         }
         //Play a random sound from a folder library 
         public static string GetCPPlayFolder()
@@ -854,8 +867,35 @@ namespace Noice_Bot_Twitch
                 }
             }
             Console.WriteLine("INCORRECT CP PLAY FOLDER DETECTED");
-            return null;
+            return "";
         }
+        //Get all available channelpoint redemption names
+        public static string GetCPToggleTTS()
+        {
+            foreach (string s in settingsList)
+            {
+                if (s.Contains("cptoggletts=") && s.Length > 12)
+                {
+                    return s.Substring(s.IndexOf("=") + 1);
+                }
+            }
+            Console.WriteLine("INCORRECT CP PLAY FOLDER DETECTED");
+            return "";
+        }
+        public static string GetCPTTSRead()
+        {
+            foreach (string s in settingsList)
+            {
+                if (s.Contains("cpttsread=") && s.Length > 10)
+                {
+                    return s.Substring(s.IndexOf("=") + 1);
+                }
+            }
+            Console.WriteLine("INCORRECT CP PLAY FOLDER DETECTED");
+            return "";
+
+        }
+
 
         //Gives you a plimp, bloop, bonk or anyhing else you like
         public static String GetRandomNotificationSound()

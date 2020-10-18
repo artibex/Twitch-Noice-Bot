@@ -42,8 +42,9 @@ namespace Noice_Bot_Twitch
             whitelistOnly = FileManager.GetWhitelistOnly();
             commands = FileManager.GetCommandsList();
         }
-        public static void LoadSettings(IrcClient cl)
+        public static void LoadSettings(IrcClient cl, PubSubService pub)
         {
+            pubsub = pub;
             client = cl;
             LoadSettings();
         }
@@ -591,11 +592,13 @@ namespace Noice_Bot_Twitch
         static void SBReload(Command command, Comment c)
         {
             string[] s = c.comment.Split();
-            if (s.Length < 2) return;
-            if (s[1].Contains("?"))
+            if (s.Length > 1)
             {
-                client.SendChatMessage(command.helpComment);
-                return;
+                if (s[1].Contains("?"))
+                {
+                    client.SendChatMessage(command.helpComment);
+                    return;
+                }
             }
             FileManager.LoadSoundfiles();
             SoundboardManager.LoadSettings();
@@ -604,11 +607,13 @@ namespace Noice_Bot_Twitch
         static void ReloadSettings(Command command, Comment c)
         {
             string[] s = c.comment.Split();
-            if (s.Length < 2) return;
-            if (s[1].Contains("?"))
+            if (s.Length > 1)
             {
-                client.SendChatMessage(command.helpComment);
-                return;
+                if (s[1].Contains("?"))
+                {
+                    client.SendChatMessage(command.helpComment);
+                    return;
+                }
             }
             FileManager.LoadSettings();
             AudioDeviceManager.LoadSettings();
@@ -621,32 +626,78 @@ namespace Noice_Bot_Twitch
             client.SendChatMessage("Reloaded all settings");
         }
 
-
         //Trigger with Channel Points
-        public static bool CheckCommand(TwitchLib.PubSub.Events.OnRewardRedeemedArgs e)
+        public static bool CheckCommand(dynamic redemption)
         {
+            string rType = redemption.type;
+
+            switch(rType) {
+                case "RESPONSE":
+                    return false;
+                case "MESSAGE":
+                    break;
+                default:
+                    Console.WriteLine("<"+redemption.type+">");
+                    return false;
+            }
+
+            string redemption2 = redemption.data.message;
+            dynamic redeption3 = Newtonsoft.Json.Linq.JObject.Parse(redemption2);
+            string rTitle = redeption3.data.redemption.reward.title;
+            
+            Console.WriteLine(rTitle);
+
             //Play Random
-            if (e.RewardTitle.ToLower() == FileManager.GetCPPlayRandom().ToLower())
+            if (rTitle.ToLower() == FileManager.GetCPPlayRandom().ToLower())
             {
                 SoundboardManager.PlayRandom();
                 return true;
             }
             //Play Name or Random
-            else if (e.RewardTitle.ToLower() == FileManager.GetCPPlayName().ToLower())
+            else if (rTitle.ToLower() == FileManager.GetCPPlayName().ToLower())
             {
-                SoundboardManager.PlayName(e);
+                string rMessage = redeption3.data.redemption.user_input;
+                SoundboardManager.PlayName(rMessage);
                 return true;
             }
             //Play ID or Random
-            else if (e.RewardTitle.ToLower() == FileManager.GetCPPlayID().ToLower())
+            else if (rTitle.ToLower() == FileManager.GetCPPlayID().ToLower())
             {
-                SoundboardManager.PlayID(e);
+                string rMessage = redeption3.data.redemption.user_input;
+                SoundboardManager.PlayID(rMessage);
                 return true;
             }
             //Play Folder or Random
-            else if (e.RewardTitle.ToLower() == FileManager.GetCPPlayFolder().ToLower())
+            else if (rTitle.ToLower() == FileManager.GetCPPlayFolder().ToLower())
             {
-                SoundboardManager.PlayFolder(e);
+                string rMessage = redeption3.data.redemption.user_input;
+                SoundboardManager.PlayFolder(rMessage);
+                return true;
+            }
+            else if (rTitle.ToLower() == FileManager.GetCPToggleTTS().ToLower())
+            {
+                if (TTS.useTTS)
+                {
+                    TTS.useTTS = false;
+                    client.SendChatMessage("Disabled TTS");
+                }
+                else
+                {
+                    TTS.useTTS = true;
+                    client.SendChatMessage("Enabled TTS");
+                }
+                return true;
+            }
+            else if (rTitle.ToLower() == FileManager.GetCPTTSRead().ToLower())
+            {
+                string rMessage = redeption3.data.redemption.user_input;
+                if (TTS.useTTS) TTS.Speak(rMessage);
+                else
+                {
+                    TTS.useTTS = true;
+                    TTS.Speak(rMessage);
+                    TTS.useTTS = false;
+                }
                 return true;
             }
             return false;
