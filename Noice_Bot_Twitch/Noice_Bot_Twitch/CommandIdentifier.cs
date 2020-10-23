@@ -620,7 +620,11 @@ namespace Noice_Bot_Twitch
             CommandIdentifier.LoadSettings();
             CommentProcessor.LoadSettings();
             ExecutionOrderManager.LoadSettings();
-            if(pubsub != null) pubsub.LoadSettings();
+            if (pubsub != null)
+            {
+                pubsub.Disconnect();
+                pubsub.LoadSettings();
+            }
             SoundboardManager.LoadSettings();
             TTS.LoadSettings();
             client.SendChatMessage("Reloaded all settings");
@@ -632,8 +636,6 @@ namespace Noice_Bot_Twitch
             string rType = redemption.type;
 
             switch(rType) {
-                case "RESPONSE":
-                    return false;
                 case "MESSAGE":
                     break;
                 default:
@@ -645,8 +647,6 @@ namespace Noice_Bot_Twitch
             dynamic redeption3 = Newtonsoft.Json.Linq.JObject.Parse(redemption2);
             string rTitle = redeption3.data.redemption.reward.title;
             
-            Console.WriteLine(rTitle);
-
             //Play Random
             if (rTitle.ToLower() == FileManager.GetCPPlayRandom().ToLower())
             {

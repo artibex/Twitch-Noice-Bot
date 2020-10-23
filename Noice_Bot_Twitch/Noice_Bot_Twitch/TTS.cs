@@ -86,6 +86,7 @@ namespace Noice_Bot_Twitch
             filename = filename.Replace("&", String.Empty);
             filename = filename.Replace("/", String.Empty);
             filename = filename.Replace(" ", String.Empty);
+            filename = filename.Replace("*", String.Empty);
             filename += randomnumber.ToString();
             filename = filename + ".wav";
 

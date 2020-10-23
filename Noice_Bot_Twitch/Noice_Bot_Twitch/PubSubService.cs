@@ -53,9 +53,13 @@ namespace Noice_Bot_Twitch
             LoadSettings();
         }
 
+        public void Disconnect()
+        {
+            socket.Dispose();
+        }
+
         void PubSubMessageRecived(object sender, MessageReceivedEventArgs e)
         {
-            Console.WriteLine(e.Message);
             dynamic redemption = Newtonsoft.Json.Linq.JObject.Parse(e.Message);
             CommandIdentifier.CheckCommand(redemption);
         }
