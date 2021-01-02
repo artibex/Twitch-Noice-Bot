@@ -59,6 +59,7 @@ namespace Noice_Bot_Twitch
             set { _useSoundCooldown = value; }
         }
 
+        private static Random rand;
         private static DateTime globalCooldownEndTimer; //The time when the bot will be back available
         private static System.Timers.Timer globalCooldownTimer; //Global timer to set
         private static System.Timers.Timer responseCooldownTimer; //Response timer to set
@@ -88,6 +89,7 @@ namespace Noice_Bot_Twitch
             subDirektories = FileManager.GetSoundboardSubdirektories();
             soundfileOffsetList = FileManager.GetSoundfileOffsetList();
             _useSoundCooldown = FileManager.GetUseSoundcooldown();
+            rand = new Random();
         }
         public static void LoadSettings(IrcClient cl)
         {
@@ -358,8 +360,7 @@ namespace Noice_Bot_Twitch
         //Takes a list and returns a random string from it
         static void GetRandomPath(out int id, out string path, List<String> strList)
         {
-            Random rand = new Random();
-            id = rand.Next(strList.Count);
+            id = rand.Next(0, strList.Count - 1);
             path = strList[id];
         }
 

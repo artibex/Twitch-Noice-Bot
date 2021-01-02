@@ -36,7 +36,7 @@ namespace Noice_Bot_Twitch
             client = new IrcClient(FileManager.GetIrcClient(), FileManager.GetPort(), FileManager.GetBotName(), FileManager.GetOAuth(), FileManager.GetChannelName().ToLower());
             pinger = new Pinger(client); //Create a Pinger that pings the server every 5 minutes to prevent this connection getting closed
             tjb = new TwitchJsonBuilder(new string[] { "channel-points-channel-v1." + FileManager.GetChannelID()}, FileManager.GetAppAuth());
-            pubSub = new PubSubService(tjb);
+            pubSub = new PubSubService(tjb,client);
 
             //Load all Settings in (These functions can also be used to reload settings)
             AudioDeviceManager.LoadSettings();
