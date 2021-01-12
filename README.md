@@ -15,6 +15,7 @@
 - Adjustable TTS speed (keep it slow or gotta go fast!)
 - No installation requiered! (Just start the .exe)
 - Helpful for streamers or users with a visual handicap etc.
+- Get a notification sound when someone writes something in chat!
 - Load an infinite amount of soundfiles
 - Play soundfiles by Name/ID or random
 - Keep control of your library with sub-libraries (!play haha plays a soundfile out of that folder)
