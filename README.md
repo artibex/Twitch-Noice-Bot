@@ -6,18 +6,18 @@
 
 <br></br>
 ### 🔑Key Features🔑
-➕Engage with your Community while not getting distrected by a Textwall, just listen the chatmembers what they have to say!
-➕Quick Start! (Ready in 1 minute)
-➕Adjustable Spam Protection (Cut out really long chat messages for example)
-➕Aliaslist (XxXCoolKidXxX is spoken as "John")
-➕Blacklist (Remove those pesky bot's out of your ear)
-➕Custom Bridgewords (John says Kappa; John: Kappa; John tells you kappa)
-➕Adjustable TTS speed (keep it slow or gotta go fast!)
-➕No installation requiered! (Just start the .exe)
-➕Helpful for streamers or users with a visual handicap etc.
-➕Load an infinite amount of soundfiles
-➕Play soundfiles by Name/ID or random
-➕Keep control of your library with sub-libraries (!play haha plays a soundfile out of that folder)
+- Engage with your Community while not getting distrected by a Textwall, just listen the chatmembers what they have to say!
+- Quick Start! (Ready in 1 minute)
+- Adjustable Spam Protection (Cut out really long chat messages for example)
+- Aliaslist (XxXCoolKidXxX is spoken as "John")
+- Blacklist (Remove those pesky bot's out of your ear)
+- Custom Bridgewords (John says Kappa; John: Kappa; John tells you kappa)
+- Adjustable TTS speed (keep it slow or gotta go fast!)
+- No installation requiered! (Just start the .exe)
+- Helpful for streamers or users with a visual handicap etc.
+- Load an infinite amount of soundfiles
+- Play soundfiles by Name/ID or random
+- Keep control of your library with sub-libraries (!play haha plays a soundfile out of that folder)
 
 <br></br>
 ### 🛠️Installation Guide🛠️
