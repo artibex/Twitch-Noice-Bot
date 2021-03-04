@@ -29,7 +29,7 @@ namespace Noice_Bot_Twitch
 
         public static void LoadSettings()
         {
-            _executionOrder = FileManager.GetNotificationExecutionOrder();
+            _executionOrder = FileManagerOld.GetNotificationExecutionOrder();
         }
 
         public static string GetTTSText(Comment c)
@@ -51,7 +51,7 @@ namespace Noice_Bot_Twitch
                             ttsText += " " + c.comment;
                             break;
                         case 'b':
-                            ttsText += " " + FileManager.GetRandomBridgeWord();
+                            ttsText += " " + FileManagerOld.GetRandomBridgeWord();
                             break;
                         case 'n':
                             NotificationSoundManager.Play();
@@ -69,7 +69,7 @@ namespace Noice_Bot_Twitch
     
         static bool CheckTTSBlacklist(Comment c)
         {
-            foreach(string s in FileManager.GetTTSBlacklist())
+            foreach(string s in FileManagerOld.GetTTSBlacklist())
             {
                 if (c.user.ToLower() == s.ToLower()) return true;
             }

@@ -54,6 +54,7 @@
     </Reference>
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.IO, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.IO.4.3.0\lib\net462\System.IO.dll</HintPath>
       <Private>True</Private>
@@ -179,28 +180,41 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AudioDeviceManager.cs" />
-    <Compile Include="AudioMixer.cs" />
-    <Compile Include="Command.cs" />
-    <Compile Include="ExecutionOrderManager.cs" />
-    <Compile Include="JsonClass.cs" />
-    <Compile Include="PubSubService.cs" />
-    <Compile Include="Comment.cs" />
-    <Compile Include="CommandIdentifier.cs" />
-    <Compile Include="CommentProcessor.cs" />
-    <Compile Include="UserCooldown.cs" />
     <Compile Include="FileManager.cs" />
-    <Compile Include="TwitchJsonBuilder.cs" />
     <Compile Include="MainLogic.cs" />
-    <Compile Include="NotificationSoundManager.cs" />
-    <Compile Include="Pinger.cs" />
+    <Compile Include="Old\AudioDeviceManager.cs" />
+    <Compile Include="Old\AudioMixer.cs" />
+    <Compile Include="Command.cs" />
+    <Compile Include="Old\ExecutionOrderManager.cs" />
+    <Compile Include="Old\JsonClass.cs" />
+    <Compile Include="Old\PubSubService.cs" />
+    <Compile Include="Old\Comment.cs" />
+    <Compile Include="Old\CommandIdentifier.cs" />
+    <Compile Include="Old\CommentProcessor.cs" />
+    <Compile Include="Old\UserCooldown.cs" />
+    <Compile Include="Old\FileManagerOld.cs" />
+    <Compile Include="Old\TwitchJsonBuilder.cs" />
+    <Compile Include="Old\MainLogicOld.cs" />
+    <Compile Include="Old\NotificationSoundManager.cs" />
+    <Compile Include="Old\Pinger.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SoundboardManager.cs" />
-    <Compile Include="Speaker.cs" />
-    <Compile Include="TTS.cs" />
+    <Compile Include="Old\SoundboardManager.cs" />
+    <Compile Include="Old\Speaker.cs" />
+    <Compile Include="Old\TTS.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="TwitchAPI.cs" />
+    <Compile Include="UI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI.Designer.cs">
+      <DependentUpon>UI.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="UI.resx">
+      <DependentUpon>UI.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="App.config" />
     <None Include="packages.config" />
     <EmbeddedResource Include="SettingsRef\CommandsRef.json" />

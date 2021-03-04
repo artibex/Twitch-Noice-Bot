@@ -46,11 +46,11 @@ namespace Noice_Bot_Twitch
         public static void LoadSettings()
         {
             _outputDeviceID = AudioDeviceManager.GetTTSOutputDeviceID(); //Get the configured device
-            _ttsVolume = FileManager.GetTTSVolume(); //Get the volume
-            _normalSpeed = FileManager.GetTTSBaseSpeed(); //Get the normal speed
-            _fastestSpeed = FileManager.GetTTSMaxSpeed(); //Get the max speed
+            _ttsVolume = FileManagerOld.GetTTSVolume(); //Get the volume
+            _normalSpeed = FileManagerOld.GetTTSBaseSpeed(); //Get the normal speed
+            _fastestSpeed = FileManagerOld.GetTTSMaxSpeed(); //Get the max speed
             CalcMidSpeed();
-            useTTS = FileManager.GetUseTTS();
+            useTTS = FileManagerOld.GetUseTTS();
         }
 
         static void CalcMidSpeed()
@@ -66,8 +66,8 @@ namespace Noice_Bot_Twitch
             int speed = 0; //Defined PlaybackSpeed
             string filepath = String.Empty; //Filepath
 
-            if (text.Length > Convert.ToInt32(FileManager.GetMaxTextLength()*0.5)) speed = _fasterSpeed; //50% of 100 letters = 50
-            if (text.Length > Convert.ToInt32(FileManager.GetMaxTextLength()*0.8)) speed = _fastestSpeed; //80% of 100 letters = 80
+            if (text.Length > Convert.ToInt32(FileManagerOld.GetMaxTextLength()*0.5)) speed = _fasterSpeed; //50% of 100 letters = 50
+            if (text.Length > Convert.ToInt32(FileManagerOld.GetMaxTextLength()*0.8)) speed = _fastestSpeed; //80% of 100 letters = 80
             else speed = _normalSpeed; //If the text is small enough, use normal speed
 
             //Create a hash with the current date and format out useless characters
@@ -90,7 +90,7 @@ namespace Noice_Bot_Twitch
             filename += randomnumber.ToString();
             filename = filename + ".wav";
 
-            filepath = FileManager.GetPath() + @"\" + filename; //Get the path to save to
+            filepath = FileManagerOld.GetPath() + @"\" + filename; //Get the path to save to
 
             SpeechSynthesizer tempSynth = new SpeechSynthesizer(); //Create a new synth
             tempSynth.SetOutputToWaveFile(filepath); //Set the output path

@@ -38,9 +38,9 @@ namespace Noice_Bot_Twitch
 
         public static void LoadSettings()
         {
-            commandCharacter = FileManager.GetCommandCharacter();
-            whitelistOnly = FileManager.GetWhitelistOnly();
-            commands = FileManager.GetCommandsList();
+            commandCharacter = FileManagerOld.GetCommandCharacter();
+            whitelistOnly = FileManagerOld.GetWhitelistOnly();
+            commands = FileManagerOld.GetCommandsList();
         }
         public static void LoadSettings(IrcClient cl, PubSubService pub)
         {
@@ -57,7 +57,7 @@ namespace Noice_Bot_Twitch
             {
                 if (whitelistOnly) //Check if only whitelisted people are allowed (Channel Point redemption work allways)
                 {
-                    foreach (string s in FileManager.GetWhiteList()) if (c.user.ToLower() == s.ToLower()) CheckCommandList(c);
+                    foreach (string s in FileManagerOld.GetWhiteList()) if (c.user.ToLower() == s.ToLower()) CheckCommandList(c);
                 } else CheckCommandList(c);
                 return true;
             }
@@ -600,7 +600,7 @@ namespace Noice_Bot_Twitch
                     return;
                 }
             }
-            FileManager.LoadSoundfiles();
+            FileManagerOld.LoadSoundfiles();
             SoundboardManager.LoadSettings();
             client.SendChatMessage("Soundboard reloaded");
         }
@@ -615,7 +615,7 @@ namespace Noice_Bot_Twitch
                     return;
                 }
             }
-            FileManager.LoadSettings();
+            FileManagerOld.LoadSettings();
             AudioDeviceManager.LoadSettings();
             CommandIdentifier.LoadSettings();
             CommentProcessor.LoadSettings();
@@ -648,33 +648,33 @@ namespace Noice_Bot_Twitch
             string rTitle = redeption3.data.redemption.reward.title;
             
             //Play Random
-            if (rTitle.ToLower() == FileManager.GetCPPlayRandom().ToLower())
+            if (rTitle.ToLower() == FileManagerOld.GetCPPlayRandom().ToLower())
             {
                 SoundboardManager.PlayRandom();
                 return true;
             }
             //Play Name or Random
-            else if (rTitle.ToLower() == FileManager.GetCPPlayName().ToLower())
+            else if (rTitle.ToLower() == FileManagerOld.GetCPPlayName().ToLower())
             {
                 string rMessage = redeption3.data.redemption.user_input;
                 SoundboardManager.PlayName(rMessage);
                 return true;
             }
             //Play ID or Random
-            else if (rTitle.ToLower() == FileManager.GetCPPlayID().ToLower())
+            else if (rTitle.ToLower() == FileManagerOld.GetCPPlayID().ToLower())
             {
                 string rMessage = redeption3.data.redemption.user_input;
                 SoundboardManager.PlayID(rMessage);
                 return true;
             }
             //Play Folder or Random
-            else if (rTitle.ToLower() == FileManager.GetCPPlayFolder().ToLower())
+            else if (rTitle.ToLower() == FileManagerOld.GetCPPlayFolder().ToLower())
             {
                 string rMessage = redeption3.data.redemption.user_input;
                 SoundboardManager.PlayFolder(rMessage);
                 return true;
             }
-            else if (rTitle.ToLower() == FileManager.GetCPToggleTTS().ToLower())
+            else if (rTitle.ToLower() == FileManagerOld.GetCPToggleTTS().ToLower())
             {
                 if (TTS.useTTS)
                 {
@@ -688,7 +688,7 @@ namespace Noice_Bot_Twitch
                 }
                 return true;
             }
-            else if (rTitle.ToLower() == FileManager.GetCPTTSRead().ToLower())
+            else if (rTitle.ToLower() == FileManagerOld.GetCPTTSRead().ToLower())
             {
                 string rMessage = redeption3.data.redemption.user_input;
                 if (TTS.useTTS) TTS.Speak(rMessage);

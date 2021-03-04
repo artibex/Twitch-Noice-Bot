@@ -38,9 +38,9 @@ namespace Noice_Bot_Twitch
         public static void LoadSettings()
         {
             //First, check the File manager for a setting, otherwise ask user to select one
-            _ttsOutputDeviceID = FileManager.GetTTSOutputDeviceID();
-            _soundboardOutputDeviceID = FileManager.GetSoundboardOutputDeviceID();
-            _notificationOutputDeviceID = FileManager.GetNotificationOutputDeviceID();
+            _ttsOutputDeviceID = FileManagerOld.GetTTSOutputDeviceID();
+            _soundboardOutputDeviceID = FileManagerOld.GetSoundboardOutputDeviceID();
+            _notificationOutputDeviceID = FileManagerOld.GetNotificationOutputDeviceID();
             DetectDevices();
         }
 

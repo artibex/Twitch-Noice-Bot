@@ -45,10 +45,10 @@ namespace Noice_Bot_Twitch
         //Load all the settings from the file manager
         public static void LoadSettings()
         {
-            _maxTextLength = FileManager.GetMaxTextLength();
-            _spamThreshold = FileManager.GetSpamThreshold();
-            _removeEmojis = FileManager.GetRemoveEmojis();
-            _badChars = FileManager.GetBadCharList();
+            _maxTextLength = FileManagerOld.GetMaxTextLength();
+            _spamThreshold = FileManagerOld.GetSpamThreshold();
+            _removeEmojis = FileManagerOld.GetRemoveEmojis();
+            _badChars = FileManagerOld.GetBadCharList();
         }
 
         //Process the given command and return it
@@ -72,7 +72,7 @@ namespace Noice_Bot_Twitch
         public static Comment CheckAlias(Comment c)
         {
             //For each string in the alias list, check if you can find the username
-            foreach (string s in FileManager.GetAliasList())
+            foreach (string s in FileManagerOld.GetAliasList())
             {
                 string username = s.Substring(0, s.IndexOf(","));
                 string alias = s.Substring(s.IndexOf(",")+1);
@@ -114,7 +114,7 @@ namespace Noice_Bot_Twitch
         //Return true if user is on the list, otherwise false
         public static bool CheckBlacklist(Comment c)
         {
-            foreach (string s in FileManager.GetBlacklist())
+            foreach (string s in FileManagerOld.GetBlacklist())
             {
                 string username = s.ToLower();
                 if (c.user == username.ToLower()) return true;
@@ -126,7 +126,7 @@ namespace Noice_Bot_Twitch
         //Return true if he is on the list, otherwise false
         public static bool CheckWhiteList(Comment c)
         {
-            foreach (string s in FileManager.GetWhiteList())
+            foreach (string s in FileManagerOld.GetWhiteList())
             {
                 string username = s.ToLower();
 

@@ -24,12 +24,12 @@
         public static void LoadSettings()
         {
             outputDeviceID = AudioDeviceManager.GetNotificationOutputDeviceID();
-            _notificationVolume = FileManager.GetNotificationVolume();
+            _notificationVolume = FileManagerOld.GetNotificationVolume();
         }
 
         public static void Play() //Play a notification
         {
-            Speaker s = new Speaker(FileManager.GetRandomNotificationSound(), outputDeviceID, _notificationVolume, false, true);
+            Speaker s = new Speaker(FileManagerOld.GetRandomNotificationSound(), outputDeviceID, _notificationVolume, false, true);
             AudioMixer.AddNotificationSpeaker(s);
         }
     }
