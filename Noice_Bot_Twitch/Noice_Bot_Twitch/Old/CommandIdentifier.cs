@@ -464,7 +464,7 @@ namespace Noice_Bot_Twitch
         }
         static void Play(Command command, Comment c)
         {
-            SoundboardManager.PlaySoundeffect(c, command);
+            SoundboardManagerOld.PlaySoundeffect(c, command);
         }
         static void SBVol(Command command, Comment c)
         {
@@ -480,7 +480,7 @@ namespace Noice_Bot_Twitch
             {
                 if (f > 0 && f <= 1)
                 {
-                    SoundboardManager.sbVolume = f;
+                    SoundboardManagerOld.sbVolume = f;
                     client.SendChatMessage("Set soundboard volume to " + f);
                     return;
                 }
@@ -503,7 +503,7 @@ namespace Noice_Bot_Twitch
             {
                 if (i >= 0)
                 {
-                    SoundboardManager.globalCooldown = i;
+                    SoundboardManagerOld.globalCooldown = i;
                     client.SendChatMessage("Set global soundboard cooldown to " + i);
                 }
                 else client.SendChatMessage(command.helpComment);
@@ -523,7 +523,7 @@ namespace Noice_Bot_Twitch
             {
                 if (i >= 0)
                 {
-                    SoundboardManager.userCooldown = i;
+                    SoundboardManagerOld.userCooldown = i;
                     client.SendChatMessage("Set soundboard user cooldown to " + i);
                 }
                 else client.SendChatMessage(command.helpComment);
@@ -543,7 +543,7 @@ namespace Noice_Bot_Twitch
             {
                 if (i >= 0)
                 {
-                    SoundboardManager.responseCooldown = i;
+                    SoundboardManagerOld.responseCooldown = i;
                     client.SendChatMessage("Set soundboard response cooldown to " + i);
                 }
                 else client.SendChatMessage(command.helpComment);
@@ -563,7 +563,7 @@ namespace Noice_Bot_Twitch
             {
                 if (i >= 0)
                 {
-                    SoundboardManager.soundInterval = i;
+                    SoundboardManagerOld.soundInterval = i;
                     client.SendChatMessage("Set soundboard interval cooldown to " + i);
                 }
                 else client.SendChatMessage(command.helpComment);
@@ -580,12 +580,12 @@ namespace Noice_Bot_Twitch
             }
             if (s[1].Contains("true"))
             {
-                SoundboardManager.useSoundCooldown = true;
+                SoundboardManagerOld.useSoundCooldown = true;
                 client.SendChatMessage("Enabled Soundcooldown system");
             }
             else if (s[1].Contains("false"))
             {
-                SoundboardManager.useSoundCooldown = false;
+                SoundboardManagerOld.useSoundCooldown = false;
                 client.SendChatMessage("Disabled Soundcooldown system");
             }
         }
@@ -601,7 +601,7 @@ namespace Noice_Bot_Twitch
                 }
             }
             FileManagerOld.LoadSoundfiles();
-            SoundboardManager.LoadSettings();
+            SoundboardManagerOld.LoadSettings();
             client.SendChatMessage("Soundboard reloaded");
         }
         static void ReloadSettings(Command command, Comment c)
@@ -625,7 +625,7 @@ namespace Noice_Bot_Twitch
                 pubsub.Disconnect();
                 pubsub.LoadSettings();
             }
-            SoundboardManager.LoadSettings();
+            SoundboardManagerOld.LoadSettings();
             TTS.LoadSettings();
             client.SendChatMessage("Reloaded all settings");
         }
@@ -650,28 +650,28 @@ namespace Noice_Bot_Twitch
             //Play Random
             if (rTitle.ToLower() == FileManagerOld.GetCPPlayRandom().ToLower())
             {
-                SoundboardManager.PlayRandom();
+                SoundboardManagerOld.PlayRandom();
                 return true;
             }
             //Play Name or Random
             else if (rTitle.ToLower() == FileManagerOld.GetCPPlayName().ToLower())
             {
                 string rMessage = redeption3.data.redemption.user_input;
-                SoundboardManager.PlayName(rMessage);
+                SoundboardManagerOld.PlayName(rMessage);
                 return true;
             }
             //Play ID or Random
             else if (rTitle.ToLower() == FileManagerOld.GetCPPlayID().ToLower())
             {
                 string rMessage = redeption3.data.redemption.user_input;
-                SoundboardManager.PlayID(rMessage);
+                SoundboardManagerOld.PlayID(rMessage);
                 return true;
             }
             //Play Folder or Random
             else if (rTitle.ToLower() == FileManagerOld.GetCPPlayFolder().ToLower())
             {
                 string rMessage = redeption3.data.redemption.user_input;
-                SoundboardManager.PlayFolder(rMessage);
+                SoundboardManagerOld.PlayFolder(rMessage);
                 return true;
             }
             else if (rTitle.ToLower() == FileManagerOld.GetCPToggleTTS().ToLower())

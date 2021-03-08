@@ -6,13 +6,15 @@ using System.Threading.Tasks;
 
 namespace Noice_Bot_Twitch
 {
-    public class Settings
+    public class SettingsModel
     {
-
-    }
-
-    public class UISettings
-    {
-
+        public List<string> Blacklist;
+        public List<string> Whitelist;
+        public List<string> Aliaslist;
+        public List<string> TtsBlacklist;
+        public List<string> SoundboardWhitelist;
+        public List<string> ModeratorList;
+        public List<string> Settings;
+        public List<string> Bridgelist;
     }
 }

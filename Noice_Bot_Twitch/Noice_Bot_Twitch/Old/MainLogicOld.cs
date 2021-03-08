@@ -42,7 +42,7 @@ namespace Noice_Bot_Twitch
             AudioDeviceManager.LoadSettings();
             NotificationSoundManager.LoadSettings();
             TTS.LoadSettings();
-            SoundboardManager.LoadSettings(client);
+            SoundboardManagerOld.LoadSettings(client);
             CommandIdentifier.LoadSettings(client, pubSub);
             CommentProcessor.LoadSettings();
             ExecutionOrderManager.LoadSettings();

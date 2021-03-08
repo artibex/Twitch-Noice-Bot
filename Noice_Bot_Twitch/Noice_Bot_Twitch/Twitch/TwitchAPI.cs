@@ -7,7 +7,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Noice_Bot_Twitch
+namespace Noice_Bot_Twitch.Twitch
 {
     class TwitchAPI
     {

@@ -199,11 +199,14 @@
     <Compile Include="Old\Pinger.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Old\SoundboardManager.cs" />
+    <Compile Include="Old\SoundboardManagerOld.cs" />
     <Compile Include="Old\Speaker.cs" />
     <Compile Include="Old\TTS.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="TwitchAPI.cs" />
+    <Compile Include="Soundboard\SoundboardManager.cs" />
+    <Compile Include="Soundboard\Soundfile.cs" />
+    <Compile Include="Soundboard\SoundfileManager.cs" />
+    <Compile Include="Twitch\TwitchAPI.cs" />
     <Compile Include="UI.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -230,5 +233,6 @@
   <ItemGroup>
     <EmbeddedResource Include="SettingsRef\ttsblacklistRef.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

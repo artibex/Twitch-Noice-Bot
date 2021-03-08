@@ -10,7 +10,7 @@ using System.Runtime.CompilerServices;
 namespace Noice_Bot_Twitch
 {
     //Manages the playing of soundeffects and cooldowns
-    public static class SoundboardManager
+    public static class SoundboardManagerOld
     {
         //AudioDeviceManager adm; //Load output device ID here
         //FileManager fm; //Get Paths to soundfiles here
