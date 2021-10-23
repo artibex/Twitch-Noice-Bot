@@ -216,5 +216,8 @@
   <ItemGroup>
     <EmbeddedResource Include="SettingsRef\ttsblacklistRef.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SettingsRef\soundListRef.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

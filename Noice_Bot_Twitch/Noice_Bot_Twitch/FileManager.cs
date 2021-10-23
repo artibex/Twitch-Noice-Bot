@@ -21,6 +21,7 @@ namespace Noice_Bot_Twitch
         private static string bridgelistFile = @"BridgeWordList.txt";
         private static string whitelistFile = @"Whitelist.txt";
         private static string soundOffsetFile = @"SoundfileOffset.txt";
+        private static string soundsFile = @"Sounds.txt";
         private static string commandsFile = @"Commands.json";
 
         //Folder structure
@@ -28,7 +29,6 @@ namespace Noice_Bot_Twitch
         static string soundEffectsFolder = @"Soundeffects"; //Soundeffects folder usually contains Notification folder and Soundboard folder
         static string notificationSoundsFolder = @"Notifications"; //Notification sounds folder
         static string soundBoardFolder = @"Soundboard"; //Soundboard folder name, can be defined via Settings file
-
         //Alias List, Blacklist, Whitelist, Settings
         static List<String> aliasList; //Loaded Aliases
         static List<String> blackList; //Loaded Blacklist
@@ -37,7 +37,7 @@ namespace Noice_Bot_Twitch
         static List<String> whiteList; //Loaded Whitelist
         static List<String> settingsList; //Loaded Settings
         static List<String> notificationList; //Paths to the notifications sounds
-        static List<String> soundFiles; //All the Soundfiles as Path
+        static List<String> soundfilePaths; //All the Soundfiles as Path
         static List<String> soundboardSubdirektories; //Subdirektories of the soundboard folder
         static List<String> soundfileOffsetList; //Loaded offsets of soundfiles
         static List<Command> commands;
@@ -70,9 +70,10 @@ namespace Noice_Bot_Twitch
                 ttsBlacklist = File.ReadAllLines(path + @"\" + settingsFolder + @"\" + ttsblacklistFile).ToList(); //Read "TTSBlacklist.txt"
                 bridgeWordList = File.ReadAllLines(path + @"\" + settingsFolder + @"\" + bridgelistFile).ToList(); //Read "BridgeWordList.txt"
                 whiteList = File.ReadAllLines(path + @"\" + settingsFolder + @"\" + whitelistFile).ToList(); //Read "Whitelist.txt"
+           
                 commands = JsonConvert.DeserializeObject<List<Command>>(File.ReadAllText(path + @"\" + settingsFolder + @"\" + commandsFile));
 
-                LoadSoundfiles(); //Check in the given path for soundfiles and put them in the list
+                LoadSoundfiles(); //Check first for a sounds file and generate it if needed
                 UpdateSoundOffsetFile(); //Before loading the file, update it to check if new sounds are added
                 soundfileOffsetList = File.ReadAllLines(path + @"\" + settingsFolder + @"\" + soundOffsetFile).ToList(); //Load sound offset
             } catch
@@ -86,15 +87,25 @@ namespace Noice_Bot_Twitch
         //Load all soundfiles in a given path
         public static void LoadSoundfiles()
         {
-            soundFiles = new List<string>();
-            //Check all files in direktory and subdirektories and add every supported file to the list
-            if(Directory.Exists(GetSoundboardPath()))
-            {
-                soundFiles = Directory.EnumerateFiles(GetSoundboardPath(), "*.*", SearchOption.AllDirectories)
-                .Where(s => s.EndsWith(".mp3") || s.EndsWith(".wav") || s.EndsWith(".aiff") || s.EndsWith(".wma")).ToList();
+            soundfilePaths = new List<string>(); //Create new List
 
+            if (File.Exists(path + @"\" + settingsFolder + @"\" + soundsFile)) //If Sounds.txt does not exist, create it
+            {
+                UpdateSoundsListFile();
+
+                //read soundfiles with id and name in and extract the path of the file
+                List<string> sounds = File.ReadAllLines(path + @"\" + settingsFolder + @"\" + soundsFile).ToList();
+                foreach (string s in sounds)
+                {
+                    string[] split = s.Split(',');
+                    soundfilePaths.Add(split[2]);
+                }
+            } else CheckFileExistence();
+
+            if (Directory.Exists(GetSoundboardPath())) //get soundboardSubdirektories
+            {
                 soundboardSubdirektories = Directory.GetDirectories(GetSoundboardPath()).ToList(); //Load subdirectories
-                Console.WriteLine("Loaded " + soundFiles.Count + " Soundfiles"); //Display the loaded amount in console to flex
+                Console.WriteLine("Loaded " + soundfilePaths.Count + " Soundfiles"); //Display the loaded amount in console to flex
             }
         }
 
@@ -145,7 +156,6 @@ namespace Noice_Bot_Twitch
                 }
                 Console.WriteLine("File: " + blacklistFile + " was missing");
             }
-
 
             if (!File.Exists(path + @"\" + settingsFolder + @"\" +  bridgelistFile)) //BridgeWordlist.txt
             {
@@ -202,6 +212,22 @@ namespace Noice_Bot_Twitch
                 }
                 Console.WriteLine("File: " + soundOffsetFile + " was missing");
             }
+            if (!File.Exists(path + @"\" + settingsFolder + @"\" + soundsFile)) //Sounds.txt
+            {
+                //Sound effects offset file to adjust every sound if needed
+                var assembly = Assembly.GetExecutingAssembly();
+                var resourceName = "Noice_Bot_Twitch.SettingsRef.soundListRef.txt";
+
+                using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    string result = reader.ReadToEnd();
+                    result += "\n" + GenSoundsListFile();
+                    File.WriteAllText(path + @"\" + settingsFolder + @"\" + soundsFile, result);
+                }
+                Console.WriteLine("File: " + soundsFile + " was missing");
+            }
+
             if (!File.Exists(path + @"\" + settingsFolder + @"\" + commandsFile)) //Commands.json
             {
                 //Basic Conf, the user has to put in his own oauth key, channelname and Channel ID for Channel Point support
@@ -222,9 +248,9 @@ namespace Noice_Bot_Twitch
         static String GenSoundfileOffsetList()
         {
             string str = "";
-            if (soundFiles != null)
+            if (soundfilePaths != null)
             {
-                foreach (string path in soundFiles)
+                foreach (string path in soundfilePaths)
                 {
                     str += GetSoundname(path) + ",+0,+0\n";
                 }
@@ -232,21 +258,41 @@ namespace Noice_Bot_Twitch
             }
             else return str;
         }
+        //Generate the list of all soundfiles in the soundboard
+        static String GenSoundsListFile()
+        {
+            string str = "";
+            int counter = 0;
 
+            //Check all files in direktory and subdirektories and add every supported file to the list
+            if (Directory.Exists(GetSoundboardPath()))
+            {
+                soundfilePaths = Directory.EnumerateFiles(GetSoundboardPath(), "*.*", SearchOption.AllDirectories)
+                .Where(s => s.EndsWith(".mp3") || s.EndsWith(".wav") || s.EndsWith(".aiff") || s.EndsWith(".wma")).ToList();
+            }
+
+            foreach (string path in soundfilePaths)
+            {
+                str += counter.ToString() + "," + GetSoundname(path) + "," + path + "\n";
+                counter++;
+            }
+            return str;
+
+        }
         //Update the Soundeffects offset file with new found soundeffects, this will not delete any out
         static void UpdateSoundOffsetFile()
         {
             List<String> data = new List<string>();
             List<String> newData = new List<string>();
 
-            //If the file dows not exist, generate it first
+            //If the file does not exist, generate it first
             if (File.Exists(path + @"\" + settingsFolder + @"\" + soundOffsetFile)) //Soundoffsetfile.txt
             {
                 //Read every colum in the file
                 data = File.ReadAllLines(path + @"\" + settingsFolder + @"\" + soundOffsetFile).ToList();
 
                 //For each soundfile check if it's in the list
-                foreach(string soundfilePath in soundFiles)
+                foreach(string soundfilePath in soundfilePaths)
                 {
                     bool found = false; //Simple bool to determen if was not found
 
@@ -283,6 +329,62 @@ namespace Noice_Bot_Twitch
                     File.WriteAllText(path + @"\" + settingsFolder + @"\" + soundOffsetFile, writingData);
                 }
             } else GenSoundfileOffsetList(); //If the file does not exist, create it
+        }
+        static void UpdateSoundsListFile()
+        {
+            List<string> foundSoundfiles = new List<string>();
+            List<string> readSoundfiles = new List<string>();
+            List<string> unknownSoundFiles = new List<string>();
+
+            //Check all files in direktory and subdirektories and add every supported file to the list
+            if (Directory.Exists(GetSoundboardPath()))
+            {
+                foundSoundfiles = Directory.EnumerateFiles(GetSoundboardPath(), "*.*", SearchOption.AllDirectories)
+                .Where(s => s.EndsWith(".mp3") || s.EndsWith(".wav") || s.EndsWith(".aiff") || s.EndsWith(".wma")).ToList();
+            }
+
+            //read soundfiles with id and name in and extract the path of the file
+            List<string> sounds = File.ReadAllLines(path + @"\" + settingsFolder + @"\" + soundsFile).ToList();
+            foreach (string s in sounds)
+            {
+                string[] split = s.Split(',');
+                try
+                {
+                    if (File.Exists(split[2])){
+                        readSoundfiles.Add(split[2]);
+                    }
+                } catch { GenSoundsListFile(); }
+            }
+
+            Console.WriteLine("found sounds:" + foundSoundfiles.Count + " sounds in file:" + readSoundfiles.Count);
+
+            foreach (string fPath in foundSoundfiles)
+            {
+                if (readSoundfiles.Exists(x => x.Contains(fPath))) //If the string can be found in the list, ignore
+                {
+                    //If you can't find it in the list, add it to the list
+                }
+                else
+                {
+                    Console.WriteLine("Could not find " + fPath);
+                    unknownSoundFiles.Add(fPath);
+                }
+            }
+
+            int counter = 0;
+            string writingData = "";
+            foreach (string s in readSoundfiles)
+            {
+                writingData += counter + "," + GetSoundname(s) + "," + s + "\n";
+                counter++;
+            }
+            foreach (string s in unknownSoundFiles)
+            {
+                writingData += counter + "," + GetSoundname(s) + "," + s + "\n";
+                counter++;
+            }
+
+            File.WriteAllText(path + @"\" + settingsFolder + @"\" + soundsFile, writingData);
         }
 
         //#### Getter Methods for all kind of stuff ####
@@ -753,7 +855,7 @@ namespace Noice_Bot_Twitch
         //All paths to the soundfiles
         public static List<String> GetSoundfiles()
         {
-            if (soundFiles != null) return soundFiles;
+            if (soundfilePaths != null) return soundfilePaths;
             else return new List<string>(); //If list is null, return empty list
         }
         //All the subdirektories of the soundboard, these are new libraries that can be also triggerd
