@@ -40,5 +40,10 @@ namespace Noice_Bot_Twitch
                 Console.WriteLine(rawMsg);
             }
         }
+
+        public void Print()
+        {
+            Console.WriteLine(user + ": " + comment);
+        }
     }
 }

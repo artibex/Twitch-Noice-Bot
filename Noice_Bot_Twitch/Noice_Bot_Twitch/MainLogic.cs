@@ -12,7 +12,7 @@ namespace Noice_Bot_Twitch
         TwitchJsonBuilder tjb;
         PubSubService pubSub;
         IrcClient client; //Create new Connection to a IRC Server
-        Pinger pinger; //Ping the server every 5 Minutes so the connection is not getting closed
+        //Pinger pinger; //Ping the server every 5 Minutes so the connection is not getting closed
         //AudioDeviceManager adm; //Manages the Output Devices (if non is configured in the settings.txt ask for ID's)
         //NotificationSoundManager nsm; //Manages the Notification Sound, Playing, Volume etc.
         //TTS tts; //Text to Speech Synthesizer to read out the chat
@@ -121,15 +121,17 @@ namespace Noice_Bot_Twitch
         private void Client_OnMessageReceived(object sender, OnMessageReceivedArgs e)
         {
             Comment c = new Comment(e.ChatMessage.Username, e.ChatMessage.Message);
+            c.Print();
+
             //c = CommentProcessor.Process(c); //Edit the given User Comment
             CommandIdentifier.CheckCommand(c);
             string executionOrder = FileManager.GetNotificationExecutionOrder(); //Check if to read it out and how
             string ttsText = ExecutionOrderManager.GetTTSText(c); //The text how it should be converted to speech
 
-            if (ttsText == "" && !String.IsNullOrWhiteSpace(c.user) && !String.IsNullOrWhiteSpace(c.comment)) Console.WriteLine(c.user + ": " + c.comment); //If comment is empty, write normal comment in console
+            if (ttsText == "" && !String.IsNullOrWhiteSpace(c.user) && !String.IsNullOrWhiteSpace(c.comment))Console.WriteLine(c.user + ": " + c.comment); //If comment is empty, write normal comment in console
             else if (ttsText != "" && !String.IsNullOrWhiteSpace(c.user) && !String.IsNullOrWhiteSpace(c.comment))
             {
-                Console.WriteLine(ttsText);
+                //Console.WriteLine("TTS OUTPUT=" + ttsText);
                 TTS.Speak(ttsText);
             }
         }

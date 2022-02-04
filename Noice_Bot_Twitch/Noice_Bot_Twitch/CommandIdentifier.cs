@@ -55,7 +55,7 @@ namespace Noice_Bot_Twitch
         //Return false if it's not a command
         public static bool CheckCommand(Comment c)
         {
-            Console.WriteLine("Checking " + c.comment);
+            //Console.WriteLine("Checking " + c.comment);
             if(c.comment != null && c.comment.StartsWith(commandCharacter))
             {
                 if (whitelistOnly) //Check if only whitelisted people are allowed (Channel Point redemption work allways)
