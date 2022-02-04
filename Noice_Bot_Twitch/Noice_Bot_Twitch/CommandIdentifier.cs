@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using TwitchLib.Client;
+
 using System.Data.SqlClient;
 using System.Runtime.CompilerServices;
 
@@ -11,7 +13,7 @@ namespace Noice_Bot_Twitch
     {
         //public static SoundboardManager sm;
         //public static FileManager fm;
-        public static IrcClient client;
+        //public static IrcClient client;
         //public static AudioDeviceManager adm;
         //public static NotificationSoundManager nsm;
         //public static TTS tts;
@@ -45,7 +47,7 @@ namespace Noice_Bot_Twitch
         public static void LoadSettings(IrcClient cl, PubSubService pub)
         {
             pubsub = pub;
-            client = cl;
+            //client = TwitchLibChatClient.client;
             LoadSettings();
         }
 
@@ -53,6 +55,7 @@ namespace Noice_Bot_Twitch
         //Return false if it's not a command
         public static bool CheckCommand(Comment c)
         {
+            Console.WriteLine("Checking " + c.comment);
             if(c.comment != null && c.comment.StartsWith(commandCharacter))
             {
                 if (whitelistOnly) //Check if only whitelisted people are allowed (Channel Point redemption work allways)
@@ -167,7 +170,8 @@ namespace Noice_Bot_Twitch
             string collector = "";
             foreach (Command co in commands) collector += co.name + ", ";
             collector = collector.Substring(0, collector.Length - 2); //Cut away last ','
-            client.SendChatMessage(command.helpComment + " " + collector);
+            //TwitchLibChatClient.SendMessage(command.helpComment + " " + collector);
+            TwitchLibChatClient.SendMessage(command.helpComment + " " + collector);
         }
         static void TTSEnabled(Command command, Comment c)
         {
@@ -175,18 +179,21 @@ namespace Noice_Bot_Twitch
             if (s.Length < 2) return;
             if(s[1].Contains("?"))
             {
-                client.SendChatMessage(command.helpComment);
+                //TwitchLibChatClient.SendMessage(command.helpComment);
+                TwitchLibChatClient.SendMessage(command.helpComment);
                 return;
             }
             if (s[1].Contains("true"))
             {
                 TTS.useTTS = true;
-                client.SendChatMessage("Enabled TTS");
+                //client.SendChatMessage("Enabled TTS");
+                TwitchLibChatClient.SendMessage("Enabled TTS");
             }
             else if (s[1].Contains("false"))
             {
                 TTS.useTTS = false;
-                client.SendChatMessage("Disabled TTS");
+                //client.SendChatMessage("Disabled TTS");
+                TwitchLibChatClient.SendMessage("Enabled TTS");
             }
         }
         static void TTSVol(Command command, Comment c)
@@ -195,25 +202,34 @@ namespace Noice_Bot_Twitch
             float f;
             if (s.Length < 2)
             {
-                client.SendChatMessage("Current TTS Volume=" + TTS.ttsVolume); 
+                //client.SendChatMessage("Current TTS Volume=" + TTS.ttsVolume);
+                TwitchLibChatClient.SendMessage("Current TTS Volume=" + TTS.ttsVolume);
                 return;
             }
             if (s[1].Contains("?"))
             {
-                client.SendChatMessage(command.helpComment);
+                //client.SendChatMessage(command.helpComment);
+                TwitchLibChatClient.SendMessage(command.helpComment);
                 return;
             }
-            if(float.TryParse(s[1], out f))
+            if (float.TryParse(s[1], out f))
             {
-                if(f > 0 && f <= 1)
+                if (f > 0 && f <= 1)
                 {
                     TTS.ttsVolume = f;
-                    client.SendChatMessage("Set TTS volume to " + f);
+                    //client.SendChatMessage("Set TTS volume to " + f);
+                    TwitchLibChatClient.SendMessage("Set TTS volume to " + f);
                     return;
                 }
-                client.SendChatMessage("TTS volume must be between 0 and 1");
+                //client.SendChatMessage("TTS volume must be between 0 and 1");
+                TwitchLibChatClient.SendMessage("TTS volume must be between 0 and 1");
+
             }
-            else client.SendChatMessage(command.helpComment);
+            else 
+            {
+                //client.SendChatMessage(command.helpComment);
+                TwitchLibChatClient.SendMessage(command.helpComment);
+            };
         }
         static void TTSSkip(Command command, Comment c)
         {
@@ -222,11 +238,13 @@ namespace Noice_Bot_Twitch
             {
                 if (s[1].Contains("?"))
                 {
-                    client.SendChatMessage(command.helpComment);
+                    //client.SendChatMessage(command.helpComment);
+                    TwitchLibChatClient.SendMessage(command.helpComment);
                     return;
                 }
             }
-            client.SendChatMessage("Skipping current TTS");
+            //client.SendChatMessage("Skipping current TTS");
+            TwitchLibChatClient.SendMessage("Skipping current TTS");
             AudioMixer.StopTTS();
         }
         static void TTSExecutionOrder(Command command, Comment c)
@@ -235,7 +253,8 @@ namespace Noice_Bot_Twitch
             if (s.Length < 2) return;
             if (s[1].Contains("?"))
             {
-                client.SendChatMessage(command.helpComment);
+                //client.SendChatMessage(command.helpComment);
+                TwitchLibChatClient.SendMessage(command.helpComment);
                 return;
             }
             foreach(char ch in s[1])
@@ -251,12 +270,15 @@ namespace Noice_Bot_Twitch
                     case 'n':
                         break;
                     default:
-                        client.SendChatMessage("Only chars u,b,c,n are usable");
+                        //client.SendChatMessage("Only chars u,b,c,n are usable");
+                        TwitchLibChatClient.SendMessage("Only chars u,b,c,n are usable");
                         return;
                 }
             }
             ExecutionOrderManager.executionOrder = s[1];
-            client.SendChatMessage("New execution order= " + s[1]);
+            //client.SendChatMessage("New execution order= " + s[1]);
+            TwitchLibChatClient.SendMessage("New execution order= " + s[1]);
+
         }
         static void TTSSpeed(Command command, Comment c)
         {
@@ -265,7 +287,8 @@ namespace Noice_Bot_Twitch
             if (s.Length < 2) return;
             if (s[1].Contains("?"))
             {
-                client.SendChatMessage(command.helpComment);
+                //client.SendChatMessage(command.helpComment);
+                TwitchLibChatClient.SendMessage(command.helpComment);
                 return;
             }
             if(int.TryParse(s[1], out i)) {
@@ -274,9 +297,14 @@ namespace Noice_Bot_Twitch
                     if(i < TTS.fastestSpeed)
                     {
                         TTS.normalSpeed = i;
-                        client.SendChatMessage("Set TTS base speed to " + i);
+                        //client.SendChatMessage("Set TTS base speed to " + i);
+                        TwitchLibChatClient.SendMessage("Set TTS base speed to " + i);
                     }
-                    else client.SendChatMessage("TTS base speed can't be higher then max speed. Max Speed=" + TTS.fastestSpeed);
+                    else
+                    {
+                        //client.SendChatMessage("TTS base speed can't be higher then max speed. Max Speed=" + TTS.fastestSpeed);
+                        TwitchLibChatClient.SendMessage("TTS base speed can't be higher then max speed. Max Speed=" + TTS.fastestSpeed);
+                    }
                 }
             }
         }
@@ -287,7 +315,8 @@ namespace Noice_Bot_Twitch
             if (s.Length < 2) return;
             if (s[1].Contains("?"))
             {
-                client.SendChatMessage(command.helpComment);
+                //client.SendChatMessage(command.helpComment);
+                TwitchLibChatClient.SendMessage(command.helpComment);
                 return;
             }
             if (int.TryParse(s[1], out i))
@@ -297,9 +326,15 @@ namespace Noice_Bot_Twitch
                     if(i > TTS.normalSpeed)
                     {
                         TTS.fastestSpeed = i;
-                        client.SendChatMessage("Set TTS max speed to " + i);
+                        //client.SendChatMessage("Set TTS max speed to " + i);
+                        TwitchLibChatClient.SendMessage("Set TTS max speed to " + i);
+
                     }
-                    else client.SendChatMessage("TTS max speed must be higher then base speed. Base speed=" + TTS.normalSpeed);
+                    else
+                    {
+                        //client.SendChatMessage("TTS max speed must be higher then base speed. Base speed=" + TTS.normalSpeed);
+                        TwitchLibChatClient.SendMessage("TTS max speed must be higher then base speed. Base speed=" + TTS.normalSpeed);
+                    }
                 }
             }
 
@@ -311,7 +346,9 @@ namespace Noice_Bot_Twitch
             if (s.Length < 2) return;
             if (s[1].Contains("?"))
             {
-                client.SendChatMessage(command.helpComment);
+                //client.SendChatMessage(command.helpComment);
+                TwitchLibChatClient.SendMessage(command.helpComment);
+
                 return;
             }
             if(int.TryParse(s[1], out i))
@@ -319,9 +356,16 @@ namespace Noice_Bot_Twitch
                 if(i > 0)
                 {
                     CommentProcessor.maxTextLength = i;
-                    client.SendChatMessage("Set TTS max text length to " + i);
+                    //client.SendChatMessage("Set TTS max text length to " + i);
+                    TwitchLibChatClient.SendMessage("Set TTS max text length to " + i);
+
                 }
-                else client.SendChatMessage("Value must be higher then 0");
+                else
+                {
+                    TwitchLibChatClient.SendMessage("Value must be higher then 0");
+                    TwitchLibChatClient.SendMessage("Set TTS max text length to " + i);
+
+                }
             }
         }
         static void TTSSpamThreshHold(Command command, Comment c)
@@ -331,7 +375,7 @@ namespace Noice_Bot_Twitch
             if (s.Length < 2) return;
             if (s[1].Contains("?"))
             {
-                client.SendChatMessage(command.helpComment);
+                TwitchLibChatClient.SendMessage(command.helpComment);
                 return;
             }
             if (int.TryParse(s[1], out i))
@@ -339,9 +383,9 @@ namespace Noice_Bot_Twitch
                 if (i > 0)
                 {
                     CommentProcessor.spamThreshold = i;
-                    client.SendChatMessage("Set TTS spam threshold to " + i);
+                    TwitchLibChatClient.SendMessage("Set TTS spam threshold to " + i);
                 }
-                else client.SendChatMessage("Value must be higher then 0");
+                else TwitchLibChatClient.SendMessage("Value must be higher then 0");
             }
 
         }
@@ -352,13 +396,13 @@ namespace Noice_Bot_Twitch
             if (s.Length < 2) return;
             if (s[1].Contains("?"))
             {
-                client.SendChatMessage(command.helpComment);
+                TwitchLibChatClient.SendMessage(command.helpComment);
                 return;
             }
             if(bool.TryParse(s[1], out b))
             {
                 CommentProcessor.removeEmojis = b;
-                client.SendChatMessage("Removing ASCII Emojis set to " + b.ToString());
+                TwitchLibChatClient.SendMessage("Removing ASCII Emojis set to " + b.ToString());
             }
         }
         static void TTSBadCharList(Command command, Comment c)
@@ -367,11 +411,11 @@ namespace Noice_Bot_Twitch
             if (s.Length < 2) return;
             if (s[1].Contains("?") && s[1].Length < 2)
             {
-                client.SendChatMessage(command.helpComment);
+                TwitchLibChatClient.SendMessage(command.helpComment);
                 return;
             }
             CommentProcessor.badChars = s[1];
-            client.SendChatMessage("Updated bad char list. New list: " + s[1]);
+            TwitchLibChatClient.SendMessage("Updated bad char list. New list: " + s[1]);
         }
         static void TTSRead(Command command, Comment c)
         {
@@ -379,7 +423,7 @@ namespace Noice_Bot_Twitch
             if (s.Length < 2) return;
             if (s[1].Contains("?"))
             {
-                client.SendChatMessage(command.helpComment);
+                TwitchLibChatClient.SendMessage(command.helpComment);
                 return;
             }
 
@@ -405,13 +449,13 @@ namespace Noice_Bot_Twitch
             if (s.Length < 2) return;
             if (s[1].Contains("?"))
             {
-                client.SendChatMessage(command.helpComment);
+                TwitchLibChatClient.SendMessage(command.helpComment);
                 return;
             }
             if(int.TryParse(s[1], out i))
             {
                 AudioDeviceManager.ttsOutputDeviceID = i;
-                client.SendChatMessage("Set TTS output device to " + i);
+                TwitchLibChatClient.SendMessage("Set TTS output device to " + i);
             }
         }
         static void SoundboardOutput(Command command, Comment c)
@@ -421,13 +465,13 @@ namespace Noice_Bot_Twitch
             if (s.Length < 2) return;
             if (s[1].Contains("?"))
             {
-                client.SendChatMessage(command.helpComment);
+                TwitchLibChatClient.SendMessage(command.helpComment);
                 return;
             }
             if (int.TryParse(s[1], out i))
             {
                 AudioDeviceManager.soundboardOutputDeviceID = i;
-                client.SendChatMessage("Set Soundboard output device to " + i);
+                TwitchLibChatClient.SendMessage("Set Soundboard output device to " + i);
             }
         }
         static void NotificationOutput(Command command, Comment c)
@@ -436,7 +480,7 @@ namespace Noice_Bot_Twitch
             if (s.Length < 2) return;
             if (s[1].Contains("?"))
             {
-                client.SendChatMessage(command.helpComment);
+                TwitchLibChatClient.SendMessage(command.helpComment);
                 return;
             }
         }
@@ -447,7 +491,7 @@ namespace Noice_Bot_Twitch
             if (s.Length < 2) return;
             if (s[1].Contains("?"))
             {
-                client.SendChatMessage(command.helpComment);
+                TwitchLibChatClient.SendMessage(command.helpComment);
                 return;
             }
             if (float.TryParse(s[1], out f))
@@ -455,12 +499,12 @@ namespace Noice_Bot_Twitch
                 if (f > 0 && f <= 1)
                 {
                     NotificationSoundManager.notificationVolume = f;
-                    client.SendChatMessage("Set notification volume to " + f);
+                    TwitchLibChatClient.SendMessage("Set notification volume to " + f);
                     return;
                 }
-                client.SendChatMessage("notification volume must be between 0 and 1");
+                TwitchLibChatClient.SendMessage("notification volume must be between 0 and 1");
             }
-            else client.SendChatMessage(command.helpComment);
+            else TwitchLibChatClient.SendMessage(command.helpComment);
         }
         static void Play(Command command, Comment c)
         {
@@ -473,7 +517,7 @@ namespace Noice_Bot_Twitch
             if (s.Length < 2) return;
             if (s[1].Contains("?"))
             {
-                client.SendChatMessage(command.helpComment);
+                TwitchLibChatClient.SendMessage(command.helpComment);
                 return;
             }
             if (float.TryParse(s[1], out f))
@@ -481,12 +525,12 @@ namespace Noice_Bot_Twitch
                 if (f > 0 && f <= 1)
                 {
                     SoundboardManager.sbVolume = f;
-                    client.SendChatMessage("Set soundboard volume to " + f);
+                    TwitchLibChatClient.SendMessage("Set soundboard volume to " + f);
                     return;
                 }
-                client.SendChatMessage("soundboard volume must be between 0 and 1");
+                TwitchLibChatClient.SendMessage("soundboard volume must be between 0 and 1");
             }
-            else client.SendChatMessage(command.helpComment);
+            else TwitchLibChatClient.SendMessage(command.helpComment);
 
         }
         static void SBGlobalCooldown(Command command, Comment c)
@@ -496,7 +540,7 @@ namespace Noice_Bot_Twitch
             if (s.Length < 2) return;
             if (s[1].Contains("?"))
             {
-                client.SendChatMessage(command.helpComment);
+                TwitchLibChatClient.SendMessage(command.helpComment);
                 return;
             }
             if (int.TryParse(s[1], out i))
@@ -504,9 +548,9 @@ namespace Noice_Bot_Twitch
                 if (i >= 0)
                 {
                     SoundboardManager.globalCooldown = i;
-                    client.SendChatMessage("Set global soundboard cooldown to " + i);
+                    TwitchLibChatClient.SendMessage("Set global soundboard cooldown to " + i);
                 }
-                else client.SendChatMessage(command.helpComment);
+                else TwitchLibChatClient.SendMessage(command.helpComment);
             }
         }
         static void SBUserCooldown(Command command, Comment c)
@@ -516,7 +560,7 @@ namespace Noice_Bot_Twitch
             if (s.Length < 2) return;
             if (s[1].Contains("?"))
             {
-                client.SendChatMessage(command.helpComment);
+                TwitchLibChatClient.SendMessage(command.helpComment);
                 return;
             }
             if (int.TryParse(s[1], out i))
@@ -524,9 +568,9 @@ namespace Noice_Bot_Twitch
                 if (i >= 0)
                 {
                     SoundboardManager.userCooldown = i;
-                    client.SendChatMessage("Set soundboard user cooldown to " + i);
+                    TwitchLibChatClient.SendMessage("Set soundboard user cooldown to " + i);
                 }
-                else client.SendChatMessage(command.helpComment);
+                else TwitchLibChatClient.SendMessage(command.helpComment);
             }
         }
         static void SBResponseCooldown(Command command, Comment c)
@@ -536,7 +580,7 @@ namespace Noice_Bot_Twitch
             if (s.Length < 2) return;
             if (s[1].Contains("?"))
             {
-                client.SendChatMessage(command.helpComment);
+                TwitchLibChatClient.SendMessage(command.helpComment);
                 return;
             }
             if (int.TryParse(s[1], out i))
@@ -544,9 +588,9 @@ namespace Noice_Bot_Twitch
                 if (i >= 0)
                 {
                     SoundboardManager.responseCooldown = i;
-                    client.SendChatMessage("Set soundboard response cooldown to " + i);
+                    TwitchLibChatClient.SendMessage("Set soundboard response cooldown to " + i);
                 }
-                else client.SendChatMessage(command.helpComment);
+                else TwitchLibChatClient.SendMessage(command.helpComment);
             }
         }
         static void SBSoundInterval(Command command, Comment c)
@@ -556,7 +600,7 @@ namespace Noice_Bot_Twitch
             if (s.Length < 2) return;
             if (s[1].Contains("?"))
             {
-                client.SendChatMessage(command.helpComment);
+                TwitchLibChatClient.SendMessage(command.helpComment);
                 return;
             }
             if (int.TryParse(s[1], out i))
@@ -564,9 +608,9 @@ namespace Noice_Bot_Twitch
                 if (i >= 0)
                 {
                     SoundboardManager.soundInterval = i;
-                    client.SendChatMessage("Set soundboard interval cooldown to " + i);
+                    TwitchLibChatClient.SendMessage("Set soundboard interval cooldown to " + i);
                 }
-                else client.SendChatMessage(command.helpComment);
+                else TwitchLibChatClient.SendMessage(command.helpComment);
             }
         }
         static void SBEnableSoundcooldown(Command command, Comment c)
@@ -575,18 +619,18 @@ namespace Noice_Bot_Twitch
             if (s.Length < 2) return;
             if (s[1].Contains("?"))
             {
-                client.SendChatMessage(command.helpComment);
+                TwitchLibChatClient.SendMessage(command.helpComment);
                 return;
             }
             if (s[1].Contains("true"))
             {
                 SoundboardManager.useSoundCooldown = true;
-                client.SendChatMessage("Enabled Soundcooldown system");
+                TwitchLibChatClient.SendMessage("Enabled Soundcooldown system");
             }
             else if (s[1].Contains("false"))
             {
                 SoundboardManager.useSoundCooldown = false;
-                client.SendChatMessage("Disabled Soundcooldown system");
+                TwitchLibChatClient.SendMessage("Disabled Soundcooldown system");
             }
         }
         static void SBReload(Command command, Comment c)
@@ -596,13 +640,13 @@ namespace Noice_Bot_Twitch
             {
                 if (s[1].Contains("?"))
                 {
-                    client.SendChatMessage(command.helpComment);
+                    TwitchLibChatClient.SendMessage(command.helpComment);
                     return;
                 }
             }
             FileManager.LoadSoundfiles();
             SoundboardManager.LoadSettings();
-            client.SendChatMessage("Soundboard reloaded");
+            TwitchLibChatClient.SendMessage("Soundboard reloaded");
         }
         static void ReloadSettings(Command command, Comment c)
         {
@@ -611,7 +655,7 @@ namespace Noice_Bot_Twitch
             {
                 if (s[1].Contains("?"))
                 {
-                    client.SendChatMessage(command.helpComment);
+                    TwitchLibChatClient.SendMessage(command.helpComment);
                     return;
                 }
             }
@@ -627,7 +671,7 @@ namespace Noice_Bot_Twitch
             }
             SoundboardManager.LoadSettings();
             TTS.LoadSettings();
-            client.SendChatMessage("Reloaded all settings");
+            TwitchLibChatClient.SendMessage("Reloaded all settings");
         }
 
         //Trigger with Channel Points
@@ -679,12 +723,12 @@ namespace Noice_Bot_Twitch
                 if (TTS.useTTS)
                 {
                     TTS.useTTS = false;
-                    client.SendChatMessage("Disabled TTS");
+                    TwitchLibChatClient.SendMessage("Disabled TTS");
                 }
                 else
                 {
                     TTS.useTTS = true;
-                    client.SendChatMessage("Enabled TTS");
+                    TwitchLibChatClient.SendMessage("Enabled TTS");
                 }
                 return true;
             }

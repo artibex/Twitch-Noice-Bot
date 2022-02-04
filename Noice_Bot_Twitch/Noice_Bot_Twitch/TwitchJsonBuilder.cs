@@ -39,6 +39,7 @@ namespace Noice_Bot_Twitch
 
         public string ReadMessage()
         {
+            Console.WriteLine(inputStream.ReadLine());
             return inputStream.ReadLine();
         }
 

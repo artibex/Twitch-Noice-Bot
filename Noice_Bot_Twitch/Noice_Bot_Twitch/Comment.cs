@@ -10,8 +10,8 @@ namespace Noice_Bot_Twitch
 
         public Comment(string user, string command)
         {
-            this.user = user;
-            this.comment = command;
+            this.user = user.ToLower();
+            this.comment = command.ToLower();
         }
         public Comment(string rawMsg)
         {

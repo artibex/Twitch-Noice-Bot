@@ -22,7 +22,7 @@ namespace Noice_Bot_Twitch
             set { if (value >= 0) _userCooldown = value; }
         }
         
-        private static int _globalCooldown = 0; //Global Cooldown, nobody is allowed to play another one untill it's over
+        private static int _globalCooldown = 1; //Global Cooldown, nobody is allowed to play another one untill it's over
         public static int globalCooldown
         {
             get { return _globalCooldown; }
@@ -116,7 +116,7 @@ namespace Noice_Bot_Twitch
             {
                 string folders = " ";
                 foreach (string s in subDirektories) folders += GetDirName(s) + ", "; //Display all folders/Sublibraries to choose from
-                client.SendChatMessage("Use " + FileManager.GetCommandCharacter() + "play + a sound name, ID or category OR random. Sublibraries:" + folders);
+                TwitchLibChatClient.SendMessage("Use " + FileManager.GetCommandCharacter() + "play + a sound name, ID or category OR random. Sublibraries:" + folders);
                 return;
             }
             //If the user is on the cooldown list, return
@@ -126,7 +126,7 @@ namespace Noice_Bot_Twitch
                 {
                     if(!responseCooldownActive)
                     {
-                        client.SendChatMessage("@" + c.user + " not ready (" + uc.TimeLeft() + "sec)");
+                        TwitchLibChatClient.SendMessage("@" + c.user + " not ready (" + uc.TimeLeft() + "sec)");
                         SetResponseCooldown();
                         return;
                     } else return;
@@ -259,7 +259,7 @@ namespace Noice_Bot_Twitch
                         {
                             if(!responseCooldownActive)
                             {
-                                client.SendChatMessage("Soundfile " + FileManager.GetSoundname(soundFiles[uc.soundfileID]) + " in cd (" + uc.TimeLeft() + "sec)");
+                                TwitchLibChatClient.SendMessage("Soundfile " + FileManager.GetSoundname(soundFiles[uc.soundfileID]) + " in cd (" + uc.TimeLeft() + "sec)");
                                 SetResponseCooldown();
                             }
                             return;
@@ -274,13 +274,13 @@ namespace Noice_Bot_Twitch
 
                 Speaker s = new Speaker(path, 0, volume, false, true);
                 CooldownUser(c, combinedCooldown, GetIDInt(path));
-                client.SendChatMessage("Playing: " + FileManager.GetSoundname(path) + " ID:" + GetIDString(path) + " (cd: " + combinedCooldown + "sec)");
+                TwitchLibChatClient.SendMessage("Playing: " + FileManager.GetSoundname(path) + " ID:" + GetIDString(path) + " (cd: " + combinedCooldown + "sec)");
                 SetGlobalCooldown();
             } else //If the glocal cooldown is active, return the time left
             {
                 if(!responseCooldownActive)
                 {
-                    client.SendChatMessage("Global cd (" + GetGlobalCooldownLeft() + "sec)");
+                    TwitchLibChatClient.SendMessage("Global cd (" + GetGlobalCooldownLeft() + "sec)");
                     SetResponseCooldown();
                 }
             }
@@ -295,7 +295,7 @@ namespace Noice_Bot_Twitch
 
             Speaker s = new Speaker(path, 0, volume, false, true);
             AudioMixer.AddSoundboardSpeaker(s);
-            client.SendChatMessage("Playing: " + FileManager.GetSoundname(path) + " ID:" + GetIDString(path) + extraInfo);
+            TwitchLibChatClient.SendMessage("Playing: " + FileManager.GetSoundname(path) + " ID:" + GetIDString(path) + extraInfo);
         }
 
         //Returns the subdirektorie name of the given path

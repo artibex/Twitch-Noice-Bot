@@ -58,7 +58,7 @@ namespace Noice_Bot_Twitch
 
             if (!CommandIdentifier.CheckCommand(c)) //before everything else is changed, check if it's a command
             {
-                c.user = RemoveNumeric(c.user); //Remove numbers from name for faster reading? Hm... could be bad
+                //c.user = RemoveNumeric(c.user); //Remove numbers from name for faster reading? Hm... could be bad
                 c = SpamProtection(c); //Check with the Spam protection before giving it back
                 return c;
             } else //If it is a command, remove the comment to not read it out in the TTS

@@ -65,11 +65,11 @@ customsoundboardfolder=
 # Cooldown of the specific user, can play sound after 90 seconds again
 usercooldown=90
 # Global cooldown, nobody can play a sound when it's active
-globalcooldown=0
+globalcooldown=5
 # Lower Bot spamming, ignore every incoming message for 30 seconds, if not completed task
-responsecooldown=30
+responsecooldown=15
 # Prevent sound stacking by putting in a intervall timer, idk if it actually works lul.
-soundinterval=0
+soundinterval=2
 # Prevent spamming the same soundfile by putting the used file in cooldown connected to the user
 usesoundcooldown=true
 #Create Channel Point Redemptions with these names to trigger the Soundboard

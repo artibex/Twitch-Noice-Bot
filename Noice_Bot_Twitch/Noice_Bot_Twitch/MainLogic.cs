@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
-using System.Windows.Forms;
+using TwitchLib.Client.Events;
+
 
 namespace Noice_Bot_Twitch
 {
@@ -33,8 +34,11 @@ namespace Noice_Bot_Twitch
             Console.OutputEncoding = System.Text.Encoding.UTF8; //Changes the Console Encoding to UTF8 (Might be usefull, might be not)
             FileManager.LoadSettings(); //Setup File Manager
 
-            client = new IrcClient(FileManager.GetIrcClient(), FileManager.GetPort(), FileManager.GetBotName(), FileManager.GetOAuth(), FileManager.GetChannelName().ToLower());
-            pinger = new Pinger(client); //Create a Pinger that pings the server every 5 minutes to prevent this connection getting closed
+            //client = new IrcClient(FileManager.GetIrcClient(), FileManager.GetPort(), FileManager.GetBotName(), FileManager.GetOAuth(), FileManager.GetChannelName().ToLower());
+            //pinger = new Pinger(client); //Create a Pinger that pings the server every 5 minutes to prevent this connection getting closed
+            //TwitchLibChatClient libClient = new TwitchLibChatClient();
+            TwitchLibChatClient.LoadSettings();
+            TwitchLibChatClient.client.OnMessageReceived += Client_OnMessageReceived;
             tjb = new TwitchJsonBuilder(new string[] { "channel-points-channel-v1." + FileManager.GetChannelID()}, FileManager.GetAppAuth());
             pubSub = new PubSubService(tjb,client);
 
@@ -53,27 +57,27 @@ namespace Noice_Bot_Twitch
                 Console.WriteLine("An error occured while checking your Settings, please check your Settings.txt");
                 Console.WriteLine("Press any key to continue");
                 Console.ReadKey();
-                Application.Exit();
+                //Application.Exit();
                 return;
             }
 
-            pinger.Start(); //Start the Pinger
+            //pinger.Start(); //Start the Pinger
             Console.WriteLine(FileManager.GetBotName() + " is ready!");
             while (true) //Loop throu this, react when something in the chat happend
             {
-                var rawMsg = client.ReadMessage(); //The whole Message from the IRC Server
-                Comment c = new Comment(rawMsg); //Create a new Comment out of it. Cut out the Username ans the Message
-                c = CommentProcessor.Process(c); //Edit the given User Comment
-                string executionOrder = FileManager.GetNotificationExecutionOrder(); //Check if to read it out and how
-                string ttsText = ExecutionOrderManager.GetTTSText(c); //The text how it should be converted to speech
+                //var rawMsg = client.ReadMessage(); //The whole Message from the IRC Server
+                //Comment c = new Comment(rawMsg); //Create a new Comment out of it. Cut out the Username ans the Message
+                //c = CommentProcessor.Process(c); //Edit the given User Comment
+                //string executionOrder = FileManager.GetNotificationExecutionOrder(); //Check if to read it out and how
+                //string ttsText = ExecutionOrderManager.GetTTSText(c); //The text how it should be converted to speech
 
                 
-                if (ttsText == "" && !String.IsNullOrWhiteSpace(c.user) && !String.IsNullOrWhiteSpace(c.comment)) Console.WriteLine(c.user + ": " + c.comment); //If comment is empty, write normal comment in console
-                else if(ttsText != "" && !String.IsNullOrWhiteSpace(c.user) && !String.IsNullOrWhiteSpace(c.comment))
-                {
-                    Console.WriteLine(ttsText);
-                    TTS.Speak(ttsText);
-                }
+                //if (ttsText == "" && !String.IsNullOrWhiteSpace(c.user) && !String.IsNullOrWhiteSpace(c.comment)) Console.WriteLine(c.user + ": " + c.comment); //If comment is empty, write normal comment in console
+                //else if(ttsText != "" && !String.IsNullOrWhiteSpace(c.user) && !String.IsNullOrWhiteSpace(c.comment))
+                //{
+                //    Console.WriteLine(ttsText);
+                //    TTS.Speak(ttsText);
+                //}
 
                 //If the Comment is not empty or just spaces execute a notification
                 //if (!String.IsNullOrWhiteSpace(c.user) && !String.IsNullOrWhiteSpace(c.comment) && !cp.CheckBlacklist(c) && executionOrder != "")
@@ -111,6 +115,22 @@ namespace Noice_Bot_Twitch
                 //    }
                 //}
                 //else if(c.user != "" && c.comment != "") Console.WriteLine(c.user + ": " + c.comment);
+            }
+        }
+
+        private void Client_OnMessageReceived(object sender, OnMessageReceivedArgs e)
+        {
+            Comment c = new Comment(e.ChatMessage.Username, e.ChatMessage.Message);
+            //c = CommentProcessor.Process(c); //Edit the given User Comment
+            CommandIdentifier.CheckCommand(c);
+            string executionOrder = FileManager.GetNotificationExecutionOrder(); //Check if to read it out and how
+            string ttsText = ExecutionOrderManager.GetTTSText(c); //The text how it should be converted to speech
+
+            if (ttsText == "" && !String.IsNullOrWhiteSpace(c.user) && !String.IsNullOrWhiteSpace(c.comment)) Console.WriteLine(c.user + ": " + c.comment); //If comment is empty, write normal comment in console
+            else if (ttsText != "" && !String.IsNullOrWhiteSpace(c.user) && !String.IsNullOrWhiteSpace(c.comment))
+            {
+                Console.WriteLine(ttsText);
+                TTS.Speak(ttsText);
             }
         }
     }
