@@ -65,6 +65,7 @@ namespace Noice_Bot_Twitch
         private static System.Timers.Timer responseCooldownTimer; //Response timer to set
 
         private static List<String> soundFiles = new List<string>(); //The list of every collected sound
+        private static List<AudioFile> audioFiles = FileManager.audioFiles;
         private static List<String> subDirektories = new List<string>(); //List of all subdirektories containing sounds
         private static List<UserCooldown> cooldownList = new List<UserCooldown>(); //List of users in cooldown
         private static List<String> soundfileOffsetList = new List<string>(); //List of all offsets
@@ -86,6 +87,7 @@ namespace Noice_Bot_Twitch
             _soundInterval = FileManager.GetSoundInterval();
             _sbVolume = FileManager.GetSoundboardVolume();
             soundFiles = FileManager.GetSoundfiles();
+            audioFiles = FileManager.audioFiles;
             subDirektories = FileManager.GetSoundboardSubdirektories();
             soundfileOffsetList = FileManager.GetSoundfileOffsetList();
             _useSoundCooldown = FileManager.GetUseSoundcooldown();
@@ -299,7 +301,7 @@ namespace Noice_Bot_Twitch
         }
 
         //Returns the subdirektorie name of the given path
-        static string GetDirName(string path)
+        public static string GetDirName(string path)
         {
             string str = path.Substring(path.LastIndexOf(@"\") + 1);
             str = str.ToLower();
@@ -307,7 +309,7 @@ namespace Noice_Bot_Twitch
         }
 
         //Get the ID of the given songfile path
-        static string GetIDString(string path)
+        public static string GetIDString(string path)
         {
             int count = 0;
 
@@ -339,7 +341,7 @@ namespace Noice_Bot_Twitch
 
             return "";
         }
-        static int GetIDInt(string path)
+        public static int GetIDInt(string path)
         {
             int count = 0;
             string pName = FileManager.GetSoundname(path);
@@ -358,14 +360,14 @@ namespace Noice_Bot_Twitch
         }
 
         //Takes a list and returns a random string from it
-        static void GetRandomPath(out int id, out string path, List<String> strList)
+        public static void GetRandomPath(out int id, out string path, List<String> strList)
         {
             id = rand.Next(0, strList.Count - 1);
             path = strList[id];
         }
 
         //Get the Path by a given ID
-        static string GetPathByID(int id)
+        public static string GetPathByID(int id)
         {
             //If the user put in a to high number, return las in list
             if (id >= soundFiles.Count) return soundFiles[soundFiles.Count-1]; //Out of Range
@@ -373,7 +375,7 @@ namespace Noice_Bot_Twitch
             else return soundFiles[id]; //Return the path
         }
         //Get offset for the soundeffect and add or subtract it to the volume
-        static float GetVolumeOffset(string path)
+        public static float GetVolumeOffset(string path)
         {
             string name = FileManager.GetSoundname(path);
             foreach(string raw in soundfileOffsetList)

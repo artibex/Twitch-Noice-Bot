@@ -222,6 +222,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AudioDeviceManager.cs" />
+    <Compile Include="AudioFileDirectory.cs" />
     <Compile Include="AudioMixer.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="ExecutionOrderManager.cs" />
@@ -230,6 +231,7 @@
     <Compile Include="Comment.cs" />
     <Compile Include="CommandIdentifier.cs" />
     <Compile Include="CommentProcessor.cs" />
+    <Compile Include="AudioFile.cs" />
     <Compile Include="TwitchLibChatClient.cs" />
     <Compile Include="UserCooldown.cs" />
     <Compile Include="FileManager.cs" />
@@ -247,6 +249,7 @@
     <None Include="App.config" />
     <None Include="packages.config" />
     <EmbeddedResource Include="SettingsRef\CommandsRef.json" />
+    <EmbeddedResource Include="SettingsRef\AudioFilesRef.json" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SettingsRef\whitelistRef.txt" />

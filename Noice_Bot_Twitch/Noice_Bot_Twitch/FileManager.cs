@@ -21,7 +21,8 @@ namespace Noice_Bot_Twitch
         private static string bridgelistFile = @"BridgeWordList.txt";
         private static string whitelistFile = @"Whitelist.txt";
         private static string soundOffsetFile = @"SoundfileOffset.txt";
-        private static string commandsFile = @"Commands.json";
+        private static string commandsJson = @"Commands.json";
+        private static string audioJson = @"Audiofiles.json";
 
         //Folder structure
         static string settingsFolder = @"Settings"; //Settings of the bot
@@ -37,18 +38,12 @@ namespace Noice_Bot_Twitch
         static List<String> whiteList; //Loaded Whitelist
         static List<String> settingsList; //Loaded Settings
         static List<String> notificationList; //Paths to the notifications sounds
-        static List<String> soundFiles; //All the Soundfiles as Path
+        static List<String> soundFiles = new List<string>(); //All the Soundfiles as Path
         static List<String> soundboardSubdirektories; //Subdirektories of the soundboard folder
         static List<String> soundfileOffsetList; //Loaded offsets of soundfiles
+        public static List<AudioFile> audioFiles = new List<AudioFile>(); //All loaded information of a audio file
+        public static List<AudioFileDirectory> audioDirectories = new List<AudioFileDirectory>();
         static List<Command> commands;
-
-        //Init Filemanager
-        //public static FileManager()
-        //{
-        //    path = Directory.GetCurrentDirectory(); //Get the current execution Directory
-        //    LoadFiles(); //Load the files into string lists
-        //    CheckFileExistence(); //Check file existance of all needed files, create missing ones (with examples)
-        //}
 
         public static void LoadSettings()
         {
@@ -70,9 +65,21 @@ namespace Noice_Bot_Twitch
                 ttsBlacklist = File.ReadAllLines(path + @"\" + settingsFolder + @"\" + ttsblacklistFile).ToList(); //Read "TTSBlacklist.txt"
                 bridgeWordList = File.ReadAllLines(path + @"\" + settingsFolder + @"\" + bridgelistFile).ToList(); //Read "BridgeWordList.txt"
                 whiteList = File.ReadAllLines(path + @"\" + settingsFolder + @"\" + whitelistFile).ToList(); //Read "Whitelist.txt"
-                commands = JsonConvert.DeserializeObject<List<Command>>(File.ReadAllText(path + @"\" + settingsFolder + @"\" + commandsFile));
+                commands = JsonConvert.DeserializeObject<List<Command>>(File.ReadAllText(path + @"\" + settingsFolder + @"\" + commandsJson));
+                //AudioFilesList = JsonConvert.DeserializeObject<List<Command>>(File.ReadAllText(path + @"\" + settingsFolder + @"\" + AudioListFile));
+                
+                try
+                {
+                    audioFiles = JsonConvert.DeserializeObject<List<AudioFile>>(File.ReadAllText(path + @"\" + settingsFolder + @"\" + audioJson));
+                    LoadSoundFilesFromFile();
+                    Console.WriteLine("Loaded " + audioFiles.Count + " audio files from file");
+                } catch
+                {
+                    LoadSoundfiles();
+                    Console.WriteLine("Can't load sounds from file, genereting own list");
+                }
 
-                LoadSoundfiles(); //Check in the given path for soundfiles and put them in the list
+                //LoadSoundfiles(); //Check in the given path for soundfiles and put them in the list
                 UpdateSoundOffsetFile(); //Before loading the file, update it to check if new sounds are added
                 soundfileOffsetList = File.ReadAllLines(path + @"\" + settingsFolder + @"\" + soundOffsetFile).ToList(); //Load sound offset
             } catch
@@ -91,11 +98,63 @@ namespace Noice_Bot_Twitch
             if(Directory.Exists(GetSoundboardPath()))
             {
                 soundFiles = Directory.EnumerateFiles(GetSoundboardPath(), "*.*", SearchOption.AllDirectories)
-                .Where(s => s.EndsWith(".mp3") || s.EndsWith(".wav") || s.EndsWith(".aiff") || s.EndsWith(".wma")).ToList();
+                .Where(s => s.EndsWith(".wav") || s.EndsWith(".aiff") || s.EndsWith(".wma")).ToList();
 
                 soundboardSubdirektories = Directory.GetDirectories(GetSoundboardPath()).ToList(); //Load subdirectories
                 Console.WriteLine("Loaded " + soundFiles.Count + " Soundfiles"); //Display the loaded amount in console to flex
             }
+
+            int i = 0;
+            foreach(string s in soundFiles)
+            {
+                audioFiles.Add(new AudioFile(i, GetSoundname(s), s));
+                i++;
+            }
+
+            foreach (string s in soundboardSubdirektories)
+            {
+                audioDirectories.Add(new AudioFileDirectory(s));
+            }
+            WriteSoundFile();
+        }
+
+        static void LoadSoundFilesFromFile()
+        {
+            soundFiles = new List<string>();
+            List<String> audioPaths = Directory.EnumerateFiles(GetSoundboardPath(), "*.*", SearchOption.AllDirectories)
+            .Where(s => s.EndsWith(".wav") || s.EndsWith(".aiff") || s.EndsWith(".wma")).ToList();
+
+            foreach (AudioFile a in audioFiles) soundFiles.Add(a.Path);
+            if(soundFiles.Count < audioPaths.Count)
+            {
+                foreach(string s in audioPaths)
+                {
+                    if (!soundFiles.Contains(s))
+                    {
+                        soundFiles.Add(s);
+                        AddAudioFile(s);
+                        WriteSoundFile();
+                        Console.WriteLine("Found new soundeffekt");
+                    }
+                }
+            } 
+            soundboardSubdirektories = Directory.GetDirectories(GetSoundboardPath()).ToList(); //Load subdirectories
+        }
+
+        static void AddAudioFile(string path)
+        {
+            audioFiles.Add(new AudioFile(audioFiles.Count+1, GetSoundname(path), path));
+        }
+        static AudioFile CreateAudioFile(string path)
+        {
+            AudioFile a = new AudioFile(audioFiles.Count + 1, GetSoundname(path), path);
+            return a;
+        }
+
+        static void WriteSoundFile()
+        {
+            string jsonBuild = JsonConvert.SerializeObject(audioFiles);
+            File.WriteAllText(path + @"\" + settingsFolder + @"\" + audioJson, jsonBuild);
         }
 
         static void CheckFileExistence() //Does all the wanted files exist? No? Then Create them and put examples in it
@@ -202,7 +261,7 @@ namespace Noice_Bot_Twitch
                 }
                 Console.WriteLine("File: " + soundOffsetFile + " was missing");
             }
-            if (!File.Exists(path + @"\" + settingsFolder + @"\" + commandsFile)) //Commands.json
+            if (!File.Exists(path + @"\" + settingsFolder + @"\" + commandsJson)) //Commands.json
             {
                 //Basic Conf, the user has to put in his own oauth key, channelname and Channel ID for Channel Point support
                 var assembly = Assembly.GetExecutingAssembly();
@@ -212,9 +271,24 @@ namespace Noice_Bot_Twitch
                 using (StreamReader reader = new StreamReader(stream))
                 {
                     string result = reader.ReadToEnd();
-                    File.WriteAllText(path + @"\" + settingsFolder + @"\" + commandsFile, result);
+                    File.WriteAllText(path + @"\" + settingsFolder + @"\" + commandsJson, result);
                 }
-                Console.WriteLine("File: " + commandsFile + " was missing");
+                Console.WriteLine("File: " + commandsJson + " was missing");
+            }
+            if (!File.Exists(path + @"\" + settingsFolder + @"\" + audioJson)) //Commands.json
+            {
+                //var assembly = Assembly.GetExecutingAssembly();
+                //var resourceName = "Noice_Bot_Twitch.SettingsRef.AudioFilesRef.json";
+
+                //using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+                //using (StreamReader reader = new StreamReader(stream))
+                //{
+                //    string result = reader.ReadToEnd();
+                //    File.WriteAllText(path + @"\" + settingsFolder + @"\" + audioJson, result);
+                //}
+                //Console.WriteLine("File: " + audioJson + " was missing");
+                string jsonBuild = JsonConvert.SerializeObject(audioFiles);
+                File.WriteAllText(path + @"\" + settingsFolder + @"\" + audioJson, jsonBuild);
             }
         }
 
@@ -756,6 +830,14 @@ namespace Noice_Bot_Twitch
             if (soundFiles != null) return soundFiles;
             else return new List<string>(); //If list is null, return empty list
         }
+        public static List<String> GetSoundFiles(string path)
+        {
+
+            return new List<string>(); //If list is null, return empty list
+
+        }
+
+
         //All the subdirektories of the soundboard, these are new libraries that can be also triggerd
         public static List<String> GetSoundboardSubdirektories()
         {
