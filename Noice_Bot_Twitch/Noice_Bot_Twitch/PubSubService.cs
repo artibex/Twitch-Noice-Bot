@@ -48,7 +48,7 @@ namespace Noice_Bot_Twitch
         void PubSubError(object sender, EventArgs e)
         {
             Console.WriteLine("Some PubSub Error occured");
-            client.SendChatMessage("PubSub got disconnected idk how LUL");
+            TwitchLibChatClient.SendMessage("PubSub got disconnected idk how LUL");
         }
 
         void PubSubClosed(object sender, EventArgs e)
