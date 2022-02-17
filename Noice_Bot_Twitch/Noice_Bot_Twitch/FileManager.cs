@@ -23,6 +23,7 @@ namespace Noice_Bot_Twitch
         private static string soundOffsetFile = @"SoundfileOffset.txt";
         private static string commandsJson = @"Commands.json";
         private static string audioJson = @"Audiofiles.json";
+        private static string audiolistFile = @"Audiofiles.txt";
 
         //Folder structure
         static string settingsFolder = @"Settings"; //Settings of the bot
@@ -88,6 +89,7 @@ namespace Noice_Bot_Twitch
                 CheckFileExistence(); //Check existance of every file
                 LoadFiles(); //Load files again
             }
+            WriteAudioFileList(); //If the soundboard is online, write it in a file
         }
 
         //Load all soundfiles in a given path
@@ -139,6 +141,18 @@ namespace Noice_Bot_Twitch
                 }
             } 
             soundboardSubdirektories = Directory.GetDirectories(GetSoundboardPath()).ToList(); //Load subdirectories
+        }
+
+        static void WriteAudioFileList() //a user friendly way to read the list
+        {
+            string result = "";
+            int i = 0;
+            foreach(AudioFile a in audioFiles)
+            {
+                result += a.ID + ": " + a.Name + "\n";
+                i++;
+            }
+            File.WriteAllText(path + @"\" + settingsFolder + @"\" + audiolistFile, result);
         }
 
         static void AddAudioFile(string path)
